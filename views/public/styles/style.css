@@ -1,0 +1,114 @@
+* {
+  border: none;
+  margin: 0;
+  padding: 0;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box; }
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: local("Open Sans"), local("OpenSans"), url("http://themes.googleusercontent.com/static/fonts/opensans/v5/cJZKeOuBrn4kERxqtaUH3T8E0i7KZn-EPnyo3HZu7kw.woff") format("woff"); }
+
+:focus {
+  outline-color: initial;
+  outline-style: initial;
+  outline-width: 0; }
+
+.clear {
+  clear: both; }
+
+h3, h4 {
+  margin-bottom: 50px; }
+
+a {
+  color: #34495e;
+  text-decoration: none; }
+
+body {
+  background-color: white;
+  color: #34495e;
+  font-family: 'Open Sans';
+  font-size: 12px; }
+
+header {
+  width: 100%;
+  background: #1a1a1a; }
+  header #name img {
+    width: 150px;
+    margin: 15px 0 0 30px; }
+  header a {
+    color: #fff;
+    text-decoration: none;
+    padding: 15px 15px 15px 15px; }
+  header a:hover {
+    background-color: #343434; }
+  header nav {
+    margin: 30px 0 0 20px;
+    padding-bottom: 15px; }
+    header nav ul li {
+      display: inline;
+      list-style-type: none; }
+    header nav ul li:last-child {
+      float: right; }
+  header #header {
+    width: 800px;
+    margin: 0 auto; }
+
+section {
+  position: relative;
+  min-height: 100%; }
+  section #titre {
+    height: 100px;
+    background-color: #27ae60;
+    color: #fff;
+    text-align: center;
+    padding: 20px 0 0 0; }
+  section #glob {
+    position: relative;
+    min-height: 100%; }
+    section #glob #content {
+      padding: 15px;
+      float: left;
+      width: 70%; }
+      section #glob #content .article {
+        border: 1px solid #27ae60;
+        padding: 25px;
+        margin-bottom: 25px;
+        position: relative; }
+        section #glob #content .article .titre {
+          font-size: 18px; }
+        section #glob #content .article .shortContent {
+          margin-bottom: 35px; }
+        section #glob #content .article .date {
+          position: absolute;
+          right: 0;
+          top: 0;
+          background: #27ae60;
+          text-align: center;
+          padding: 10px;
+          color: #fff;
+          font-weight: bolder; }
+        section #glob #content .article .more {
+          position: absolute;
+          bottom: 0;
+          right: 0;
+          font-weight: bolder;
+          margin-top: 15px;
+          background: #27ae60;
+          margin-bottom: 15px;
+          padding: 5px 70px 5px 5px;
+          color: #fff;
+          text-decoration: none; }
+    section #glob #rubrique {
+      width: 30%;
+      margin-left: 70%;
+      padding: 15px; }
+
+footer {
+  position: absolute;
+  bottom: 0;
+  background-color: #fff;
+  height: 25px; }

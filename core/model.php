@@ -1,0 +1,80 @@
+<?php
+
+	class Model{
+		public $table;
+		public $id;
+		protected $bdd;
+
+		public function __construct(PDO $bdd){
+			$this->setBdd($bdd);
+		}
+
+		public function setBdd($bdd){
+			$this->bdd = $bdd;
+		}
+
+		public function save($data){
+			if(isset($data['id']) && !empty($data['id'])){ 	# Si l'id envoyé existe et n'est pas vide
+				$sql = "UPDATE ".$this->table." SET "; 
+				foreach ($data as $k => $v) {
+					if($k != "id"){ 						# continue et ajoute toute les key s'il n'est pas l'id
+						$sql .= "$k='$v',"; 
+					}
+				}
+				$sql = substr($sql, 0,-1); 					# enleve la dernière virgule
+				$sql .= "WHERE id = ".$data['id'];
+			}else{ 											# si l'id n'existe pas c'est que c'est un ajout
+
+				$sql = "INSERT INTO ".$this->table."(";
+				unset($data['id']);							# on supprime l'id envoyé car inutile
+				foreach ($data as $k => $v) {
+					$sql .= "$k,";
+				}
+				$sql = substr($sql, 0,-1);					# enleve la dernière virgule
+				$sql .= ") VALUES (";
+				foreach ($data as $k => $v) {
+					$sql .= ":$k,";
+				}
+				$sql = substr($sql, 0,-1);					# enleve la dernière virgule
+				$sql .= ")";
+			}
+
+			$req = $this->bdd->prepare($sql);
+			$req->execute($data);
+
+
+			if(!isset($data['id'])){						# si l'id n'existe pas on récupère le dernier id ajouté
+				$this->id = $this->bdd->lastInsertId();
+			}else{
+				$this->id = $data['id'];
+			}
+		}
+
+		public function find($data=array()){
+			$condition = "1=1";
+			$fields = "*";
+			$limit = "";
+			$order = "id DESC";
+			if(isset($data['condition'])){ $condition = $data['condition']; }
+			if(isset($data['fields'])){ $fields = $data['fields']; }
+			if(isset($data['limit'])){ $limit = "LIMIT ".$data['limit']; }
+			if(isset($data['order'])){ $order = $data['order']; }
+			$sql = "SELECT $fields FROM ".$this->table." WHERE $condition ORDER BY $order $limit";
+			$d = array();
+
+			$req = $this->bdd->query($sql);
+			while($data = $req->fetch(PDO::FETCH_OBJ)){
+				$d[] = $data;
+			};
+			return $d;
+		}
+
+		public function delete($id=null){
+			if($id == null){ $id = $this->id; }
+
+			$sql = "DELETE FROM ".$this->table." WHERE id = $id";
+			$this->bdd->exec($sql);
+		}
+
+
+	}
