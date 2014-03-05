@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
 #Framework
 
 No name yet
@@ -33,15 +31,3 @@ The views are in `views` -> `pages` .
 the pages name are the action name without 'Action' at end and there are in the folder where the action are in the Controller.
 
 `Ressources` content Css/Js/Images/Fonts files each in respective folder
-
-=======
-=======
->>>>>>> FETCH_HEAD
-Framework
-=========
-
-Own framework
-<<<<<<< HEAD
->>>>>>> FETCH_HEAD
-=======
->>>>>>> FETCH_HEAD
