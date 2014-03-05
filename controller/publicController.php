@@ -5,21 +5,25 @@
 
 		function indexAction(){
 			$d['perso'] = $this->Tutoriel->findBy(); 		# model
-			$this->set($d); 								#ca pousse les var dans la vue
+			$this->send($d); 								# envoie le(s) tableau vers la vue qui sera recuperer en twig
 		}
 
-		function lireAction($id){ 							#separer par des vigules si plusieur donné dans l'url séparer par des /
+		function lireAction($id){ 							# separer par des vigules si plusieur donné dans l'url séparer par des /
 			$d['perso'] = $this->Tutoriel->find(array(
 				'condition' => 'id='.$id
 			));
 			$d['perso'] = $d['perso'][0];
-			$this->set($d);
+			$this->send($d);
 		}
 
 		function delAction($id){
 			$d['perso'] = $this->Tutoriel->delete($id);
 
-			$this->set($d);
+			$this->send($d);
+		}
+
+		function ajoutAction(){
+
 		}
 	}
 

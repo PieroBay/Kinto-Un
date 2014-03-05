@@ -17,15 +17,13 @@
 			}
 		}
 
-		function set($d){
-			$this->vars = array_merge($this->vars,$d); 									
-			$this->render( explode("Action", debug_backtrace()[1]["function"])[0] ); 	# Get action name without "Action"
-		}
-
-		function render($filename){
-			$array = $this->vars;
-			$contro = explode("Controller", get_class($this))[0];
-			require(ROOT.'core/template/twig/lib/Twig/LoaderTemplate.php');
+		function send($d){
+			$this->vars = array_merge($this->vars,$d); 		
+			$array = $this->vars;							
+			$filename = explode("Action", debug_backtrace()[1]["function"])[0]; 	# Get action name without "Action"
+			$contro = explode("Controller", get_class($this))[0];					# Get controller name without "Controller"
+			require(ROOT.'libs/form.php');
+			require(ROOT.'libs/template/twig/lib/Twig/LoaderTemplate.php');
 		}
 
 		function loadModel($name){
