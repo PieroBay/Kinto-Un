@@ -5,12 +5,17 @@
 		public $id;
 		protected $bdd;
 
-		public function __construct(PDO $bdd){
+		public function __construct(PDO $bdd, $table){
 			$this->setBdd($bdd);
+			$this->setTable($table);
 		}
 
 		public function setBdd($bdd){
 			$this->bdd = $bdd;
+		}
+
+		public function setTable($table){
+			$this->table = $table;
 		}
 
 		public function save($data){
@@ -50,7 +55,7 @@
 			}
 		}
 
-		public function find($data=array()){
+		public function findAll($data=array()){
 			$condition = "1=1";
 			$fields = "*";
 			$limit = "";
@@ -67,6 +72,13 @@
 				$d[] = $data;
 			};
 			return $d;
+		}
+
+		public function findById($id){
+			$sql = "SELECT * FROM ".$this->table." WHERE id= $id";
+			$req = $this->bdd->query($sql);
+			$data = $req->fetch(PDO::FETCH_OBJ);
+			return $data;
 		}
 
 		public function delete($id=null){

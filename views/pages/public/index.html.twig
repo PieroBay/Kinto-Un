@@ -8,9 +8,12 @@
   <title></title>
  </head>
  <body>
- 	{% for pers in perso %}
-		<h1><a href="lire/{{ pers.id }}">{{ pers.nom }}</a></h1>
+ 	{% for perso in perso %}
+		<h1><a href="lire/{{ perso.id }}">{{ perso.nom }} - {{ perso.experience }} d'xp et {{ perso.degats }} de degat</a></h1>
 	{% endfor %}
+
+
+	<p><a href="ajout">Ajouter</a></p>
  </body>
 </html>
 
