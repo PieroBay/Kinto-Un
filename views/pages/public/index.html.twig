@@ -13,7 +13,22 @@
 	{% endfor %}
 
 
-	<p><a href="ajout">Ajouter</a></p>
+	{% if session.ROLE == 'visiteur' %}
+		<p><a href="connexion">Connexion</a></p>
+	{% elseif session.ROLE == 'admin' %}
+		<p><a href="admin/ajout">Ajouter</a> - <a href="deconnexion">Deconnexion</a></p>		
+	{% elseif session.ROLE == 'membre' %}
+		<p><a href="deconnexion">Deconnexion</a></p>
+	{% endif %}
+
+
+	<p>Tout le monde a d'office le ROLE Visiteur.</p>
+
+	<p>Le plus haut ROLE est 'Admin'.</p>
+
+	<p>Pour le moment ton ROLE est {{ session.ROLE }}</p>
+
+
  </body>
 </html>
 

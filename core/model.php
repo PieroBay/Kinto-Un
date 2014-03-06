@@ -19,36 +19,43 @@
 		}
 
 		public function save($data){
-			if(isset($data['id']) && !empty($data['id'])){ 	# Si l'id envoyé existe et n'est pas vide
-				$sql = "UPDATE ".$this->table." SET "; 
+			if(isset($data['id']) && !empty($data['id'])){
+				$sql = "UPDATE ".$this->table." SET ";
+				if(isset($data['uniqid'])){unset($data['uniqid']);};
+				if(isset($data['valider'])){unset($data['valider']);};
 				foreach ($data as $k => $v) {
-					if($k != "id"){ 						# continue et ajoute toute les key s'il n'est pas l'id
-						$sql .= "$k='$v',"; 
+					if($k != "id"){
+						$k = strip_tags($k);
+						$v = strip_tags($v);
+						$sql .= "$k='$v',";
 					}
 				}
-				$sql = substr($sql, 0,-1); 					# enleve la dernière virgule
-				$sql .= "WHERE id = ".$data['id'];
-			}else{ 											# si l'id n'existe pas c'est que c'est un ajout
+				$sql = substr($sql, 0,-1);
+				$i = strip_tags($data['id']);
+				$sql .= "WHERE id = ".$i;
+			}else{ 																# si l'id n'existe pas c'est que c'est un ajout
 
 				$sql = "INSERT INTO ".$this->table."(";
-				unset($data['id']);							# on supprime l'id envoyé car inutile pour enregistrement
-				if(isset($data['uniqid'])){unset($data['uniqid']);};							
-				if(isset($data['valider'])){unset($data['valider']);};												
+				unset($data['id']);
+				if(isset($data['uniqid'])){unset($data['uniqid']);};
+				if(isset($data['valider'])){unset($data['valider']);};
 				foreach ($data as $k => $v) {
+					$k = strip_tags($k);
+					$v = strip_tags($v);
 					$sql .= "$k,";
 				}
-				$sql = substr($sql, 0,-1);					# enleve la dernière virgule
+				$sql = substr($sql, 0,-1);
 				$sql .= ") VALUES (";
 				foreach ($data as $k => $v) {
+					$k = strip_tags($k);
+					$v = strip_tags($v);
 					$sql .= ":$k,";
 				}
-				$sql = substr($sql, 0,-1);					# enleve la dernière virgule
+				$sql = substr($sql, 0,-1);
 				$sql .= ")";
 			}
-
 			$req = $this->bdd->prepare($sql);
 			$req->execute($data);
-
 
 			if(!isset($data['id'])){						# si l'id n'existe pas on récupère le dernier id ajouté
 				$this->id = $this->bdd->lastInsertId();
@@ -90,9 +97,20 @@
 			$this->bdd->exec($sql);
 		}
 
-		public function connexion($data=array()){
-			
+		public function connexion($d=array()){
+			$connect = strip_tags($d["nom"]);
+			$pwd = strip_tags($d["password"]);
+			$sql = "SELECT *, COUNT(*) AS nb FROM ".$this->table." WHERE pseudo = '$connect' AND password = '$pwd'";
+			$req = $this->bdd->query($sql);
+			$data = $req->fetch(PDO::FETCH_OBJ);
+			if($data->nb > 0){
+				$_SESSION['id'] = $data->id;
+				$_SESSION['ROLE'] = $data->role;
+			}
+			return $data;
 		}
 
-
+		public function deconnexion(){
+			$_SESSION['ROLE'] = 'visiteur';
+		}
 	}

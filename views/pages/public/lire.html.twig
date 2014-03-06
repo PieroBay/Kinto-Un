@@ -8,15 +8,16 @@
   <title></title>
  </head>
  <body>
-
+ 	<a href="../">accueil</a>
 	<h1>{{perso.nom}}</h1>
 
-	<p>{{perso.nom}} a {{perso.experience}} d'expérience</p>
+	<p>{{perso.nom}} a {{perso.experience}} d'expérience et {{ perso.degats }} de degats</p>
 
-	<p><a href="../del/{{perso.id}}">Supprimer</a></p>
-	<p><a href="../edite/{{perso.id}}">Editer</a></p>
+	
 
-
+	{% if session.ROLE == 'admin' %}
+		<p><a href="../admin/del/{{perso.id}}">Supprimer</a> - <a href="../admin/edite/{{perso.id}}">Editer</a></p>	
+	{% endif %}
 
 
  </body>

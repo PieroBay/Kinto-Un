@@ -20,15 +20,19 @@
 			$this->Session = $session;
 		}
 
+		public function setRole($rol){
+			$this->role = $rol;
+		}
 
-		public function redirectUrl($redi){
-			$controllers = explode(":", $redi);
+		public function redirectUrl($url, $data=""){
+			$controllers = explode(":", $url);
 			$controller = $controllers[0];
 			$action = explode(".", $controllers[1])[0];
+			$data = !empty($data) ? '/'.$data : $data;
 			if($controller == 'public'){
 				$controller = "";
 			}
-			header('Loction: '.WEBROOT.$controller.$action);
+			header('Location: '.WEBROOT.$controller.$action.$data);
 		}
 
 		function render($d=array()){
@@ -37,6 +41,14 @@
 			$filename = explode("Action", debug_backtrace()[1]["function"])[0];
 			$contro = explode("Controller", get_class($this))[0];
 			require(ROOT.'libs/template/twig/lib/Twig/LoaderTemplate.php');
+
+			$sess = array(
+				"session"	=>	array(
+					"ROLE" => $_SESSION['ROLE'],
+				),
+			);
+
+			$array = array_merge($array, $sess);
 			echo $twig->render($contro.'/'.$filename.'.html.twig', $array);
 		}
 
