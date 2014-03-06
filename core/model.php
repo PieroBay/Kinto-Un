@@ -31,7 +31,9 @@
 			}else{ 											# si l'id n'existe pas c'est que c'est un ajout
 
 				$sql = "INSERT INTO ".$this->table."(";
-				unset($data['id']);							# on supprime l'id envoyé car inutile
+				unset($data['id']);							# on supprime l'id envoyé car inutile pour enregistrement
+				if(isset($data['uniqid'])){unset($data['uniqid']);};							
+				if(isset($data['valider'])){unset($data['valider']);};												
 				foreach ($data as $k => $v) {
 					$sql .= "$k,";
 				}
@@ -86,6 +88,10 @@
 
 			$sql = "DELETE FROM ".$this->table." WHERE id = $id";
 			$this->bdd->exec($sql);
+		}
+
+		public function connexion($data=array()){
+			
 		}
 
 

@@ -7,6 +7,8 @@
 	require(ROOT.'core/connect-bdd.php');
 	require(ROOT.'core/model.php');
 	require(ROOT.'core/controller.php');
+	require(ROOT.'libs/session.php');
+	require(ROOT.'libs/form.php');
 
 	$params = explode('/', $_GET['p']);
 

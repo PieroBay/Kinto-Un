@@ -1,3 +1,4 @@
+/* line 2, ../sass/main.scss */
 * {
   border: none;
   margin: 0;
@@ -6,109 +7,236 @@
   -webkit-box-sizing: border-box;
   box-sizing: border-box; }
 
-@font-face {
-  font-family: 'Open Sans';
-  font-style: normal;
-  font-weight: 400;
-  src: local("Open Sans"), local("OpenSans"), url("http://themes.googleusercontent.com/static/fonts/opensans/v5/cJZKeOuBrn4kERxqtaUH3T8E0i7KZn-EPnyo3HZu7kw.woff") format("woff"); }
-
+/* line 10, ../sass/main.scss */
 :focus {
   outline-color: initial;
   outline-style: initial;
   outline-width: 0; }
 
+@font-face {
+  font-family: 'gillsans';
+  src: url("fonts/GillSans.ttf") format("truetype");
+  font-style: normal; }
+
+/* line 21, ../sass/main.scss */
 .clear {
   clear: both; }
 
-h3, h4 {
-  margin-bottom: 50px; }
-
-a {
-  color: #34495e;
-  text-decoration: none; }
-
+/* line 41, ../sass/main.scss */
 body {
-  background-color: white;
-  color: #34495e;
-  font-family: 'Open Sans';
-  font-size: 12px; }
-
-header {
+  background: #fbfbfb;
+  font-family: 'gillsans';
   width: 100%;
-  background: #1a1a1a; }
-  header #name img {
-    width: 150px;
-    margin: 15px 0 0 30px; }
-  header a {
-    color: #fff;
-    text-decoration: none;
-    padding: 15px 15px 15px 15px; }
-  header a:hover {
-    background-color: #343434; }
-  header nav {
-    margin: 30px 0 0 20px;
-    padding-bottom: 15px; }
-    header nav ul li {
-      display: inline;
-      list-style-type: none; }
-    header nav ul li:last-child {
-      float: right; }
-  header #header {
-    width: 800px;
-    margin: 0 auto; }
+  font-size: 18px; }
 
-section {
+/* line 47, ../sass/main.scss */
+header {
+  margin: 40px auto;
+  color: #fff;
+  width: 820px; }
+  /* line 51, ../sass/main.scss */
+  header #computerland {
+    float: left;
+    margin-top: -12px; }
+    /* line 54, ../sass/main.scss */
+    header #computerland img {
+      width: 250px; }
+  /* line 58, ../sass/main.scss */
+  header #title {
+    background: #1094d0;
+    width: 560px;
+    height: 30px;
+    margin-left: 260px;
+    padding: 5px 0 0 20px;
+    -webkit-font-smoothing: antialiased;
+    -moz-font-smoothing: antialiased;
+    -ms-font-smoothing: antialiased;
+    -o-font-smoothing: antialiased; }
+
+/* line 68, ../sass/main.scss */
+section#connect {
   position: relative;
-  min-height: 100%; }
-  section #titre {
-    height: 100px;
-    background-color: #27ae60;
-    color: #fff;
-    text-align: center;
-    padding: 20px 0 0 0; }
-  section #glob {
-    position: relative;
-    min-height: 100%; }
-    section #glob #content {
-      padding: 15px;
-      float: left;
-      width: 70%; }
-      section #glob #content .article {
-        border: 1px solid #27ae60;
-        padding: 25px;
-        margin-bottom: 25px;
-        position: relative; }
-        section #glob #content .article .titre {
-          font-size: 18px; }
-        section #glob #content .article .shortContent {
-          margin-bottom: 35px; }
-        section #glob #content .article .date {
-          position: absolute;
-          right: 0;
-          top: 0;
-          background: #27ae60;
-          text-align: center;
-          padding: 10px;
-          color: #fff;
-          font-weight: bolder; }
-        section #glob #content .article .more {
-          position: absolute;
-          bottom: 0;
-          right: 0;
-          font-weight: bolder;
-          margin-top: 15px;
-          background: #27ae60;
-          margin-bottom: 15px;
-          padding: 5px 70px 5px 5px;
-          color: #fff;
-          text-decoration: none; }
-    section #glob #rubrique {
-      width: 30%;
-      margin-left: 70%;
-      padding: 15px; }
+  top: 200px; }
+  /* line 71, ../sass/main.scss */
+  section#connect article {
+    margin: 0 auto;
+    width: 294px; }
+    /* line 74, ../sass/main.scss */
+    section#connect article #separate {
+      margin: 5px;
+      clear: both;
+      text-align: center; }
 
-footer {
-  position: absolute;
-  bottom: 0;
-  background-color: #fff;
-  height: 25px; }
+/* line 82, ../sass/main.scss */
+section#core {
+  position: relative;
+  width: 820px;
+  margin: 0 auto;
+  padding: 0 10px; }
+  /* line 87, ../sass/main.scss */
+  section#core aside#step {
+    position: absolute;
+    top: 40px;
+    left: -60px;
+    border-right: 2px solid #ecf0f1;
+    padding-right: 19px; }
+    /* line 93, ../sass/main.scss */
+    section#core aside#step .bloc {
+      clear: both;
+      float: right;
+      display: block;
+      margin-bottom: 20px;
+      position: relative; }
+      /* line 99, ../sass/main.scss */
+      section#core aside#step .bloc .nbr {
+        position: relative;
+        width: 35px;
+        height: 35px;
+        text-align: center;
+        background: #2C82C9;
+        color: #fff;
+        line-height: 35px;
+        display: inline-block; }
+      /* line 109, ../sass/main.scss */
+      section#core aside#step .bloc .nbr:after {
+        content: "\f0da";
+        font-family: 'FontAwesome';
+        color: #2C82C9;
+        position: absolute;
+        font-size: 12px;
+        top: 2px;
+        right: -3px; }
+      /* line 118, ../sass/main.scss */
+      section#core aside#step .bloc .content {
+        -webkit-font-smoothing: antialiased;
+        -moz-font-smoothing: antialiased;
+        -ms-font-smoothing: antialiased;
+        -o-font-smoothing: antialiased;
+        background: #2774b4;
+        width: 150px;
+        color: #fff;
+        line-height: 25px;
+        font-size: 14px;
+        white-space: nowrap;
+        padding: 5px 8px;
+        height: 35px;
+        text-align: right;
+        position: absolute;
+        display: block;
+        right: 0;
+        margin-right: 35px; }
+      /* line 134, ../sass/main.scss */
+      section#core aside#step .bloc .dot {
+        float: right;
+        position: absolute;
+        color: #ecf0f1;
+        font-size: 10px;
+        right: -25px;
+        top: 13px; }
+        /* line 141, ../sass/main.scss */
+        section#core aside#step .bloc .dot .o {
+          color: #fff;
+          text-shadow: 0 0 2px #ecf0f1;
+          -webkit-text-stroke-width: 2px;
+          -webkit-text-stroke-color: #ecf0f1; }
+    /* line 150, ../sass/main.scss */
+    section#core aside#step .bloc:nth-child(3) .nbr {
+      background: #2cc990; }
+    /* line 153, ../sass/main.scss */
+    section#core aside#step .bloc:nth-child(3) .nbr:after {
+      color: #2cc990; }
+    /* line 156, ../sass/main.scss */
+    section#core aside#step .bloc:nth-child(3) .content {
+      background: #27b481; }
+    /* line 161, ../sass/main.scss */
+    section#core aside#step .bloc:nth-child(4) .nbr {
+      background: #eee657; }
+    /* line 164, ../sass/main.scss */
+    section#core aside#step .bloc:nth-child(4) .nbr:after {
+      color: #eee657; }
+    /* line 167, ../sass/main.scss */
+    section#core aside#step .bloc:nth-child(4) .content {
+      background: #ece340; }
+    /* line 172, ../sass/main.scss */
+    section#core aside#step .bloc:nth-child(5) .nbr {
+      background: #fcb941; }
+    /* line 175, ../sass/main.scss */
+    section#core aside#step .bloc:nth-child(5) .nbr:after {
+      color: #fcb941; }
+    /* line 178, ../sass/main.scss */
+    section#core aside#step .bloc:nth-child(5) .content {
+      background: #fcb028; }
+    /* line 183, ../sass/main.scss */
+    section#core aside#step .bloc:nth-child(6) .nbr {
+      background: #fc6042; }
+    /* line 186, ../sass/main.scss */
+    section#core aside#step .bloc:nth-child(6) .nbr:after {
+      color: #fc6042; }
+    /* line 189, ../sass/main.scss */
+    section#core aside#step .bloc:nth-child(6) .content {
+      background: #fc4b29; }
+    /* line 194, ../sass/main.scss */
+    section#core aside#step .bloc:nth-child(13) .nbr {
+      background: #9b59b6; }
+    /* line 197, ../sass/main.scss */
+    section#core aside#step .bloc:nth-child(13) .nbr:after {
+      color: #9b59b6; }
+    /* line 200, ../sass/main.scss */
+    section#core aside#step .bloc:nth-child(13) .content {
+      background: #8f4bab; }
+    /* line 205, ../sass/main.scss */
+    section#core aside#step .bloc:nth-child(14) .nbr {
+      background: #34495e; }
+    /* line 208, ../sass/main.scss */
+    section#core aside#step .bloc:nth-child(14) .nbr:after {
+      color: #34495e; }
+    /* line 211, ../sass/main.scss */
+    section#core aside#step .bloc:nth-child(14) .content {
+      background: #2b3c4e; }
+    /* line 216, ../sass/main.scss */
+    section#core aside#step .sub .nbr {
+      width: 20px;
+      height: 20px;
+      line-height: 21px;
+      font-size: 10px;
+      margin-right: -8px;
+      background: #fc6042; }
+    /* line 224, ../sass/main.scss */
+    section#core aside#step .sub .nbr:after {
+      top: 1px;
+      color: #fc6042; }
+    /* line 228, ../sass/main.scss */
+    section#core aside#step .sub .content {
+      line-height: 10px;
+      font-size: 14px;
+      height: 20px;
+      margin-top: 2px;
+      margin-right: 12px;
+      background: #fc4b29; }
+    /* line 236, ../sass/main.scss */
+    section#core aside#step .sub .dot {
+      top: 8px; }
+  /* line 243, ../sass/main.scss */
+  section#core article .dt {
+    -webkit-font-smoothing: antialiased;
+    -moz-font-smoothing: antialiased;
+    -ms-font-smoothing: antialiased;
+    -o-font-smoothing: antialiased;
+    margin: 0 0 15px 0px; }
+  /* line 247, ../sass/main.scss */
+  section#core article #content {
+    padding: 20px; }
+  /* line 251, ../sass/main.scss */
+  section#core aside#client {
+    position: absolute;
+    top: 10px;
+    right: -220px; }
+    /* line 255, ../sass/main.scss */
+    section#core aside#client span {
+      clear: both;
+      float: right;
+      background: #f5f7f7;
+      display: block;
+      padding: 8px;
+      min-width: 220px;
+      margin-bottom: 5px; }

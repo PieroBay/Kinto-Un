@@ -7,5 +7,3 @@
     $twig = new Twig_Environment($loader, array(
       'cache' => false
     ));
-
-    echo $twig->render($contro.'/'.$filename.'.html.twig', $array);
