@@ -1,6 +1,8 @@
 #Framework
 
-Pas encore de nom
+Pas encore de nom.
+
+Utilise le template Twig pour les vue
 
 
 ## Controller
@@ -68,6 +70,6 @@ $this->redirectUrl('public:index.html.twig'); // une fois fait, redirection sur 
 ## Views
 
 Les vues sont dans le dossier `views` -> `pages`.
-Les pages sont les mêmes que les functions actions dans les controllers sans 'Action' à la fin et sont placés dans le dossier des controller ou sont les actions
+Les pages sont les mêmes que les functions actions dans les controllers sans 'Action' à la fin et sont placés dans le dossier des controller ou sont les actions et ont comme extension `.html.twig`
 
 Le dossier `Ressources` contient les fichiers Css/Js/Images/Fonts, chacun sont dans un dossier respectif.
