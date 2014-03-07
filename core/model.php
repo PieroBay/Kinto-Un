@@ -4,6 +4,7 @@
 		public $table;
 		public $id;
 		protected $bdd;
+		public $connexion = false;
 
 		public function __construct(PDO $bdd, $table){
 			$this->setBdd($bdd);
@@ -16,6 +17,10 @@
 
 		public function setTable($table){
 			$this->table = $table;
+		}
+
+		public function setConnexion($connect){
+			$this->connexion = $connect;
 		}
 
 		public function save($data){
@@ -98,7 +103,7 @@
 		}
 
 		public function connexion($d=array()){
-			$connect = strip_tags($d["nom"]);
+			$connect = strip_tags($d["user"]);
 			$pwd = strip_tags($d["password"]);
 			$sql = "SELECT *, COUNT(*) AS nb FROM ".$this->table." WHERE pseudo = '$connect' AND password = '$pwd'";
 			$req = $this->bdd->query($sql);
@@ -106,8 +111,10 @@
 			if($data->nb > 0){
 				$_SESSION['id'] = $data->id;
 				$_SESSION['ROLE'] = $data->role;
+				$this->setConnexion(true);
+			}else{
+				$this->setConnexion(false);
 			}
-			return $data;
 		}
 
 		public function deconnexion(){

@@ -49,12 +49,18 @@
 			);
 
 			$array = array_merge($array, $sess);
-			echo $twig->render($contro.'/'.$filename.'.html.twig', $array);
+			echo $twig->render('pages/'.$contro.'/'.$filename.'.html.twig', $array);
 		}
 
 		function loadModel($table){
-			require_once(ROOT.'core/model.php');
-			$this->$table = new Model($this->bdd, $table);
+			$tableModel = $table.'Model';
+			if(file_exists(ROOT.'models/'.$tableModel.'.php')){
+				require_once(ROOT.'models/'.$tableModel.'.php');
+				$this->$tableModel = new $tableModel($this->bdd, $table);
+			}else{
+				require_once(ROOT.'core/model.php');
+				$this->$table = new Model($this->bdd, $table);
+			}
 		}
 	}
 

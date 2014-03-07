@@ -1,1 +1,15 @@
-page d'admin
+{% extends "ressources/layout/base.html.twig" %}
+{% block title %}{{ parent()  }} | Admin{% endblock %}
+{% block stylesheets %}
+  <link rel="stylesheet" href="views/ressources/css/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="views/ressources/css/main.css" />
+  <link rel="stylesheet" href="views/ressources/css/formulaire.css" />
+{% endblock %}
+{% block body %}
+ 	{{ message }}
+{% endblock %}
+
+{% block javascripts %}
+  <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
+  <script type="text/javascript" src="views/ressources/js/app.js"></script>
+{% endblock %}

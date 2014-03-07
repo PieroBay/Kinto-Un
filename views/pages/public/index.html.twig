@@ -1,36 +1,15 @@
-<!DOCTYPE html>
-<html>
- <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+{% extends "ressources/layout/base.html.twig" %}
+{% block title %}{{ parent()  }} | Public{% endblock %}
+{% block stylesheets %}
+  <link rel="stylesheet" href="views/ressources/css/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="views/ressources/css/main.css" />
+  <link rel="stylesheet" href="views/ressources/css/formulaire.css" />
+{% endblock %}
+{% block body %}
+ 	{{ message }}
+{% endblock %}
+
+{% block javascripts %}
   <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
-  <script type="text/javascript" src="../../ressources/js/js.js"></script>
-  <link rel="stylesheet" href="../../ressources/css/style.css" />
-  <title></title>
- </head>
- <body>
- 	{% for perso in perso %}
-		<h1><a href="lire/{{ perso.id }}">{{ perso.nom }} - {{ perso.experience }} d'xp et {{ perso.degats }} de degat</a></h1>
-	{% endfor %}
-
-
-	{% if session.ROLE == 'visiteur' %}
-		<p><a href="connexion">Connexion</a></p>
-	{% elseif session.ROLE == 'admin' %}
-		<p><a href="admin/ajout">Ajouter</a> - <a href="deconnexion">Deconnexion</a></p>		
-	{% elseif session.ROLE == 'membre' %}
-		<p><a href="deconnexion">Deconnexion</a></p>
-	{% endif %}
-
-
-	<p>Tout le monde a d'office le ROLE Visiteur.</p>
-
-	<p>Le plus haut ROLE est 'Admin'.</p>
-
-	<p>Pour le moment ton ROLE est {{ session.ROLE }}</p>
-
-
- </body>
-</html>
-
-
-
+  <script type="text/javascript" src="views/ressources/js/app.js"></script>
+{% endblock %}
