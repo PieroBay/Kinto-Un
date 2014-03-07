@@ -1,0 +1,5 @@
+<?php
+class tableModel extends Model{ // tableModel est un exemple, remplacer 'table' par le nom de la table dans la quel on veut des requètes spéciales
+	
+}
+?>
