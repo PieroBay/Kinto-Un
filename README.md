@@ -22,7 +22,25 @@ Le publicController n'apparait pas dans l'url, uniquement l'adminController sera
 
 Dans le controller, dans le tableau `$table`, séparer par des virgules les tables nécessaire pour les actions.
 
-Pour récuperer des données dans la DB, utilisé `$this->` suivis du nom de la table et d'une des fonctions suivante.
+un model principal avec des requetes de base est automatiquement créé.
+
+Si on veut des requètes spéciale, créer un fichier tableModel.php (table est le nom de la table) dans le dossier `models`.
+Dans ce fichier, créer une classe du même nom que le fichier (tableModel.php) qui extends de `Model`.
+
+```php
+<?php
+class tableModel extends Model{
+
+	public function enregistrementSpecial(){
+		// requète
+	}
+}
+?>
+```
+
+Pour utiliser ces requetes dans le controller, utiliser `$this->tableModel->fonction`.
+
+Requètes principales:
 
 * `delete($id)` => DELETE FROM $table WHERE id = $id
 * `findAll(array())` => Dans le tableau, mettre des conditions => "condition", "fields", "limit", "order"
@@ -43,9 +61,33 @@ Dans les actions, quand les données sont récupérées, on les envoi à la vue 
 -`index.html.twig` est le nom de la vue.
 -`$key` est la clé a envoyer dans l'url si on redirige vers une vue qui en a besoin (optionel)
 
+
+### Message Flash
+
+Créer un message Flash `$this->Session->setFlash('error', 'Mauvais identifiant');` error ou ok
+
+envoyer le message à la vue:
+```php
+$this->render(array(
+	"flash"	=>	$this->Session->flash(),
+));
+```
+
+Recuperer le message dans la vue twig: `{{ flash }}` , renvois une div `<div class="flash flash-'type'">message</div>` (type = error ou ok).
+
 ### Connexion
 
 Utiliser `$this->table->connexion($_POST);` dans une action au nom de votre choix pour un connexion.
+tester `$this->user->connexion`, si tout est ok, return true
+
+```php
+$this->user->connexion($_POST); // envoi le formulaire
+if($this->user->connexion){ // si la connexion s'est bien passée, return true
+  $this->redirectUrl('public:choice.html.twig'); // on redirige
+}else{
+	$this->Session->setFlash('error', 'Mauvais identifiant'); // sinon on envois un message flash
+}
+```
 
 Dans la table qui contient les utilisateurs, ajouter un champs `role` pour pouvoir gerer les droits d'accès.
 
