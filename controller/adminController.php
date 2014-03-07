@@ -1,7 +1,7 @@
 <?php 
 	class adminController extends Controller{
 
-		var $table = array('user');
+		var $table = array();
 
 		function indexAction(){
 			if($_SESSION['ROLE'] != 'admin'){

@@ -54,12 +54,11 @@
 
 		function loadModel($table){
 			$tableModel = $table.'Model';
+			require_once(ROOT.'core/model.php');
+			$this->$table = new Model($this->bdd, $table);			
 			if(file_exists(ROOT.'models/'.$tableModel.'.php')){
 				require_once(ROOT.'models/'.$tableModel.'.php');
 				$this->$tableModel = new $tableModel($this->bdd, $table);
-			}else{
-				require_once(ROOT.'core/model.php');
-				$this->$table = new Model($this->bdd, $table);
 			}
 		}
 	}

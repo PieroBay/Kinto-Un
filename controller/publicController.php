@@ -1,7 +1,7 @@
 <?php 
 	class publicController extends Controller{
 
-		var $table = array('user');
+		var $table = array();
 
 		function indexAction(){
 			$this->render(array(
