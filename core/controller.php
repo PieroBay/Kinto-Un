@@ -20,8 +20,12 @@
 			$this->Session = $session;
 		}
 
-		public function setRole($rol){
-			$this->role = $rol;
+		public function ROLE($typeRole='visiteur'){
+			if($_SESSION['ROLE'] == $typeRole){
+				return true;
+			}else{
+				return false;
+			}
 		}
 
 		public function redirectUrl($url, $data=""){
