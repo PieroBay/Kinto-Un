@@ -53,7 +53,7 @@
 			);
 
 			$array = array_merge($array, $sess);
-			echo $twig->render('pages/'.$contro.'/'.$filename.'.html.twig', $array);
+			echo $twig->render('views/pages/'.$contro.'/'.$filename.'.html.twig', $array);
 		}
 
 		function loadModel($table){

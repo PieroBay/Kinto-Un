@@ -9,7 +9,8 @@ session_start();
 	require(ROOT.'core/controller.php');
 	require(ROOT.'libs/session.php');
 	require(ROOT.'libs/form.php');
-
+	require(ROOT.'libs/template/twig/lib/Twig/LoaderTemplate.php');
+	
 	$_SESSION['ROLE'] = !isset($_SESSION['ROLE']) ? 'visiteur' : $_SESSION['ROLE'] ;
 	$params = explode('/', $_GET['p']);
 
@@ -39,6 +40,7 @@ session_start();
 		
 		call_user_func_array(array($controller, $action), $params);
 	}else{
-		echo 'error 404';
+		
+		echo $twig->render('core/errors/404.html.twig');
 	}	
 ?>

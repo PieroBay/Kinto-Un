@@ -1,4 +1,4 @@
-#Yoow Framework
+# Kinto'un [Framework]
 
 [Utilise le template Twig pour les vues]
 
