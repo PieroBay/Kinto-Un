@@ -168,5 +168,5 @@ $erreur = array(
 		"Message" => "La page que vous tentez d'atteindre n'existe pas ou n'est plus disponible.",
 	),
 );
-echo $twig->render('core/errors/error.html.twig',$erreur); return false; 
+echo $twig->render('core/errors/error.html.twig',$erreur);
 ```
