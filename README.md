@@ -1,7 +1,20 @@
 # Kinto'un [Framework]
 
-[Utilise le template Twig pour les vues]
+[Utilise le template Twig pour les vues] 
 
+(temporaire, dans la prochaine version, l'utilisateur aura le choix entre l'**HTML standard**, le template **Twig** ou **Smarty**)
+
+## Project
+
+Les projets sont des dossiers contenant un enssemble de code permettant par la suite d'être réutlisé plus facilement.
+
+Les projets sont à placer dans le dossier `src/project`.
+
+Le projet principal (qui sera lancé en premier en visitant le site) doit commencer par un underscore "_". 
+
+/!\ Il ne doit avoir qu'un seul projet principal.
+
+![image](http://img11.hostingpics.net/pics/553819project.png)
 
 ## Controller
 
@@ -10,9 +23,11 @@ Seulement 2 Controller
 * PublicController
 * AdminController
 
-Dans le dossier **views/pages/**, créer les dossiers `admin` et `public` **(Sans Controller à la fin)** 
+À placer dans le dossier `src/project/*nomDuProjet*/controller/`.
 
-![image](http://imageshack.com/a/img843/6349/u4yf.png)
+Dans le dossier **views/**, créer les dossiers `admin` et `public` **(Sans Controller à la fin)** 
+
+![image](http://img11.hostingpics.net/pics/400637controller.png)
 
 Dans les pages Controller (publicController et adminController) créer des action, le nom des actions auront le même nom que les pages dans les vues sans 'Action' à la fin.
 
@@ -54,13 +69,13 @@ Requètes principales:
 
 ### Envoyer donnée de la DB à la vue
 
-Dans les actions, quand les données sont récupérées, on les envoi à la vue grâce à la function send() avec un tableau en paramètre.
-`$this->send(array())`
+Dans les actions, quand les données sont récupérées, on les envoi à la vue grâce à la function render() avec un tableau en paramètre.
+`$this->render(array())`
 
 *Exemple:*
 
 ```php
-$this->send(array(
+$this->render(array(
 	'message' => $listes_message,
 ));
 ```
@@ -128,9 +143,30 @@ $this->redirectUrl('public:index.html.twig'); // une fois fait, redirection sur 
 
 ## Views
 
-Les vues sont dans le dossier `views` -> `pages`.
+Les vues sont dans le dossier `views`.
+
 Les pages ont les mêmes nom que les actions dans les controllers sans 'Action' à la fin et sont placées dans le dossier des controllers et ont comme extension `.html.twig`.
 
-Le dossier `Ressources` contient les fichiers Css/Js/Images/Fonts, chacun sont dans un dossier respectif.
 
-![image](http://imageshack.com/a/img607/2273/qxzi.png)
+### Ressources
+Les ressources Css/Js/Images/fonts, sont à placer dans `src / ressources`, chacun sont dans un dossier respectif.
+
+![image](http://img11.hostingpics.net/pics/561450ressources.png)
+
+## Error
+
+Il est possible de générer des erreurs web.
+
+Un template est mis en place dans le dossier `core/errors/`.
+
+Le code à utiliser est:
+
+```php
+$erreur = array(
+	"Error"	=>	array(
+		"Number"  => 404,
+		"Message" => "La page que vous tentez d'atteindre n'existe pas ou n'est plus disponible.",
+	),
+);
+echo $twig->render('core/errors/error.html.twig',$erreur); return false; 
+```

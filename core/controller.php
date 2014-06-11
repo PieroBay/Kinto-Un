@@ -4,8 +4,10 @@
 		var $value = array();
 		protected $bdd;
 		public $Session;
+		protected $info;
 
-		function __construct($bdd){
+		function __construct($bdd, $info){
+			$this->info=$info;
 			$this->bdd=$bdd;
 			$session = new Session();
 			$this->setSession($session);
@@ -42,18 +44,22 @@
 		function render($d=array()){
 			$this->value = array_merge($this->value,$d);
 			$array = $this->value;
-			$filename = explode("Action", debug_backtrace()[1]["function"])[0];
-			$contro = explode("Controller", get_class($this))[0];
+			$filename = explode("Action", $this->info['Action'])[0];
 			require(ROOT.'libs/template/twig/lib/Twig/LoaderTemplate.php');
 
 			$sess = array(
-				"session"	=>	array(
+				"Session"	=>	array(
 					"ROLE" => $_SESSION['ROLE'],
+				),
+				"Info"	=>	array(
+					"Project"	=>	$this->info['Project'],
+					"Controller"	=>	$this->info['Controller'],
+					"Action"	=>	$this->info['Action'],
 				),
 			);
 
 			$array = array_merge($array, $sess);
-			echo $twig->render('views/pages/'.$contro.'/'.$filename.'.html.twig', $array);
+			echo $twig->render('src/project/'.$this->info['Project'].'/views/'.$this->info['Controller'].'/'.$filename.'.html.twig', $array);
 		}
 
 		function loadModel($table){

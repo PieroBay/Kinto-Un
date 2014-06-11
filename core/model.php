@@ -39,7 +39,6 @@
 				$i = strip_tags($data['id']);
 				$sql .= "WHERE id = ".$i;
 			}else{ 																# si l'id n'existe pas c'est que c'est un ajout
-
 				$sql = "INSERT INTO ".$this->table."(";
 				unset($data['id']);
 				if(isset($data['uniqid'])){unset($data['uniqid']);};
