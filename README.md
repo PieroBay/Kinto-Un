@@ -4,17 +4,23 @@
 
 (temporaire, dans la prochaine version, l'utilisateur aura le choix entre l'**HTML standard**, le template **Twig** ou **Smarty**)
 
+## Fichier config
+
+Le fichier de config (config.yml) qui vous permetra de vous connecter à la DB et d'indiquer le projet de lancement se trouve dans le dossier `core`.
+
+
 ## Project
 
 Les projets sont des dossiers contenant un enssemble de code permettant par la suite d'être réutlisé plus facilement.
 
 Les projets sont à placer dans le dossier `src/project`.
 
-Le projet principal (qui sera lancé en premier en visitant le site) doit commencer par un underscore "_". 
+Le projet principal (qui sera lancé en premier en visitant le site) doit être indiqué dans le fichier `config.yml` se trouvant dans le dossier `core`.
 
-/!\ Il ne doit avoir qu'un seul projet principal.
+/!\ Il ne peut pas y avoir un projet nommé `admin` ou il y aura conflit avec le controller du même nom.
 
-![image](http://img11.hostingpics.net/pics/553819project.png)
+
+![image](http://img4.hostingpics.net/pics/896485project.png)
 
 ## Controller
 
@@ -153,15 +159,25 @@ Les ressources Css/Js/Images/fonts, sont à placer dans `src / ressources`, chac
 
 ![image](http://img11.hostingpics.net/pics/561450ressources.png)
 
+Dans les vues, le lien pour accèder aux ressources sera
+
+`href="{{ Info.Webroot }}/src/ressources/css/style.css"`
+
 ## Error
 
 Il est possible de générer des erreurs web.
 
 Un template est mis en place dans le dossier `core/errors/`.
 
-Le code à utiliser est:
+Pour déclarer l'érreur
 
 ```php
+<<<<<<< HEAD
+$error->generate('404',"La page que vous tentez d'atteindre n'existe pas ou n'est plus disponible.");
+```
+
+*Par défaut, l'erreur est une erreur 404*
+=======
 $erreur = array(
 	"Error"	=>	array(
 		"Number"  => 404,
@@ -170,3 +186,4 @@ $erreur = array(
 );
 echo $twig->render('core/errors/error.html.twig',$erreur);
 ```
+>>>>>>> FETCH_HEAD
