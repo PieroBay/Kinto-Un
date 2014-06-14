@@ -44,22 +44,11 @@
 		function render($d=array()){
 			$this->value = array_merge($this->value,$d);
 			$array = $this->value;
-			$filename = explode("Action", $this->info['Action'])[0];
+			$filename = explode("Action", $this->info['Info']['Action'])[0];
 			require(ROOT.'libs/template/twig/lib/Twig/LoaderTemplate.php');
 
-			$sess = array(
-				"Session"	=>	array(
-					"ROLE" => $_SESSION['ROLE'],
-				),
-				"Info"	=>	array(
-					"Project"	=>	$this->info['Project'],
-					"Controller"	=>	$this->info['Controller'],
-					"Action"	=>	$this->info['Action'],
-				),
-			);
-
-			$array = array_merge($array, $sess);
-			echo $twig->render('src/project/'.$this->info['Project'].'/views/'.$this->info['Controller'].'/'.$filename.'.html.twig', $array);
+			$array = array_merge($array, $this->info);
+			echo $twig->render('src/project/'.$this->info['Info']['Project'].'/views/'.$this->info['Info']['Controller'].'/'.$filename.'.html.twig', $array);
 		}
 
 		function loadModel($table){

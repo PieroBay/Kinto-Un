@@ -1,10 +1,6 @@
 <?php
 class Session{
 
-/*	public function __construct(){
-		session_start();
-	}*/
-
 	public function setFlash($type = 'error', $message){
 		$_SESSION['flash'] = array(
 			'type' => $type,
