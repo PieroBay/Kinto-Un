@@ -6,7 +6,7 @@
 
 ## Fichier config
 
-Le fichier de config (config.yml) qui vous permetra de vous connecter à la DB et d'indiquer le projet de lancement se trouve dans le dossier `core`.
+Le fichier de config (config.yml) qui vous permetra de vous connecter à la DB, de choisir le template (none (HTML), Twig ou Smarty) et d'indiquer le projet de lancement se trouve dans le dossier `core`.
 
 
 ## Project

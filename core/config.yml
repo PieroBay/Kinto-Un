@@ -6,3 +6,4 @@ configuration:
     database_password: root
     local: fr
     default_project: home
+    template: Twig
