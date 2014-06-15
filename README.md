@@ -172,18 +172,7 @@ Un template est mis en place dans le dossier `core/errors/`.
 Pour déclarer l'érreur
 
 ```php
-<<<<<<< HEAD
 $error->generate('404',"La page que vous tentez d'atteindre n'existe pas ou n'est plus disponible.");
 ```
 
 *Par défaut, l'erreur est une erreur 404*
-=======
-$erreur = array(
-	"Error"	=>	array(
-		"Number"  => 404,
-		"Message" => "La page que vous tentez d'atteindre n'existe pas ou n'est plus disponible.",
-	),
-);
-echo $twig->render('core/errors/error.html.twig',$erreur);
-```
->>>>>>> FETCH_HEAD
