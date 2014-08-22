@@ -9,7 +9,7 @@
 			}*/
 
 			$this->render(array(
-				"message"	=>	'coucou ici c\'est l\'admin',
+				"message"	=>	'Hello Word! C\'est l\'admin',
 			));	
 		}
 		

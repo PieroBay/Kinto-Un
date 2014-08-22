@@ -1,8 +1,9 @@
 <?php
 session_start();
 
-	define('WEBROOT', str_replace('index.php', '', $_SERVER['SCRIPT_NAME']));
-	define('ROOT', str_replace('index.php', '', $_SERVER['SCRIPT_FILENAME']));
+	define('WEBROOT', str_replace('core/kintoun.php', '', $_SERVER['SCRIPT_NAME']));
+	define('ROOT', str_replace('core/kintoun.php', '', $_SERVER['SCRIPT_FILENAME']));
+
 	require(ROOT.'core/component/spyc/Spyc.php');
 	$config = spyc_load_file(ROOT.'core/config.yml')['configuration'];
 
@@ -15,6 +16,7 @@ session_start();
 	require(ROOT.'core/model.php');
 	require(ROOT.'core/controller.php');
 	require(ROOT.'libs/session.php');
+	require(ROOT.'libs/upload.php');
 	require(ROOT.'libs/error.php');
 	require(ROOT.'libs/form.php');
 	require(ROOT.'libs/template/twig/lib/Twig/LoaderTemplate.php');
@@ -28,14 +30,14 @@ session_start();
 
 	$dossier = opendir(ROOT.'src/project/');
 	while(false !== ($fichier = readdir($dossier))){
-		if($fichier != $params[0]){ # Si les projets sont différent du params[0] c'est que c'est une action ou controller admin et que c'est le projet par defaut
-			if(!empty($params[0]) && $params[0] == "admin"){	# si le controller n'est pas vide et est = "Admin"
+		if($fichier != $params[0]){ # verifie que l'action n'a pas le nom d'un projet, si il a le nom d'un projet, ca devient un projet (../projet/action)
+			if(!empty($params[0]) && $params[0] == "admin"){ # controller admin / projet home / action index (../home/admin/index)
 				$controllerFolder = $params[0]."Controller";
 				$controller = "admin";
 				$action = !empty($params[1]) ? $params[1]."Action" : 'indexAction';
 				$project = $home;
 				$e=1;
-			}else{
+			}else{ # controller public / projet home / action params0 (../action) (../home/public/index)
 				$controllerFolder = 'publicController';
 				$action = !empty($params[0]) ? $params[0]."Action" : 'indexAction';
 				$controller = "public";
@@ -47,11 +49,13 @@ session_start();
 				$controllerFolder = $params[1]."Controller";
 				$controller = "admin";
 				$action = !empty($params[2]) ? $params[2]."Action" : 'indexAction';
+				$project = $fichier;
 				$e=3;
 			}else{
 				$controllerFolder = 'publicController';
 				$action = !empty($params[1]) ? $params[1]."Action" : 'indexAction';
 				$controller = "public";
+				$project = $fichier;
 				$e=4;
 			}
 		}

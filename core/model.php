@@ -1,10 +1,11 @@
 <?php
-
 	class Model{
 		public $table;
 		public $id;
 		protected $bdd;
 		public $connexion = false;
+		public $allOk = true;
+		public $error = "";
 
 		public function __construct(PDO $bdd, $table){
 			$this->setBdd($bdd);
@@ -23,7 +24,27 @@
 			$this->connexion = $connect;
 		}
 
-		public function save($data){
+		public function save($data, $upload=array(
+			"target"    =>	"upload",
+			"maxSize"   => 2097152,
+			"widthMax"  => 100,
+			"heightMax" => 100,
+			"ext"       => array('jpg','png','jpeg'),
+			"red"       => false,)){
+
+			if($_FILES){
+				foreach ($_FILES as $k => $v) {
+					$uploadEtat = upload($_FILES, $upload);
+					if($uploadEtat['status'] == "ok"){
+						$data[$k] = $uploadEtat['name'];
+					}else{
+						$this->allOk = false;
+						$this->error = $uploadEtat['message'];
+						$data[$k] = "";
+					}
+				}	
+			}
+
 			if(isset($data['id']) && !empty($data['id'])){
 				$sql = "UPDATE ".$this->table." SET ";
 				if(isset($data['uniqid'])){unset($data['uniqid']);};
@@ -38,33 +59,34 @@
 				$sql = substr($sql, 0,-1);
 				$i = strip_tags($data['id']);
 				$sql .= "WHERE id = ".$i;
-			}else{ 																# si l'id n'existe pas c'est que c'est un ajout
+			}else{
 				$sql = "INSERT INTO ".$this->table."(";
 				unset($data['id']);
 				if(isset($data['uniqid'])){unset($data['uniqid']);};
 				if(isset($data['valider'])){unset($data['valider']);};
 				foreach ($data as $k => $v) {
 					$k = strip_tags($k);
-					$v = strip_tags($v);
 					$sql .= "$k,";
 				}
 				$sql = substr($sql, 0,-1);
 				$sql .= ") VALUES (";
 				foreach ($data as $k => $v) {
 					$k = strip_tags($k);
-					$v = strip_tags($v);
 					$sql .= ":$k,";
 				}
 				$sql = substr($sql, 0,-1);
 				$sql .= ")";
 			}
-			$req = $this->bdd->prepare($sql);
-			$req->execute($data);
 
-			if(!isset($data['id'])){						# si l'id n'existe pas on récupère le dernier id ajouté
-				$this->id = $this->bdd->lastInsertId();
-			}else{
-				$this->id = $data['id'];
+			if($this->allOk){
+				$req = $this->bdd->prepare($sql);
+				$req->execute($data);
+
+				if(!isset($data['id'])){
+					$this->id = $this->bdd->lastInsertId();
+				}else{
+					$this->id = $data['id'];
+				}
 			}
 		}
 

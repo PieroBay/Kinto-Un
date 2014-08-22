@@ -1,9 +1,9 @@
 configuration:
+    default_project: home
     database_host: localhost
     database_port: null
     database_name: test
     database_user: root
     database_password: root
     local: fr
-    default_project: home
     template: Twig
