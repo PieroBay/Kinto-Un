@@ -44,11 +44,11 @@ Seulement 2 Controllers
 
 Dans le dossier **views/**, créez les dossiers `admin` et `public` **(Sans 'Controller' à la fin)** 
 
-![image](http://img15.hostingpics.net/pics/932424action.png)
+![image](http://img15.hostingpics.net/pics/237846views.png)
 
 Dans les pages Controller (publicController et adminController) créez des actions, le nom des actions auront le même nom que les pages dans les vues **(sans 'Action' à la fin)**.
 
-![image](http://imageshack.com/a/img843/5844/7glw.png)
+![image](http://img15.hostingpics.net/pics/932424action.png)
 
 
 
@@ -142,8 +142,8 @@ Recuperez le message dans la vue twig: `{{ flash|raw }}` , renvoie une div `<div
 `$this->redirectUrl('public:index.html.twig', $key);` 
 
 -`public` est le nom du controller (sans Controller à la fin);
--`index.html.twig` est le nom de la vue.
--`$key` est la clé à envoyer dans l'url si on redirige vers une vue qui en a besoin (optionel)
+-`index.html.twig` est le nom de la vue;
+-`$key` est la clé à envoyer dans l'url si on redirige vers une vue qui en a besoin (optionel);
 
 ### ROLE 
 
