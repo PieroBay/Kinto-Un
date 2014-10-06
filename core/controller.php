@@ -3,23 +3,19 @@
 
 		var $value = array();
 		protected $bdd;
-		public $Session;
+		protected $Session;
 		protected $info;
 
 		function __construct($bdd, $info){
-			$this->info=$info;
-			$this->bdd=$bdd;
+			$this->info = $info;
+			$this->bdd = $bdd;
 			$session = new Session();
-			$this->setSession($session);
+			$this->Session = $session;
 			if(isset($this->table)){
 				foreach ($this->table as $v) {
 					$this->loadModel($v);
 				}
 			}
-		}
-
-		public function setSession($session){
-			$this->Session = $session;
 		}
 
 		public function ROLE($typeRole='visiteur'){
@@ -35,9 +31,8 @@
 			$controller = $controllers[0];
 			$action = explode(".", $controllers[1])[0];
 			$data = !empty($data) ? '/'.$data : $data;
-			if($controller == 'public'){
-				$controller = "";
-			}
+			$controller = ($controller == 'public') ? '' : $controller;
+			$action = ($action == 'index') ? '' : $action;
 			header('Location: '.WEBROOT.$controller.$action.$data);
 		}
 

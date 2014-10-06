@@ -80,7 +80,6 @@ session_start();
 	$controllerFolder = new $controllerFolder($bdd, $info);
 	
 	if(method_exists($controllerFolder, $action)){
-		call_user_func_array(array($controllerFolder, $action), $params);
 		switch ($e) {
 		    case 1:
 				unset($params[0]);
@@ -99,6 +98,7 @@ session_start();
 				unset($params[1]);
 		        break;
 		}
+		call_user_func_array(array($controllerFolder, $action), $params);
 	}else{
 		$error->generate('404',"La page que vous tentez d'atteindre n'existe pas ou n'est plus disponible.");
 	}
