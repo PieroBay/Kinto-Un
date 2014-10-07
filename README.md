@@ -1,21 +1,20 @@
 # Kinto'un [Framework]
-v 0.8.1
+v 0.8.5
 
 Nécessite PHP 5.4 ou +
 
-[Utilise le template Twig pour les vues] 
+[Utilise le template Twig/Smarty ou Php classique] 
 
-(temporaire, dans la prochaine version, l'utilisateur aura le choix entre l'**HTML standard**, le template **Twig** ou **Smarty**)
 
 ## Installation
 
-Collez les dossiers `core` `libs` et `src` à la racine de votre site.
+Extraire le dossier `Framework` à la racine de votre site. (/!\ N'oubliez pas le `.htaccess` )
 Configurez le dossier `config.yml` se trouvant à `core/config.yml`, spécifiez correctement les champs demandés.
 
 
 ## Fichier config
 
-Le fichier de config `config.yml` se trouvant à `core/config.yml` vous permettra de vous connecter à la DB, de choisir le template (none (HTML), Twig ou Smarty) et d'indiquer le projet principal.
+Le fichier de config `config.yml` se trouvant à `core/config.yml` vous permettra de vous connecter à la DB, de choisir le template (none/php, Twig ou Smarty) et d'indiquer le projet principal.
 
 
 ## Project
@@ -50,6 +49,8 @@ Dans les pages Controller (publicController et adminController) créez des actio
 
 ![image](http://img15.hostingpics.net/pics/932424action.png)
 
+
+Si il y a un paramètre dans le controller, ca récupérera le paramètre dans l'url juste après le nom de l'action.
 
 
 /!\ Le publicController (/public/) n'apparait pas dans l'url, uniquement le controller Admin (/admin/) peut être affiché.
@@ -109,6 +110,9 @@ if($this->table1->allOk){
 ```
 
 * `$this->table1->id` ($this->table->id) => Récupere le dernier id ajouté si un save() a été utilisé juste avant
+
+* `if($_POST){}` => test si un post a été fait
+
 
 ### Envoyer des données de la DB à la vue
 
@@ -188,7 +192,9 @@ $this->redirectUrl('public:index.html.twig'); // une fois fait, redirection sur 
 
 Les vues sont dans le dossier `views`.
 
-Les pages ont les mêmes noms que les actions (sans 'Action' à la fin) et sont placées dans le dossier des controllers et ont comme extension `.html.twig`.
+Les pages ont les mêmes noms que les actions (sans 'Action' à la fin) et sont placées dans le dossier des controllers et ont comme extension `.html.twig` (si Twig) `.tpl` (si Smarty) ou `.php` (si aucun template).
+
+Si vous avez choisi le php classique, récupérez les données dans la vue avec `<?php echo $data['foo']; ?>` .
 
 ### Ressources
 Les ressources Css/Js/Images/fonts, sont à placer dans `src / ressources`, chacun sont dans un dossier respectif.

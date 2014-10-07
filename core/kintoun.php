@@ -19,7 +19,7 @@ session_start();
 	require(ROOT.'libs/upload.php');
 	require(ROOT.'libs/error.php');
 	require(ROOT.'libs/form.php');
-	require(ROOT.'libs/template/twig/lib/Twig/LoaderTemplate.php');
+	
 	$error = new Error();
 
 	$_SESSION['ROLE'] = !isset($_SESSION['ROLE']) ? 'visiteur' : $_SESSION['ROLE'] ;
@@ -27,35 +27,39 @@ session_start();
 	$home = $config['default_project'];
 	$params = explode('/', $_GET['p']);
 	$project = !empty($params[0]) ? $params[0] : $home;
-
+ 	
 	$dossier = opendir(ROOT.'src/project/');
 	while(false !== ($fichier = readdir($dossier))){
 		if($fichier != $params[0]){ # verifie que l'action n'a pas le nom d'un projet, si il a le nom d'un projet, ca devient un projet (../projet/action)
-			if(!empty($params[0]) && $params[0] == "admin"){ # controller admin / projet home / action index (../home/admin/index)
+			if(!empty($params[0]) && $params[0] == "admin"){ # controller admin / projet home / action index (blabla.com/admin/index)
 				$controllerFolder = $params[0]."Controller";
 				$controller = "admin";
 				$action = !empty($params[1]) ? $params[1]."Action" : 'indexAction';
 				$project = $home;
+				$key = $params[2];
 				$e=1;
-			}else{ # controller public / projet home / action params0 (../action) (../home/public/index)
+			}else{ # controller public / projet home / action params0 (../action) (blabla.com/public*/index) (*public sera pas visible dans l'url)
 				$controllerFolder = 'publicController';
 				$action = !empty($params[0]) ? $params[0]."Action" : 'indexAction';
 				$controller = "public";
 				$project = $home;
+				$key = $params[1];
 				$e=2;
 			}
 		}else{
-			if(!empty($params[1]) && $params[1] == "admin"){
+			if(!empty($params[1]) && $params[1] == "admin"){ # (blabla.com/projet/admin/index)
 				$controllerFolder = $params[1]."Controller";
 				$controller = "admin";
 				$action = !empty($params[2]) ? $params[2]."Action" : 'indexAction';
 				$project = $fichier;
+				$key = $params[3];
 				$e=3;
-			}else{
+			}else{ # (blabla.com/projet/action) (controller public/non visible)
 				$controllerFolder = 'publicController';
 				$action = !empty($params[1]) ? $params[1]."Action" : 'indexAction';
 				$controller = "public";
 				$project = $fichier;
+				$key = $params[2];
 				$e=4;
 			}
 		}
@@ -67,11 +71,13 @@ session_start();
 			"ROLE" => $_SESSION['ROLE'],
 		),
 		"Info"	=>	array(
-			"Root"	=> ROOT,
-			"Webroot"	=> WEBROOT,
-			"Project"	=>	$project,
+			"Root"			=> ROOT,
+			"Webroot"		=> WEBROOT,
+			"Project"		=>	$project,
 			"Controller"	=>	$controller,
-			"Action"	=>	$action,
+			"Action"		=>	$action,
+			"Key"      		=> 	$key,
+			"Template"		=>	$config['template'],
 		),
 	);
 
@@ -106,4 +112,3 @@ session_start();
 	if(!file_exists(ROOT.'src/project/'.$project)){
 		$error->generate('404',"La page que vous tentez d'atteindre n'existe pas ou n'est plus disponible.");
 	}
-?>

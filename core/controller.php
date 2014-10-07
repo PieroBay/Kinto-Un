@@ -7,8 +7,8 @@
 		protected $info;
 
 		function __construct($bdd, $info){
-			$this->info = $info;
-			$this->bdd = $bdd;
+			$this->info=$info;
+			$this->bdd=$bdd;
 			$session = new Session();
 			$this->Session = $session;
 			if(isset($this->table)){
@@ -36,14 +36,29 @@
 			header('Location: '.WEBROOT.$controller.$action.$data);
 		}
 
-		function render($d=array()){
-			$this->value = array_merge($this->value,$d);
+		function render($data=array()){
+			$this->value = array_merge($this->value,$data);
 			$array = $this->value;
 			$filename = explode("Action", $this->info['Info']['Action'])[0];
-			require(ROOT.'libs/template/twig/lib/Twig/LoaderTemplate.php');
-
 			$array = array_merge($array, $this->info);
-			echo $twig->render('src/project/'.$this->info['Info']['Project'].'/views/'.$this->info['Info']['Controller'].'/'.$filename.'.html.twig', $array);
+			switch (strtolower($this->info['Info']['Template'])){
+			    case "twig":
+					require(ROOT.'libs/template/twig/LoaderTemplate.php');
+					echo $twig->render('src/project/'.$this->info['Info']['Project'].'/views/'.$this->info['Info']['Controller'].'/'.$filename.'.html.twig', $array);
+			        break;
+			    case "smarty":
+			        require(ROOT.'libs/template/smarty/smarty/libs/Smarty.class.php');
+			        $smarty = new Smarty();
+					$smarty->compile_dir = ROOT.'libs/template/smarty/templates_c/';
+					$smarty->config_dir = ROOT.'libs/template/smarty/configs/';
+					$smarty->cache_dir = ROOT.'libs/template/smarty/cache/';
+			        $smarty->display(ROOT.'src/project/'.$this->info['Info']['Project'].'/views/'.$this->info['Info']['Controller'].'/'.$filename.'.tpl', $array);
+			        break;
+			    case "php":
+			    case "none":
+			    	require(ROOT.'src/project/'.$this->info['Info']['Project'].'/views/'.$this->info['Info']['Controller'].'/'.$filename.'.php');
+			        break;
+			}
 		}
 
 		function loadModel($table){
@@ -56,5 +71,3 @@
 			}
 		}
 	}
-
-?>
