@@ -1,11 +1,11 @@
 <?php 
 	class publicController extends Controller{
 
-		var $table = array();
+		protected $table = array();
 
-		function indexAction(){
+		public function indexAction(){
 			$this->render(array(
-				"message"	=>	'Hello Word! C\'est la partie public',
+				"message"	=>	'Hello World! c\'est la partie public',
 			));	
 		}
 	}

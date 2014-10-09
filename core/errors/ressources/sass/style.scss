@@ -79,6 +79,8 @@ body{
 		}
 	}
 }
+#header.warning{
+  height: 150px;}
 #search{
 	z-index: 1;
 	background: darken(#db5b2a, 10%);
@@ -113,4 +115,13 @@ body{
 	color: #666;
 	text-align: center;
 	margin-top: 100px;
+	span{
+		-webkit-font-smoothing: antialiased;
+  		font-size: 15px;
+	}
+	strong{
+		text-decoration: underline;
+  		font-size: 17px;
+  		font-weight: 200;
+	}
 }

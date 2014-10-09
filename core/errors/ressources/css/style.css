@@ -95,6 +95,8 @@ body {
   height: 300px;
   background: #db5b2a;
   position: relative; }
+#header.warning{
+  height: 150px;}
   /* line 53, ../sass/style.scss */
   #header #contentInfoError {
     width: 50%;
@@ -161,3 +163,10 @@ body {
   color: #666;
   text-align: center;
   margin-top: 100px; }
+#content span{
+  -webkit-font-smoothing: antialiased;
+  font-size: 15px;}
+#content strong{
+  text-decoration: underline;
+  font-size: 17px;
+  font-weight: 200;}

@@ -100,16 +100,16 @@ array(
 			"red"       => false,) # Si l'image doit être redimensionner mettre une taille en pixel, sinon laisser false.
 ```
 
-* `$this->table1->allOk` => uniquement pour vérifier si l'upload s'est déroulé correctement.
+* `$this->table1->allOk()` => uniquement pour vérifier si l'upload s'est déroulé correctement.
 ```php
-if($this->table1->allOk){
+if($this->table1->allOk()){
 	// ok
 }else{
-	echo $this->table1->error; # affiche le message d'erreur
+	echo $this->table1->getError(); # affiche le message d'erreur
 }
 ```
 
-* `$this->table1->id` ($this->table->id) => Récupere le dernier id ajouté si un save() a été utilisé juste avant
+* `$this->table1->lastId()` ($this->table->lastId()) => Récupere le dernier id ajouté si un save() a été utilisé juste avant
 
 * `if($_POST){}` => test si un post a été fait
 
@@ -169,11 +169,11 @@ Par défaut, `$this->ROLE()` contient 'visiteur' et return true.
 
 Utilisez `$this->table->connexion($_POST);` dans une action au nom de votre choix pour un connexion.
 
-`$this->user->connexion`, si tout est ok, return true
+`$this->user->testConnect()`, si tout est ok, return true
 
 ```php
 $this->user->connexion($_POST); // envoi le formulaire
-if($this->user->connexion){ // si la connexion s'est bien passée, return true
+if($this->user->testConnect()){ // si la connexion s'est bien passée, return true
   $this->redirectUrl('public:choice.html.twig'); // on redirige
 }else{
 	$this->Session->setFlash('error', 'Mauvais identifiant'); // sinon on envoie un message flash
@@ -205,16 +205,3 @@ Dans les vues, le lien pour accèder aux ressources sera
 
 `href="{{ Info.Webroot }}/src/ressources/css/style.css"`
 
-## Error
-
-Il est possible de générer des erreurs web.
-
-Un template est mis en place dans le dossier `core/errors/`.
-
-Pour déclarer l'érreur
-
-```php
-$error->generate('404',"La page que vous tentez d'atteindre n'existe pas ou n'est plus disponible.");
-```
-
-*Par défaut, l'erreur est une erreur 404*

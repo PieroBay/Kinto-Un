@@ -13,14 +13,12 @@ session_start();
 	    $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 	}catch(PDOException $e){ echo 'Échec lors de la connexion : ' . $e->getMessage(); }
 
-	require(ROOT.'core/model.php');
+	require(ROOT.'vendor/autoload.php');
 	require(ROOT.'core/controller.php');
 	require(ROOT.'libs/session.php');
 	require(ROOT.'libs/upload.php');
 	require(ROOT.'libs/error.php');
 	require(ROOT.'libs/form.php');
-	
-	$error = new Error();
 
 	$_SESSION['ROLE'] = !isset($_SESSION['ROLE']) ? 'visiteur' : $_SESSION['ROLE'] ;
 
@@ -36,14 +34,14 @@ session_start();
 				$controller = "admin";
 				$action = !empty($params[1]) ? $params[1]."Action" : 'indexAction';
 				$project = $home;
-				$key = $params[2];
+				$key = (isset($params[2])) ? $params[2] : '';
 				$e=1;
 			}else{ # controller public / projet home / action params0 (../action) (blabla.com/public*/index) (*public sera pas visible dans l'url)
 				$controllerFolder = 'publicController';
 				$action = !empty($params[0]) ? $params[0]."Action" : 'indexAction';
 				$controller = "public";
 				$project = $home;
-				$key = $params[1];
+				$key = (isset($params[1])) ? $params[1] : '';
 				$e=2;
 			}
 		}else{
@@ -52,14 +50,14 @@ session_start();
 				$controller = "admin";
 				$action = !empty($params[2]) ? $params[2]."Action" : 'indexAction';
 				$project = $fichier;
-				$key = $params[3];
+				$key = (isset($params[3])) ? $params[3] : '';
 				$e=3;
 			}else{ # (blabla.com/projet/action) (controller public/non visible)
 				$controllerFolder = 'publicController';
 				$action = !empty($params[1]) ? $params[1]."Action" : 'indexAction';
 				$controller = "public";
 				$project = $fichier;
-				$key = $params[2];
+				$key = (isset($params[2])) ? $params[2] : '';
 				$e=4;
 			}
 		}
@@ -106,9 +104,9 @@ session_start();
 		}
 		call_user_func_array(array($controllerFolder, $action), $params);
 	}else{
-		$error->generate('404',"La page que vous tentez d'atteindre n'existe pas ou n'est plus disponible.");
+		Error::generate('404',"La page que vous tentez d'atteindre n'existe pas ou n'est plus disponible.");
 	}
 
 	if(!file_exists(ROOT.'src/project/'.$project)){
-		$error->generate('404',"La page que vous tentez d'atteindre n'existe pas ou n'est plus disponible.");
+		Error::generate('404',"La page que vous tentez d'atteindre n'existe pas ou n'est plus disponible.");
 	}

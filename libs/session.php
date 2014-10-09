@@ -4,7 +4,7 @@ class Session{
 	private $flash;
 
 	public function __construct(){
-		$this->flash = $_SESSION['flash'];
+		if(isset($_SESSION['flash'])){$this->flash = $_SESSION['flash'];}
 	}
 
 	public function setFlash($type = 'error', $message){

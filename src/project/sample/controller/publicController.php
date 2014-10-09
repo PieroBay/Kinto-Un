@@ -5,7 +5,7 @@
 
 		function indexAction(){
 			$this->render(array(
-				"message"	=>	'Hello Word! C\'est la partie public',
+				"message"	=>	'Hello World! C\'est la partie public',
 			));	
 		}
 	}

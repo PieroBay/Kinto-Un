@@ -1,36 +1,64 @@
 <?php
 	class Model{
-		public $table;
-		public $id;
+		protected $table;
+		protected $id;
 		protected $bdd;
-		public $connexion = false;
-		public $allOk = true;
-		public $error = "";
+		protected $connexion = false;
+		protected $allOk = true;
+		protected $error = "";
 
 		public function __construct(PDO $bdd, $table){
 			$this->setBdd($bdd);
 			$this->setTable($table);
 		}
 
-		public function setBdd($bdd){
-			$this->bdd = $bdd;
+		public function setBdd($tmp){
+			$this->bdd = $tmp;
+		}
+		public function setTable($tmp){
+			$this->table = $tmp;
+		}
+		public function setConnexion($tmp){
+			$this->connexion = $tmp;
+		}
+		public function setId($tmp){
+			$this->id = $tmp;
+		}
+		public function setAllOk($tmp){
+			$this->allOk = $tmp;
+		}
+		public function setError($tmp){
+			$this->allOk = $tmp;
 		}
 
-		public function setTable($table){
-			$this->table = $table;
+
+		public function lastId(){
+			return $this->id;
+		}
+		public function getError(){
+			return $this->error;
+		}
+		public function allOk(){
+			return $this->allOk;
+		}
+		public function testConnect(){
+			return $this->connexion;
 		}
 
-		public function setConnexion($connect){
-			$this->connexion = $connect;
-		}
-
-		public function save($data, $upload=array(
+		public function save($data=null, $upload=array(
 			"target"    =>	"upload",
 			"maxSize"   => 2097152,
 			"widthMax"  => 100,
 			"heightMax" => 100,
 			"ext"       => array('jpg','png','jpeg'),
 			"red"       => false,)){
+			
+     	   try{
+     	   	if(!isset($data) or !is_array($data)) throw new Exception("Aucun tableau n'a été envoyé");
+     	   }catch(Exception $e){
+     	   		Error::renderError($e);
+     	   		exit();
+     	   }
 
 			if($_FILES){
 				foreach ($_FILES as $k => $v) {
@@ -38,8 +66,8 @@
 					if($uploadEtat['status'] == "ok"){
 						$data[$k] = $uploadEtat['name'];
 					}else{
-						$this->allOk = false;
-						$this->error = $uploadEtat['message'];
+						$this->setAllOk(false);
+						$this->setError($uploadEtat['message']);
 						$data[$k] = "";
 					}
 				}	
@@ -83,14 +111,20 @@
 				$req->execute($data);
 
 				if(!isset($data['id'])){
-					$this->id = $this->bdd->lastInsertId();
+					$this->setId($this->bdd->lastInsertId());
 				}else{
-					$this->id = $data['id'];
+					$this->setId($data['id']);
 				}
 			}
 		}
 
-		public function findAll($data=array()){
+		public function findAll($data=null){
+     	   try{
+     	   	if(!isset($data) or !is_array($data)) throw new Exception("Aucun tableau n'a été envoyé");
+     	   }catch(Exception $e){
+     	   		Error::renderError($e);
+     	   		exit();
+     	   }
 			$condition = "1=1";
 			$fields = "*";
 			$limit = "";
@@ -109,7 +143,13 @@
 			return $d;
 		}
 
-		public function findById($id){
+		public function findById($id=null){
+     	   try{
+     	   	if(!isset($id) or !is_int($id)) throw new Exception("Aucun ID n'a été envoyé");
+     	   }catch(Exception $e){
+     	   		Error::renderError($e);
+     	   		exit();
+     	   }
 			$sql = "SELECT * FROM ".$this->table." WHERE id= $id";
 			$req = $this->bdd->query($sql);
 			$data = $req->fetch(PDO::FETCH_OBJ);
@@ -117,13 +157,23 @@
 		}
 
 		public function delete($id=null){
-			if($id == null){ $id = $this->id; }
-
+     	   try{
+     	   	if(!isset($id) or !is_int($id)) throw new Exception("Aucun ID n'a été envoyé");
+     	   }catch(Exception $e){
+     	   		Error::renderError($e);
+     	   		exit();
+     	   }
 			$sql = "DELETE FROM ".$this->table." WHERE id = $id";
 			$this->bdd->exec($sql);
 		}
 
-		public function connexion($d=array()){
+		public function connexion($d=null){
+     	   try{
+     	   	if(!isset($d) or !is_array($d)) throw new Exception("Aucun tableau n'a été envoyé");
+     	   }catch(Exception $e){
+     	   		Error::renderError($e);
+     	   		exit();
+     	   }
 			$connect = strip_tags($d["user"]);
 			$pwd = strip_tags($d["password"]);
 			$sql = "SELECT *, COUNT(*) AS nb FROM ".$this->table." WHERE pseudo = '$connect' AND password = '$pwd'";

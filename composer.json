@@ -1,0 +1,15 @@
+{
+    "name": "kinto-un/framework",
+    "type": "project",
+    "require": {
+        "php": ">=5.4",
+        "twig/twig": "1.16.*@dev",
+        "smarty/smarty": "dev-trunk"
+    },
+    "authors": [
+        {
+            "name": "Piero Bay",
+            "email": "Piero.Sarpante@Gmail.com"
+        }
+    ]
+}

@@ -1,12 +1,12 @@
 <?php 
 	class Controller{
 
-		var $value = array();
+		protected $value = array();
 		protected $bdd;
 		protected $Session;
 		protected $info;
 
-		function __construct($bdd, $info){
+		public function __construct($bdd, $info){
 			$this->info=$info;
 			$this->bdd=$bdd;
 			$session = new Session();
@@ -36,7 +36,7 @@
 			header('Location: '.WEBROOT.$controller.$action.$data);
 		}
 
-		function render($data=array()){
+		public function render($data=array()){
 			$this->value = array_merge($this->value,$data);
 			$array = $this->value;
 			$filename = explode("Action", $this->info['Info']['Action'])[0];
@@ -47,7 +47,7 @@
 					echo $twig->render('src/project/'.$this->info['Info']['Project'].'/views/'.$this->info['Info']['Controller'].'/'.$filename.'.html.twig', $array);
 			        break;
 			    case "smarty":
-			        require(ROOT.'libs/template/smarty/smarty/libs/Smarty.class.php');
+			        require(ROOT.'vendor/smarty/smarty/distribution/libs/Smarty.class.php');
 			        $smarty = new Smarty();
 					$smarty->compile_dir = ROOT.'libs/template/smarty/templates_c/';
 					$smarty->config_dir = ROOT.'libs/template/smarty/configs/';
@@ -61,7 +61,7 @@
 			}
 		}
 
-		function loadModel($table){
+		public function loadModel($table){
 			$tableModel = $table.'Model';
 			require_once(ROOT.'core/model.php');
 			$this->$table = new Model($this->bdd, $table);			
