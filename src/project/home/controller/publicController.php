@@ -8,5 +8,11 @@
 				"message"	=>	'Hello World! c\'est la partie public',
 			));	
 		}
+
+		public function ouiouiAction(){
+			$this->render(array(
+				"message"	=>	'Hello World! c\'est la page ouioui',
+			));	
+		}
 	}
 ?>

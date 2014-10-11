@@ -1,9 +1,7 @@
 {% extends "ressources/layout/base.html.twig" %}
 {% block title %}{{ parent()  }} | Admin{% endblock %}
 {% block stylesheets %}
-  <link rel="stylesheet" href="ressources/css/font-awesome/css/font-awesome.min.css">
-  <link rel="stylesheet" href="ressources/css/main.css" />
-  <link rel="stylesheet" href="ressources/css/formulaire.css" />
+  <link rel="stylesheet" href="{{ Info.Webroot }}/src/ressources/css/style.css" />
 {% endblock %}
 {% block body %}
  	{{ message }} du projet <strong>{{ Info.Project }}</strong>, du controller <strong>{{ Info.Controller }}</strong> et de l'action <strong>{{ Info.Action }}</strong>.
@@ -11,5 +9,5 @@
 
 {% block javascripts %}
   <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
-  <script type="text/javascript" src="ressources/js/app.js"></script>
+  <script type="text/javascript" src="{{ Info.Webroot }}/src/ressources/js/app.js"></script>
 {% endblock %}

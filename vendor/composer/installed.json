@@ -1,5 +1,51 @@
 [
     {
+        "name": "smarty/smarty",
+        "version": "dev-trunk",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "svn",
+            "url": "http://smarty-php.googlecode.com/svn",
+            "reference": "/trunk/@4881"
+        },
+        "require": {
+            "php": ">=5.2"
+        },
+        "time": "2014-10-02 18:08:04",
+        "type": "library",
+        "installation-source": "source",
+        "autoload": {
+            "classmap": [
+                "distribution/libs/Smarty.class.php",
+                "distribution/libs/SmartyBC.class.php",
+                "distribution/libs/sysplugins/smarty_security.php"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "LGPL-3.0"
+        ],
+        "authors": [
+            {
+                "name": "Monte Ohrt",
+                "email": "monte@ohrt.com"
+            },
+            {
+                "name": "Uwe Tews",
+                "email": "uwe.tews@googlemail.com"
+            },
+            {
+                "name": "Rodney Rehm",
+                "email": "rodney.rehm@medialize.de"
+            }
+        ],
+        "description": "Smarty - the compiling PHP template engine",
+        "homepage": "http://www.smarty.net",
+        "keywords": [
+            "templating"
+        ]
+    },
+    {
         "name": "twig/twig",
         "version": "dev-master",
         "version_normalized": "9999999-dev",
@@ -54,52 +100,6 @@
         ],
         "description": "Twig, the flexible, fast, and secure template language for PHP",
         "homepage": "http://twig.sensiolabs.org",
-        "keywords": [
-            "templating"
-        ]
-    },
-    {
-        "name": "smarty/smarty",
-        "version": "dev-trunk",
-        "version_normalized": "9999999-dev",
-        "source": {
-            "type": "svn",
-            "url": "http://smarty-php.googlecode.com/svn",
-            "reference": "/trunk/@4881"
-        },
-        "require": {
-            "php": ">=5.2"
-        },
-        "time": "2014-10-02 18:08:04",
-        "type": "library",
-        "installation-source": "source",
-        "autoload": {
-            "classmap": [
-                "distribution/libs/Smarty.class.php",
-                "distribution/libs/SmartyBC.class.php",
-                "distribution/libs/sysplugins/smarty_security.php"
-            ]
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "LGPL-3.0"
-        ],
-        "authors": [
-            {
-                "name": "Monte Ohrt",
-                "email": "monte@ohrt.com"
-            },
-            {
-                "name": "Uwe Tews",
-                "email": "uwe.tews@googlemail.com"
-            },
-            {
-                "name": "Rodney Rehm",
-                "email": "rodney.rehm@medialize.de"
-            }
-        ],
-        "description": "Smarty - the compiling PHP template engine",
-        "homepage": "http://www.smarty.net",
         "keywords": [
             "templating"
         ]

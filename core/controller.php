@@ -44,11 +44,13 @@
 			switch (strtolower($this->info['Info']['Template'])){
 			    case "twig":
 					require(ROOT.'libs/template/twig/LoaderTemplate.php');
+					require (ROOT.'libs/template/autoLoad.php');
 					echo $twig->render('src/project/'.$this->info['Info']['Project'].'/views/'.$this->info['Info']['Controller'].'/'.$filename.'.html.twig', $array);
 			        break;
 			    case "smarty":
 			        require(ROOT.'vendor/smarty/smarty/distribution/libs/Smarty.class.php');
 			        $smarty = new Smarty();
+			        require (ROOT.'libs/template/autoLoad.php');
 					$smarty->compile_dir = ROOT.'libs/template/smarty/templates_c/';
 					$smarty->config_dir = ROOT.'libs/template/smarty/configs/';
 					$smarty->cache_dir = ROOT.'libs/template/smarty/cache/';
@@ -56,9 +58,11 @@
 			        break;
 			    case "php":
 			    case "none":
+			    	require (ROOT.'libs/template/autoLoad.php');
 			    	require(ROOT.'src/project/'.$this->info['Info']['Project'].'/views/'.$this->info['Info']['Controller'].'/'.$filename.'.php');
 			        break;
 			}
+			
 		}
 
 		public function loadModel($table){

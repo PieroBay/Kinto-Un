@@ -23,74 +23,73 @@ session_start();
 	$_SESSION['ROLE'] = !isset($_SESSION['ROLE']) ? 'visiteur' : $_SESSION['ROLE'] ;
 
 	$home = $config['default_project'];
+	$_SESSION['local'] = $config['local'];
+	$_SESSION['lang'] = (!isset($_SESSION['lang']))? $config['local'] : $_SESSION['lang'];
 	$params = explode('/', $_GET['p']);
 	$project = !empty($params[0]) ? $params[0] : $home;
- 	
-	$dossier = opendir(ROOT.'src/project/');
-	while(false !== ($fichier = readdir($dossier))){
-		if($fichier != $params[0]){ # verifie que l'action n'a pas le nom d'un projet, si il a le nom d'un projet, ca devient un projet (../projet/action)
-			if(!empty($params[0]) && $params[0] == "admin"){ # controller admin / projet home / action index (blabla.com/admin/index)
-				$controllerFolder = $params[0]."Controller";
-				$controller = "admin";
-				$action = !empty($params[1]) ? $params[1]."Action" : 'indexAction';
-				$project = $home;
-				$key = (isset($params[2])) ? $params[2] : '';
-				$e=1;
-			}else{ # controller public / projet home / action params0 (../action) (blabla.com/public*/index) (*public sera pas visible dans l'url)
-				$controllerFolder = 'publicController';
-				$action = !empty($params[0]) ? $params[0]."Action" : 'indexAction';
-				$controller = "public";
-				$project = $home;
-				$key = (isset($params[1])) ? $params[1] : '';
-				$e=2;
-			}
-		}else{
-			if(!empty($params[1]) && $params[1] == "admin"){ # (blabla.com/projet/admin/index)
-				$controllerFolder = $params[1]."Controller";
-				$controller = "admin";
-				$action = !empty($params[2]) ? $params[2]."Action" : 'indexAction';
-				$project = $fichier;
-				$key = (isset($params[3])) ? $params[3] : '';
-				$e=3;
-			}else{ # (blabla.com/projet/action) (controller public/non visible)
-				$controllerFolder = 'publicController';
-				$action = !empty($params[1]) ? $params[1]."Action" : 'indexAction';
-				$controller = "public";
-				$project = $fichier;
-				$key = (isset($params[2])) ? $params[2] : '';
-				$e=4;
-			}
+
+	$para=array();
+	function addParams($nbParams,$controllerName,$fichier=null){
+		global $params;
+		$action = !empty($params[$nbParams]) ? $params[$nbParams]."Action" : 'indexAction';
+		$key = (isset($params[$nbParams+1])) ? $params[$nbParams+1] : '';
+		$project = ($fichier == null)? $GLOBALS['home']: $fichier;
+		$para=array(
+			"controllerFolder"=>$controllerName.'Controller',
+			"controller"=>$controllerName,
+			"action"=>$action,
+			"project"=>$project,
+			"key"=>$key,
+			"e"=>$nbParams+1,
+		);
+		return $para;
+	}
+
+	if(file_exists(ROOT.'src/ressources/translate/'.$params[0].'.yml') || $params[0] == $_SESSION['local'] && isset($params[0])){ # si lang dans url
+		$_SESSION['lang'] = $params[0];
+		if(!empty($params[1]) && file_exists(ROOT.'src/project/'.$params[1])){ # si params1 == $projet
+			$para = (isset($params[2]) && $params[2] == "admin")? addParams(3,"admin",$params[1]): addParams(2,"public",$params[1]);
+		}else{ # Si projet par defaut
+			$para = (isset($params[1]) && $params[1] == "admin")? addParams(2,"admin"): addParams(1,"public");
 		}
- 	}
- 	closedir($dossier);
+	}else{
+		if(file_exists(ROOT.'src/project/'.$params[0])){ # si params1 == $projet
+			$para = (isset($params[1]) && $params[1] == "admin")? addParams(2,"admin",$params[0]): addParams(1,"public",$params[0]);
+		}else{ # Si projet par defaut
+			$para = (isset($params[0]) && $params[0] == "admin")? addParams(1,"admin"): addParams(0,"public");
+		}
+	}
 
 	$info = array(
 		"Session"	=>	array(
-			"ROLE" => $_SESSION['ROLE'],
+			"ROLE" 	=> $_SESSION['ROLE'],
+			"local" => $_SESSION['local'],
+			"lang" => $_SESSION['lang'],
 		),
 		"Info"	=>	array(
-			"Root"			=> ROOT,
-			"Webroot"		=> WEBROOT,
-			"Project"		=>	$project,
-			"Controller"	=>	$controller,
-			"Action"		=>	$action,
-			"Key"      		=> 	$key,
+			"Root"			=> 	ROOT,
+			"Webroot"		=> 	WEBROOT,
+			"Project"		=>	$para['project'],
+			"Controller"	=>	$para['controller'],
+			"Action"		=>	$para['action'],
+			"Key"      		=> 	$para['key'],
+			"lang" 			=> 	$_SESSION['lang'],
 			"Template"		=>	$config['template'],
 		),
 	);
 
-	require(ROOT.'src/project/'.$project.'/controller/'.$controllerFolder.'.php');
+	require(ROOT.'src/project/'.$para['project'].'/controller/'.$para['controllerFolder'].'.php');
 
-	$controllerFolder = new $controllerFolder($bdd, $info);
+	$controllerFolder = new $para['controllerFolder']($bdd, $info);
 	
-	if(method_exists($controllerFolder, $action)){
-		switch ($e) {
+	if(method_exists($controllerFolder, $para['action'])){
+		switch ($para['e']) {
 		    case 1:
 				unset($params[0]);
-				unset($params[1]);
 		        break;
 		    case 2:
 		        unset($params[0]);
+		        unset($params[1]);
 		        break;
 		    case 3:
 		        unset($params[0]);
@@ -100,13 +99,15 @@ session_start();
 		    case 4:
 		        unset($params[0]);
 				unset($params[1]);
+				unset($params[2]);
+				unset($params[3]);
 		        break;
 		}
-		call_user_func_array(array($controllerFolder, $action), $params);
+		call_user_func_array(array($controllerFolder, $para['action']), $params);
 	}else{
 		Error::generate('404',"La page que vous tentez d'atteindre n'existe pas ou n'est plus disponible.");
 	}
 
-	if(!file_exists(ROOT.'src/project/'.$project)){
+	if(!file_exists(ROOT.'src/project/'.$para['project'])){
 		Error::generate('404',"La page que vous tentez d'atteindre n'existe pas ou n'est plus disponible.");
 	}

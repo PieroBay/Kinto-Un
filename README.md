@@ -1,5 +1,5 @@
 # Kinto'un [Framework]
-v 0.8.5
+v 0.9.0
 
 Nécessite PHP 5.4 ou +
 
@@ -8,8 +8,15 @@ Nécessite PHP 5.4 ou +
 
 ## Installation
 
-Extraire le dossier `Framework` à la racine de votre site. (/!\ N'oubliez pas le `.htaccess` )
+Extraire le dossier `Kinto-Un` à la racine de votre site. (/!\ N'oubliez pas le `.htaccess` )
 Configurez le dossier `config.yml` se trouvant à `core/config.yml`, spécifiez correctement les champs demandés.
+
+### Composer
+
+** /!\ Faire un update de Composer pour installer les templates où le framework ne fonctionnera pas /!\ ** 
+`cd _folder_`
+`php composer.phar install`
+plus d'info sur Composer => `https://getcomposer.org/doc/00-intro.md`
 
 
 ## Fichier config
@@ -205,3 +212,31 @@ Dans les vues, le lien pour accèder aux ressources sera
 
 `href="{{ Info.Webroot }}/src/ressources/css/style.css"`
 
+
+## Multilangage
+
+Kinto'Un permet de traduire son site très facilement.
+
+Pour se faire, créez un fichier `.yml` dans `src/ressources/translate/` et nommez le à la langue que vous souhaitez traduire (2 lettres).
+Si mon site est en Français et je veux le traduire en anglais, je nomerai le fichier `en.yml`.
+
+Dans ce fichier, écrivez d'un coté la sentence cible (la langue de votre site) ensuite vous mettez deux points `:` et la sentence à la langue que vous voulez traduire.
+
+```yml
+Bonjour: Hello
+Comment allez vous: How are you
+"Numéro de téléphone:": Phone number: 
+```
+
+Dans la vue, pour traduire vos sentences, les manières varient selon le template utilisé:
+
+* Twig => `{{"Bonjour"|trans}}`
+* Smarty => `{"Bonjour"|trans}`
+* Php => `<?= echo trans("Bonjour"); ?>`
+
+
+## Créez vos filtres
+
+Créez votre fichier php dans le dossier `libs/template/extensions/`.
+Danse ce fichier, créez votre fonction qui servira de filtre.
+Votre fichier doit avoir le même nom que votre fonction et ce nom servira comme filtre pour tout les templates.
