@@ -5,11 +5,14 @@
 		protected $bdd;
 		protected $Session;
 		protected $info;
+		protected $sendMail;
 
 		public function __construct($bdd, $info){
 			$this->info=$info;
 			$this->bdd=$bdd;
 			$session = new Session();
+			$mail = new SendMail();
+			$this->sendMail = $mail;
 			$this->Session = $session;
 			if(isset($this->table)){
 				foreach ($this->table as $v) {
@@ -62,7 +65,6 @@
 			    	require(ROOT.'src/project/'.$this->info['Info']['Project'].'/views/'.$this->info['Info']['Controller'].'/'.$filename.'.php');
 			        break;
 			}
-			
 		}
 
 		public function loadModel($table){

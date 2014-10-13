@@ -13,7 +13,7 @@ Configurez le dossier `config.yml` se trouvant à `core/config.yml`, spécifiez 
 
 ### Composer
 
-** /!\ Faire un update de Composer pour installer les templates où le framework ne fonctionnera pas /!\ ** 
+**/!\ Faire un update de Composer pour installer les templates où le framework ne fonctionnera pas /!\** 
 `cd _folder_`
 `php composer.phar install`
 plus d'info sur Composer => `https://getcomposer.org/doc/00-intro.md`
@@ -137,7 +137,7 @@ $this->render(array(
 
 ### Message Flash
 
-Créez un message Flash `$this->Session->setFlash('error', 'Mauvais identifiant');` ('error' ou 'ok' en premier paramètre)
+Créez un message Flash `$this->Session->setFlash('error', 'Mauvais identifiant');` (le type du message en premier paramètre)
 
 envoyer le message à la vue:
 ```php
@@ -155,6 +155,12 @@ Recuperez le message dans la vue twig: `{{ flash|raw }}` , renvoie une div `<div
 -`public` est le nom du controller (sans Controller à la fin);
 -`index.html.twig` est le nom de la vue;
 -`$key` est la clé à envoyer dans l'url si on redirige vers une vue qui en a besoin (optionel);
+
+### Envoi de mail
+
+`$this->SendMail->send($to,$fromName,$fromMail,$subject,$message);`
+
+(Les messages peuvent contenir de l'html)
 
 ### ROLE 
 
@@ -240,3 +246,8 @@ Dans la vue, pour traduire vos sentences, les manières varient selon le templat
 Créez votre fichier php dans le dossier `libs/template/extensions/`.
 Danse ce fichier, créez votre fonction qui servira de filtre.
 Votre fichier doit avoir le même nom que votre fonction et ce nom servira comme filtre pour tout les templates.
+
+## Personnalisez la page 404 et les autres pages d'erreur
+
+Un template de base est situé à `core/errors/error.html.twig` et les ressources sont dans le dossier `ressources`.
+Le controller `errorController.php` se trouvant à `core/errors/errorController.php` vous permet de rendre votre page dynamique.

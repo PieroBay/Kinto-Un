@@ -3,15 +3,19 @@ class Session{
 
 	private $flash;
 
-	public function __construct(){
-		if(isset($_SESSION['flash'])){$this->flash = $_SESSION['flash'];}
-	}
+	public function setFlash($type=null, $message=null){
+ 	    try{
+ 	   		if(!isset($message) || !isset($type)) throw new Exception("Des paramètres sont manquants");
+ 	    }catch(Exception $e){
+ 	   		Error::renderError($e);
+ 	   		exit();
+ 	    }
 
-	public function setFlash($type = 'error', $message){
 		$_SESSION['flash'] = array(
 			'type' => $type,
 			'message' => $message,
 		);
+		$this->flash = $_SESSION['flash'];
 	}
 
 	public function flash(){

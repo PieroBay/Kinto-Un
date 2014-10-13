@@ -15,11 +15,14 @@ session_start();
 
 	require(ROOT.'vendor/autoload.php');
 	require(ROOT.'core/controller.php');
-	require(ROOT.'libs/session.php');
-	require(ROOT.'libs/upload.php');
-	require(ROOT.'libs/error.php');
-	require(ROOT.'libs/form.php');
-
+	$dossier = opendir(ROOT.'libs/');
+	while(false !== ($fichier = readdir($dossier))){
+		if($fichier != '.' && $fichier != '..' && $fichier != '.DS_Store' && $fichier != '.htaccess' && $fichier != 'template'){
+			require(ROOT.'libs/'.$fichier);
+		}
+ 	}
+ 	closedir($dossier);
+ 
 	$_SESSION['ROLE'] = !isset($_SESSION['ROLE']) ? 'visiteur' : $_SESSION['ROLE'] ;
 
 	$home = $config['default_project'];
@@ -79,9 +82,10 @@ session_start();
 	);
 
 	require(ROOT.'src/project/'.$para['project'].'/controller/'.$para['controllerFolder'].'.php');
+	$setError = new Error($bdd,$info);
 
 	$controllerFolder = new $para['controllerFolder']($bdd, $info);
-	
+
 	if(method_exists($controllerFolder, $para['action'])){
 		switch ($para['e']) {
 		    case 1:
@@ -105,9 +109,9 @@ session_start();
 		}
 		call_user_func_array(array($controllerFolder, $para['action']), $params);
 	}else{
-		Error::generate('404',"La page que vous tentez d'atteindre n'existe pas ou n'est plus disponible.");
+		$setError->generate('404',"La page que vous tentez d'atteindre n'existe pas ou n'est plus disponible.");
 	}
 
 	if(!file_exists(ROOT.'src/project/'.$para['project'])){
-		Error::generate('404',"La page que vous tentez d'atteindre n'existe pas ou n'est plus disponible.");
+		$setError->generate('404',"La page que vous tentez d'atteindre n'existe pas ou n'est plus disponible.");
 	}
