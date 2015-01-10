@@ -3,15 +3,18 @@ class Error{
 
 	protected $data = array();
 	protected $info = array();
+	protected $bdd;
 
 	public function __construct($bdd,$info){
 		$this->info = $info;
+		$this->bdd = $bdd;
 		require (ROOT.'core/errors/errorController.php');
-		$e = new errorController($bdd,$info);
-		$this->data = $e->errorAction();
 	}
 
 	public function generate($number = '404', $message){
+		$e = new errorController($this->bdd,$this->info);
+		$this->data = $e->errorAction();		
+
 		$erreur = array(
 			"Error"	=>	array(
 				"Number"  => $number,
@@ -30,7 +33,7 @@ class Error{
 				echo $twig->render('core/errors/error.html.twig',$array);		        
 				break;
 		    case "smarty":
-		        require(ROOT.'vendor/smarty/smarty/distribution/libs/Smarty.class.php');
+		        require(ROOT.'vendor/smarty/smarty/libs/Smarty.class.php');
 		        $smarty = new Smarty();
 		        require (ROOT.'libs/template/autoLoad.php');
 				$smarty->compile_dir = ROOT.'libs/template/smarty/templates_c/';
@@ -60,7 +63,13 @@ class Error{
 
 	public static function renderError($e=array()){
 		$e = self::dismount($e);
+		$erreur = array(
+			"Info" => array(
+				"Webroot"	=> WEBROOT,
+			)
+		);
+		$array = array_merge($erreur, $e);
 		require(ROOT.'libs/template/twig/LoaderTemplate.php');
-		echo $twig->render('core/errors/warning.html.twig', $e);
+		echo $twig->render('core/errors/warning.html.twig', $array);
 	}
 }

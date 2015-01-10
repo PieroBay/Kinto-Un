@@ -1,0 +1,9 @@
+RewriteEngine on
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule (.*) Kintoun.php/$1 [L]
+
+<Files *.yml>
+    Order Deny,Allow
+    Deny from all
+</Files>

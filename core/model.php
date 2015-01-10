@@ -54,7 +54,7 @@
 			"red"       => false,)){
 			
      	   try{
-     	   	if(!isset($data) or !is_array($data)) throw new Exception("Aucun tableau n'a été envoyé");
+     	   	if(!isset($data) || !is_array($data)) throw new Exception("Aucun tableau n'a été envoyé");
      	   }catch(Exception $e){
      	   		Error::renderError($e);
      	   		exit();
@@ -118,13 +118,7 @@
 			}
 		}
 
-		public function findAll($data=null){
-     	   try{
-     	   	if(!isset($data) or !is_array($data)) throw new Exception("Aucun tableau n'a été envoyé");
-     	   }catch(Exception $e){
-     	   		Error::renderError($e);
-     	   		exit();
-     	   }
+		public function findAll($data=array()){
 			$condition = "1=1";
 			$fields = "*";
 			$limit = "";
@@ -144,12 +138,13 @@
 		}
 
 		public function findById($id=null){
-     	   try{
-     	   	if(!isset($id) or !is_int($id)) throw new Exception("Aucun ID n'a été envoyé");
-     	   }catch(Exception $e){
+			try{
+     	   		if(!isset($id) || !is_numeric($id) || is_array($id)) throw new Exception("Aucun ID n'a été envoyé");
+     	   	}catch(Exception $e){
      	   		Error::renderError($e);
      	   		exit();
-     	   }
+     	   	}
+
 			$sql = "SELECT * FROM ".$this->table." WHERE id= $id";
 			$req = $this->bdd->query($sql);
 			$data = $req->fetch(PDO::FETCH_OBJ);
@@ -157,19 +152,20 @@
 		}
 
 		public function delete($id=null){
-     	   try{
-     	   	if(!isset($id) or !is_int($id)) throw new Exception("Aucun ID n'a été envoyé");
-     	   }catch(Exception $e){
+			try{
+     	   		if(!isset($id) || !is_numeric($id) || is_array($id)) throw new Exception("Aucun ID n'a été envoyé");
+     	   	}catch(Exception $e){
      	   		Error::renderError($e);
      	   		exit();
-     	   }
+     	   	}
+
 			$sql = "DELETE FROM ".$this->table." WHERE id = $id";
 			$this->bdd->exec($sql);
 		}
 
 		public function connexion($d=null){
      	   try{
-     	   	if(!isset($d) or !is_array($d)) throw new Exception("Aucun tableau n'a été envoyé");
+     	   	if(!isset($d) || !is_array($d)) throw new Exception("Aucun tableau n'a été envoyé");
      	   }catch(Exception $e){
      	   		Error::renderError($e);
      	   		exit();

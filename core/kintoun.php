@@ -1,10 +1,13 @@
 <?php
 session_start();
 
-	define('WEBROOT', str_replace('core/kintoun.php', '', $_SERVER['SCRIPT_NAME']));
-	define('ROOT', str_replace('core/kintoun.php', '', $_SERVER['SCRIPT_FILENAME']));
+	define('WEBROOT', str_replace('core/Kintoun.php', '', $_SERVER['SCRIPT_NAME']));
+	define('ROOT', str_replace('core/Kintoun.php', '', $_SERVER['SCRIPT_FILENAME']));
+	require_once(ROOT.'vendor/autoload.php');
+	require_once(ROOT.'core/Routing.php');
+	require_once(ROOT.'core/Controller.php');
+	require_once(ROOT.'libs/Upload.php');
 
-	require(ROOT.'core/component/spyc/Spyc.php');
 	$config = spyc_load_file(ROOT.'core/config.yml')['configuration'];
 
 	$dsn = 'mysql:host='.$config['database_host'].';dbname='.$config['database_name'];
@@ -13,55 +16,17 @@ session_start();
 	    $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 	}catch(PDOException $e){ echo 'Échec lors de la connexion : ' . $e->getMessage(); }
 
-	require(ROOT.'vendor/autoload.php');
-	require(ROOT.'core/controller.php');
-	$dossier = opendir(ROOT.'libs/');
-	while(false !== ($fichier = readdir($dossier))){
-		if($fichier != '.' && $fichier != '..' && $fichier != '.DS_Store' && $fichier != '.htaccess' && $fichier != 'template'){
-			require(ROOT.'libs/'.$fichier);
-		}
- 	}
- 	closedir($dossier);
- 
+	spl_autoload_register(function($class){
+	    require_once(ROOT.'libs/'.$class.'.php');
+	});
+	
 	$_SESSION['ROLE'] = !isset($_SESSION['ROLE']) ? 'visiteur' : $_SESSION['ROLE'] ;
 
 	$home = $config['default_project'];
 	$_SESSION['local'] = $config['local'];
 	$_SESSION['lang'] = (!isset($_SESSION['lang']))? $config['local'] : $_SESSION['lang'];
-	$params = explode('/', $_GET['p']);
-	$project = !empty($params[0]) ? $params[0] : $home;
 
-	$para=array();
-	function addParams($nbParams,$controllerName,$fichier=null){
-		global $params;
-		$action = !empty($params[$nbParams]) ? $params[$nbParams]."Action" : 'indexAction';
-		$key = (isset($params[$nbParams+1])) ? $params[$nbParams+1] : '';
-		$project = ($fichier == null)? $GLOBALS['home']: $fichier;
-		$para=array(
-			"controllerFolder"=>$controllerName.'Controller',
-			"controller"=>$controllerName,
-			"action"=>$action,
-			"project"=>$project,
-			"key"=>$key,
-			"e"=>$nbParams+1,
-		);
-		return $para;
-	}
-
-	if(file_exists(ROOT.'src/ressources/translate/'.$params[0].'.yml') || $params[0] == $_SESSION['local'] && isset($params[0])){ # si lang dans url
-		$_SESSION['lang'] = $params[0];
-		if(!empty($params[1]) && file_exists(ROOT.'src/project/'.$params[1])){ # si params1 == $projet
-			$para = (isset($params[2]) && $params[2] == "admin")? addParams(3,"admin",$params[1]): addParams(2,"public",$params[1]);
-		}else{ # Si projet par defaut
-			$para = (isset($params[1]) && $params[1] == "admin")? addParams(2,"admin"): addParams(1,"public");
-		}
-	}else{
-		if(file_exists(ROOT.'src/project/'.$params[0])){ # si params1 == $projet
-			$para = (isset($params[1]) && $params[1] == "admin")? addParams(2,"admin",$params[0]): addParams(1,"public",$params[0]);
-		}else{ # Si projet par defaut
-			$para = (isset($params[0]) && $params[0] == "admin")? addParams(1,"admin"): addParams(0,"public");
-		}
-	}
+	$link = '/'.trim($_SERVER['PATH_INFO'], '/');
 
 	$info = array(
 		"Session"	=>	array(
@@ -70,48 +35,37 @@ session_start();
 			"lang" => $_SESSION['lang'],
 		),
 		"Info"	=>	array(
-			"Root"			=> 	ROOT,
-			"Webroot"		=> 	WEBROOT,
-			"Project"		=>	$para['project'],
-			"Controller"	=>	$para['controller'],
-			"Action"		=>	$para['action'],
-			"Key"      		=> 	$para['key'],
-			"lang" 			=> 	$_SESSION['lang'],
-			"Template"		=>	$config['template'],
+			"Root"             => 	ROOT,
+			"Webroot"          => 	WEBROOT,
+			"lang"             => 	$_SESSION['lang'],
+			"Template"         =>	$config['template'],
+			"Parametres"	   =>	"",
 		),
 	);
 
-	require(ROOT.'src/project/'.$para['project'].'/controller/'.$para['controllerFolder'].'.php');
 	$setError = new Error($bdd,$info);
+	$urlParams = Routing::start($link,$setError);
 
-	$controllerFolder = new $para['controllerFolder']($bdd, $info);
+	$info["Info"] += array(
+			"RouteName"        =>	$urlParams['routeName'],
+			"Project"          =>	$urlParams['project'],
+			"Controller"       =>	$urlParams['controller'],
+			"ControllerFolder" =>	$urlParams['controller'].'Controller',
+			"Action"           =>	$urlParams['action'],
+			"ActionComplete"   =>	$urlParams['action'].'Action',
+			"Parametres"       => 	$urlParams['parametres'],
+	);
 
-	if(method_exists($controllerFolder, $para['action'])){
-		switch ($para['e']) {
-		    case 1:
-				unset($params[0]);
-		        break;
-		    case 2:
-		        unset($params[0]);
-		        unset($params[1]);
-		        break;
-		    case 3:
-		        unset($params[0]);
-				unset($params[1]);
-				unset($params[2]);
-		        break;
-		    case 4:
-		        unset($params[0]);
-				unset($params[1]);
-				unset($params[2]);
-				unset($params[3]);
-		        break;
-		}
-		call_user_func_array(array($controllerFolder, $para['action']), $params);
+	require(ROOT.'src/project/'.$info["Info"]['Project'].'/controller/'.$info["Info"]['ControllerFolder'].'.php');
+
+	$controllerFolder = new $info["Info"]['ControllerFolder']($bdd, $info);
+
+	if(method_exists($controllerFolder, $info["Info"]['ActionComplete']) && is_array($urlParams['parametres'])){
+		call_user_func_array(array($controllerFolder, $info["Info"]['ActionComplete']), $urlParams['parametres']);
 	}else{
 		$setError->generate('404',"La page que vous tentez d'atteindre n'existe pas ou n'est plus disponible.");
 	}
 
-	if(!file_exists(ROOT.'src/project/'.$para['project'])){
+	if(!file_exists(ROOT.'src/project/'.$info["Info"]['Project'])){
 		$setError->generate('404',"La page que vous tentez d'atteindre n'existe pas ou n'est plus disponible.");
 	}

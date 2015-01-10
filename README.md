@@ -1,5 +1,5 @@
 # Kinto'un [Framework]
-v 0.9.0
+v 1.0.0
 
 Nécessite PHP 5.4 ou +
 
@@ -14,8 +14,7 @@ Configurez le dossier `config.yml` se trouvant à `core/config.yml`, spécifiez 
 ### Composer
 
 **/!\ Faire un update de Composer pour installer les templates où le framework ne fonctionnera pas /!\** 
-`cd _folder_`
-`php composer.phar install`
+
 plus d'info sur Composer => `https://getcomposer.org/doc/00-intro.md`
 
 
@@ -26,16 +25,14 @@ Le fichier de config `config.yml` se trouvant à `core/config.yml` vous permettr
 
 ## Project
 
-Les projets sont des dossiers contenant un enssemble de code permettant par la suite d'être réutlisé plus facilement.
+Les projets sont des dossiers contenant un enssemble de code permettant par la suite d'être réutilisé plus facilement.
 
 Les projets sont à placer dans le dossier `src/project`.
+Un projet se compose:
+![image](http://img11.hostingpics.net/pics/969961folder.png)
 
-Le projet principal (qui sera lancé en premier en visitant le site) doit être indiqué dans le fichier `config.yml` se trouvant dans le dossier `core`.
+Le projet principal (qui sera lancé en premier en visitant le site) doit être indiqué dans le fichier `config.yml` se trouvant dans le dossier `core` sous la clé `default_project`.
 
-/!\ Il ne peut pas y avoir un projet nommé `admin` ou il y aura conflit avec le controller du même nom.
-
-
-![image](http://img15.hostingpics.net/pics/477383project.png)
 
 ## Controller
 
@@ -44,23 +41,10 @@ Seulement 2 Controllers
 * PublicController
 * AdminController
 
-À placer dans le dossier `src/project/*nomDuProjet*/controller/`.
-
-![image](http://img15.hostingpics.net/pics/677139controller.png)
-
-Dans le dossier **views/**, créez les dossiers `admin` et `public` **(Sans 'Controller' à la fin)** 
-
-![image](http://img15.hostingpics.net/pics/237846views.png)
-
 Dans les pages Controller (publicController et adminController) créez des actions, le nom des actions auront le même nom que les pages dans les vues **(sans 'Action' à la fin)**.
 
 ![image](http://img15.hostingpics.net/pics/932424action.png)
 
-
-Si il y a un paramètre dans le controller, ca récupérera le paramètre dans l'url juste après le nom de l'action.
-
-
-/!\ Le publicController (/public/) n'apparait pas dans l'url, uniquement le controller Admin (/admin/) peut être affiché.
 
 ### Récuperer des données de la DB
 
@@ -218,6 +202,30 @@ Dans les vues, le lien pour accèder aux ressources sera
 
 `href="{{ Info.Webroot }}/src/ressources/css/style.css"`
 
+## Routing
+
+Le fichier de config de routing se trouve à `src/ressources/config/routing.yml`.
+
+```yml
+view_article:
+    pattern:  /{_lang}/article/{slug}_{id}
+    controller: home:public:view
+```
+
+* `view_article` => Est le nom de la route, qui sera utile pour la fonction path().
+* `pattern` => Est le lien subjectif désiré avec ces paramètres.
+* `controller` => Est le chemin vers le project/controller/action. 
+
+{_lang} peut être absent dans le l'url définitif.
+
+### lien
+
+Dans les vues, une fonction twig permet de créer des liens dynamiquement.
+`<a href="{{path("view_article",{"slug": "mon-beau-slug", "id": "9"})}}">cliquez moi</a>`
+le parametre {_lang} n'est pas obligatoire, si il est vide, il ajoutera automatiquement la langue de la session.
+
+retournera:
+`<a href="_ROOT_/_session-langue_/article/mon-beau-slug_9">cliquez moi</a>`
 
 ## Multilangage
 
@@ -241,13 +249,71 @@ Dans la vue, pour traduire vos sentences, les manières varient selon le templat
 * Php => `<?= echo trans("Bonjour"); ?>`
 
 
-## Créez vos filtres
+## Créez vos filtres/fonctions
 
 Créez votre fichier php dans le dossier `libs/template/extensions/`.
-Danse ce fichier, créez votre fonction qui servira de filtre.
-Votre fichier doit avoir le même nom que votre fonction et ce nom servira comme filtre pour tout les templates.
+Danse ce fichier, créez votre fonction qui servira de filtre ou de fonction.
+Votre fichier doit avoir le même nom que votre fonction et se terminer par _function ou _filter et ce nom servira comme filtre/fonction pour tout les templates.
 
 ## Personnalisez la page 404 et les autres pages d'erreur
 
 Un template de base est situé à `core/errors/error.html.twig` et les ressources sont dans le dossier `ressources`.
 Le controller `errorController.php` se trouvant à `core/errors/errorController.php` vous permet de rendre votre page dynamique.
+
+## REST
+
+Kinto'Un permet l'utilisation de REST.
+Dans le controller, testez la requète pour savoir de quel type elle est.
+
+* POST => Request::POST();
+* GET => Request::GET();
+* PUT => Request::PUT();
+* DELETE => Request::DELETE();
+
+Toute les requètes doit être testé avec une condition et return true si la requète utilisé est celle de la condition. Une condition n'est pas obligatoire uniquement pour GET et peut envoyer directement un tableau comme option.
+
+Pour récupérer la valeur envoyer par une requète:
+* POST => $_POST
+* PUT => $this->_PUT ou Request::$_PUT
+* DELETE => le paramètre de l'action
+* GET => une requète de la class Model ($this->table->findAll(); / $this->table->findById($id))
+
+
+
+```php
+# lien: monsite.com/article/
+
+function indexAction(){
+	$data = $this->table->findAll();
+
+	Request::GET($data); # une condition n'est pas obligatoire pour GET
+
+	if(Request::POST()){
+		$this->livreor->save($_POST);
+	}else{ #sinon retourne une page html
+		$this->render(array(
+			"articles"	=>	$data,
+		));
+	}
+}
+```
+
+```php
+# lien: monsite.com/article/44
+
+function viewAction($id){
+	$data = $this->table->findById($id);
+
+	Request::GET($data); # une condition n'est pas obligatoire pour GET
+
+	if(Request::PUT()){
+		$this->table->save(Request::$_PUT);
+	}elseif (Request::DELETE()){
+		$this->table->delete($id);
+	}else{ # Sinon retourne une page html
+		$this->render(array(
+			"article"	=>	$data,
+		));				
+	}
+}
+```
