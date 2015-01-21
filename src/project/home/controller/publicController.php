@@ -4,8 +4,8 @@
 		protected $table = array();
 
 		public function indexAction(){
-			$this->render(array(
-				"message"	=>	'Hello World! c\'est la partie public',
+		    $this->render(array(
+				"message"	=>	'Hello World! C\'est la partie public',
 			));	
 		}
 	}

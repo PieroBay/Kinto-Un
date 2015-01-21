@@ -119,15 +119,15 @@
 		}
 
 		public function findAll($data=array()){
-			$condition = "1=1";
+			$where = "1=1";
 			$fields = "*";
 			$limit = "";
 			$order = "id DESC";
-			if(isset($data['condition'])){ $condition = $data['condition']; }
+			if(isset($data['where'])){ $where = $data['where']; }
 			if(isset($data['fields'])){ $fields = $data['fields']; }
 			if(isset($data['limit'])){ $limit = "LIMIT ".$data['limit']; }
 			if(isset($data['order'])){ $order = $data['order']; }
-			$sql = "SELECT $fields FROM ".$this->table." WHERE $condition ORDER BY $order $limit";
+			$sql = "SELECT $fields FROM ".$this->table." WHERE $where ORDER BY $order $limit";
 			$d = array();
 
 			$req = $this->bdd->query($sql);

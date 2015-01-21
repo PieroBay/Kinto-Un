@@ -17,6 +17,8 @@ Configurez le dossier `config.yml` se trouvant à `core/config.yml`, spécifiez 
 
 plus d'info sur Composer => `https://getcomposer.org/doc/00-intro.md`
 
+Par défault, le template est Twig.
+Pour utiliser Smarty, le rajouter dans `composer.json`.
 
 ## Fichier config
 
@@ -74,7 +76,7 @@ Requètes principales:
 
 * `$this->table1->delete($id)` => DELETE FROM $table WHERE id = $id
 
-* `$this->table1->findAll(array())` => Dans le tableau, mettre des conditions => "condition", "fields", "limit", "order"
+* `$this->table1->findAll(array())` => Dans le tableau, mettre des conditions => "where", "fields", "limit", "order"
 
 * `$this->table1->findById($id)` => SELECT * FROM $table WHERE id = $id
 
@@ -271,6 +273,7 @@ Dans le controller, testez la requète pour savoir de quel type elle est.
 * DELETE => Request::DELETE();
 
 Toute les requètes doit être testé avec une condition et return true si la requète utilisé est celle de la condition. Une condition n'est pas obligatoire uniquement pour GET et peut envoyer directement un tableau comme option.
+Pour retourner un JSON utiliser $this->renderJson($data);
 
 Pour récupérer la valeur envoyer par une requète:
 * POST => $_POST
@@ -283,7 +286,7 @@ Pour récupérer la valeur envoyer par une requète:
 ```php
 # lien: monsite.com/article/
 
-function indexAction(){
+public function indexAction(){
 	$data = $this->table->findAll();
 
 	Request::GET($data); # une condition n'est pas obligatoire pour GET
@@ -301,7 +304,7 @@ function indexAction(){
 ```php
 # lien: monsite.com/article/44
 
-function viewAction($id){
+public function viewAction($id){
 	$data = $this->table->findById($id);
 
 	Request::GET($data); # une condition n'est pas obligatoire pour GET

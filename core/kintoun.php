@@ -13,6 +13,7 @@ session_start();
 	$dsn = 'mysql:host='.$config['database_host'].';dbname='.$config['database_name'];
 	try{
 	    $bdd = new PDO($dsn, $config['database_user'], $config['database_password']);
+	    $bdd->exec('SET NAMES utf8');
 	    $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 	}catch(PDOException $e){ echo 'Échec lors de la connexion : ' . $e->getMessage(); }
 
