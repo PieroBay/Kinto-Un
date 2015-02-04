@@ -122,12 +122,12 @@
 			$where = "1=1";
 			$fields = "*";
 			$limit = "";
-			$order = "id DESC";
+			$order = "";
 			if(isset($data['where'])){ $where = $data['where']; }
 			if(isset($data['fields'])){ $fields = $data['fields']; }
 			if(isset($data['limit'])){ $limit = "LIMIT ".$data['limit']; }
-			if(isset($data['order'])){ $order = $data['order']; }
-			$sql = "SELECT $fields FROM ".$this->table." WHERE $where ORDER BY $order $limit";
+			if(isset($data['order'])){ $order = $data['order']; if($order != ""){ $order = "ORDER BY ".$order; } }
+			$sql = "SELECT $fields FROM ".$this->table." WHERE $where $order $limit";
 			$d = array();
 
 			$req = $this->bdd->query($sql);
