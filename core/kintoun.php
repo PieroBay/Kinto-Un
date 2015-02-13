@@ -45,8 +45,11 @@ session_start();
 	);
 
 	$setError = new Error($bdd,$info);
-	$urlParams = Routing::start($link,$setError);
+	Routing::start($link,$setError);
+	$urlParams = Routing::$params;
 
+	$info["Info"]['lang'] = $_SESSION['lang'];
+	$info["Session"]['lang'] = $_SESSION['lang'];
 	$info["Info"] += array(
 			"RouteName"        =>	$urlParams['routeName'],
 			"Project"          =>	$urlParams['project'],
@@ -54,7 +57,6 @@ session_start();
 			"ControllerFolder" =>	$urlParams['controller'].'Controller',
 			"Action"           =>	$urlParams['action'],
 			"ActionComplete"   =>	$urlParams['action'].'Action',
-			"Parametres"       => 	$urlParams['parametres'],
 	);
 
 	require(ROOT.'src/project/'.$info["Info"]['Project'].'/controller/'.$info["Info"]['ControllerFolder'].'.php');

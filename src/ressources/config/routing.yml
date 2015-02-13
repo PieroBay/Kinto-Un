@@ -3,5 +3,5 @@ home_index:
     controller: home:public:index
 
 admin_index:
-    pattern:  /admin
+    pattern:  /{_lang}/admin
     controller: home:admin:index

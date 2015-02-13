@@ -14,11 +14,11 @@ class Routing{
 			$routeName = $k;
 			$pattern_tmp = $pattern;
 			$patternEx = explode('/', trim($pattern,'/'));
-
 			foreach($patternEx as $key => $value){
 				if($value == "{_lang}"){
-					if(file_exists(ROOT.'src/ressources/translate/'.$linkEx[$key].'.yml') || $linkEx[$key] == $_SESSION['local']){ # la langue est dans l'url
+					if(isset($linkEx[$key]) && (file_exists(ROOT.'src/ressources/translate/'.$linkEx[$key].'.yml') || $linkEx[$key] == $_SESSION['local'])){ # la langue est dans l'url
 						$lang = $linkEx[$key];
+						$_SESSION['lang'] = $lang;
 					}else{
 						$lang = $_SESSION['lang'];
 						$pattern_tmp = preg_replace('#\/\{_lang\}#', '', $pattern_tmp);
@@ -58,7 +58,6 @@ class Routing{
 		if(empty(self::$params['action'])){
 			$setError->generate('404',"La page que vous tentez d'atteindre n'existe pas ou n'est plus disponible.");
 		}
-
 		return self::$params;
 	}
 }
