@@ -1,5 +1,5 @@
 # Kinto'un [Framework]
-v 1.0.3
+v 1.0.4
 
 Nécessite PHP 5.4 ou +
 
@@ -136,11 +136,10 @@ Recuperez le message dans la vue twig: `{{ flash|raw }}` , renvoie une div `<div
 
 ### Redirection
 
-`$this->redirectUrl('public:index.html.twig', $key);` 
+`$this->redirectUrl('home_index', array("id"=>5,"slug"=>"foo"));` 
 
--`public` est le nom du controller (sans Controller à la fin);
--`index.html.twig` est le nom de la vue;
--`$key` est la clé à envoyer dans l'url si on redirige vers une vue qui en a besoin (optionel);
+-`home_index` est le nom de la route vers laquelle vous voulez rediriger;
+-`array` Si votre route a besoin de paramètre, indiquez les du même nom que les variables `{...}` qui se trouve dans `routing.yml` dans ce tableau;
 
 ### Envoi de mail
 

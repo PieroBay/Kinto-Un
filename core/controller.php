@@ -30,14 +30,22 @@
 			}
 		}
 
-		public function redirectUrl($url, $data=""){
-			$controllers = explode(":", $url);
-			$controller = $controllers[0];
-			$action = explode(".", $controllers[1])[0];
-			$data = !empty($data) ? '/'.$data : $data;
-			$controller = ($controller == 'public') ? '' : $controller;
-			$action = ($action == 'index') ? '' : $action;
-			header('Location: '.WEBROOT.$controller.$action.$data);
+		public function redirectUrl($url, $data=array()){
+			$route = spyc_load_file(ROOT.'src/ressources/config/routing.yml');
+
+			try{
+				if(!isset($route[$url])) throw new Exception("Aucune route n'a été trouvé");
+			}catch(Exception $e){
+				Error::renderError($e);
+				exit();
+			}
+
+			$pattern = $route[$url]['pattern'];
+
+			if (strpos($pattern, "{") !== false){
+				$pattern = preg_replace_callback('#{(\w+)}#', function($m) use($data){ return $data[$m[1]]; }, $pattern);
+			}
+			header('Location: '.WEBROOT.trim($pattern,'/'));
 		}
 
 		public function render($data=array()){
