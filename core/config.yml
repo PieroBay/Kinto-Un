@@ -7,3 +7,9 @@ configuration:
     database_password: root
     local: fr
     template: Twig
+
+connection:
+    login: name
+    password: password
+    remember: false
+    session: id

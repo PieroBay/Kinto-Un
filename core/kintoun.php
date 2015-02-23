@@ -8,7 +8,9 @@ session_start();
 	require_once(ROOT.'core/Controller.php');
 	require_once(ROOT.'libs/Upload.php');
 
-	$config = spyc_load_file(ROOT.'core/config.yml')['configuration'];
+	$config = spyc_load_file(ROOT.'core/config.yml');
+	$connectYml = $config['connection'];
+	$config = $config['configuration'];
 
 	$dsn = 'mysql:host='.$config['database_host'].';dbname='.$config['database_name'];
 	try{
@@ -61,7 +63,7 @@ session_start();
 
 	require(ROOT.'src/project/'.$info["Info"]['Project'].'/controller/'.$info["Info"]['ControllerFolder'].'.php');
 
-	$controllerFolder = new $info["Info"]['ControllerFolder']($bdd, $info);
+	$controllerFolder = new $info["Info"]['ControllerFolder']($bdd, $info, $connectYml);
 
 	if(method_exists($controllerFolder, $info["Info"]['ActionComplete']) && is_array($urlParams['parametres'])){
 		call_user_func_array(array($controllerFolder, $info["Info"]['ActionComplete']), $urlParams['parametres']);

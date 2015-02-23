@@ -1,5 +1,5 @@
 # Kinto'un [Framework]
-v 1.0.4
+v 1.0.5
 
 Nécessite PHP 5.4 ou +
 
@@ -23,6 +23,8 @@ Pour utiliser Smarty, le rajouter dans `composer.json`.
 ## Fichier config
 
 Le fichier de config `config.yml` se trouvant à `core/config.yml` vous permettra de vous connecter à la DB, de choisir le template (none/php, Twig ou Smarty) et d'indiquer le projet principal.
+
+Il permet également de configurer vos connexions. (plus d'info dans la section Connexion).
 
 
 ## Project
@@ -138,8 +140,8 @@ Recuperez le message dans la vue twig: `{{ flash|raw }}` , renvoie une div `<div
 
 `$this->redirectUrl('home_index', array("id"=>5,"slug"=>"foo"));` 
 
--`home_index` est le nom de la route vers laquelle vous voulez rediriger;
--`array` Si votre route a besoin de paramètre, indiquez les du même nom que les variables `{...}` qui se trouve dans `routing.yml` dans ce tableau;
+* `home_index` est le nom de la route vers laquelle vous voulez rediriger;
+* `array` Si votre route a besoin de paramètre, indiquez les du même nom que les variables `{...}` qui se trouve dans `routing.yml` dans ce tableau;
 
 ### Envoi de mail
 
@@ -165,6 +167,24 @@ Par défaut, `$this->ROLE()` contient 'visiteur' et return true.
 
 ### Connexion
 
+Un champs `role` doit être créé dans la table.
+Par défaut une session role visiteur est créée.
+
+Pour configurer une connexion, dans le fichier `config.yml` se trouvant à `core/config.yml` remplissez les champs demandé:
+
+```yml
+connection:
+    login: name 			# Champs login du formulaire qui a le même nom que dans votre table
+    password: password		# Champs password du formulaire qui a le même nom que dans votre table
+    remember: false			# Si vous voulez que le navigateur se rappel des identifians de l'utilisateur (true ou false)
+    session: id|nom			# la liste des sessions une fois l'utilisateur connecté. séparer par des pipes `|`
+```
+
+###### Récupérer les cookies si true
+* $_COOKIE['ku_login']
+* $_COOKIE['ku_password']
+
+
 Utilisez `$this->table->connexion($_POST);` dans une action au nom de votre choix pour un connexion.
 
 `$this->user->testConnect()`, si tout est ok, return true
@@ -177,6 +197,8 @@ if($this->user->testConnect()){ // si la connexion s'est bien passée, return tr
 	$this->Session->setFlash('error', 'Mauvais identifiant'); // sinon on envoie un message flash
 }
 ```
+
+Créera automatiquement une session ROLE qui sera repris de la DB.
 
 ### Deconnexion
 

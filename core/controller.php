@@ -6,9 +6,11 @@
 		protected $info;
 		protected $sendMail;
 		protected $_PUT;
+		protected $connectYml;
 
-		public function __construct($bdd, $info){
+		public function __construct($bdd, $info, $connectYml){
 			$this->info = $info;
+			$this->connectYml = $connectYml;
 			$this->bdd = $bdd;
 			$session = new Session();
 			$mail = new SendMail();
@@ -82,7 +84,7 @@
 		public function loadModel($table){
 			$tableModel = $table.'Model';
 			require_once(ROOT.'core/Model.php');
-			$this->$table = new Model($this->bdd, $table);			
+			$this->$table = new Model($this->bdd, $table, $this->connectYml);			
 			if(file_exists(ROOT.'models/'.$tableModel.'.php')){
 				require_once(ROOT.'models/'.$tableModel.'.php');
 				$this->$tableModel = new $tableModel($this->bdd, $table);

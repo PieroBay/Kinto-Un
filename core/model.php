@@ -6,9 +6,11 @@
 		protected $connexion = false;
 		protected $allOk = true;
 		protected $error = "";
+		protected $connectYml;
 
-		public function __construct(PDO $bdd, $table){
+		public function __construct(PDO $bdd, $table, $connectYml){
 			$this->setBdd($bdd);
+			$this->connectYml = $connectYml;
 			$this->setTable($table);
 		}
 
@@ -164,20 +166,35 @@
 		}
 
 		public function connexion($d=null){
-     	   try{
-     	   	if(!isset($d) || !is_array($d)) throw new Exception("Aucun tableau n'a été envoyé");
-     	   }catch(Exception $e){
-     	   		Error::renderError($e);
-     	   		exit();
-     	   }
-			$connect = strip_tags($d["user"]);
-			$pwd = strip_tags($d["password"]);
-			$sql = "SELECT *, COUNT(*) AS nb FROM ".$this->table." WHERE pseudo = '$connect' AND password = '$pwd'";
+			try{
+				if(!isset($d) || !is_array($d)) throw new Exception("Aucun tableau n'a été envoyé");
+			}catch(Exception $e){
+				Error::renderError($e);
+				exit();
+			}
+
+			$login = $this->connectYml['login'];
+			$password = $this->connectYml['password'];
+
+			$connect = strip_tags($d[$login]);
+			$pwd = strip_tags($d[$password]);
+			$sql = "SELECT *, COUNT(*) AS nb FROM ".$this->table." WHERE ".$login." = '$connect' AND ".$password." = '$pwd'";
 			$req = $this->bdd->query($sql);
 			$data = $req->fetch(PDO::FETCH_OBJ);
 			if($data->nb > 0){
-				$_SESSION['id'] = $data->id;
+				$sess = explode("|", $this->connectYml['session']);
+				foreach ($sess as $k => $v) {
+					if($v != 'role'){
+						$_SESSION[$v] = $data->$v;
+					}
+				}
 				$_SESSION['ROLE'] = $data->role;
+
+				if($this->connectYml['remember']){
+					setcookie("ku_login", $d[$login]);
+					setcookie("ku_pwd", $d[$password]);
+				}
+
 				$this->setConnexion(true);
 			}else{
 				$this->setConnexion(false);
