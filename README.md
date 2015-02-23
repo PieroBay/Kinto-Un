@@ -1,5 +1,5 @@
 # Kinto'un [Framework]
-v 1.0.5
+v 1.0.6
 
 Nécessite PHP 5.4 ou +
 
@@ -84,6 +84,8 @@ Requètes principales:
 
 * `$this->table1->save($_POST, $upload)` => $_POST ou array en paramètre => si le tableau contient un id, un UPDATE sera fait sinon un INSERT. 
 $upload (non obligatoire si pas d'upload dans le formulaire) est un array avec plusieurs parametres.
+
+/!\ Ne pas oublier `enctype="multipart/form-data"` dans la balise form.
 
 ```php
 array(
@@ -203,9 +205,10 @@ Créera automatiquement une session ROLE qui sera repris de la DB.
 ### Deconnexion
 
 Utilisez le code ci bas dans une action au nom de votre choix pour une déconnexion.
+
 ```php
-$this->user->deconnexion(); // modifier le ROLE actuel en 'visiteur'
-$this->redirectUrl('public:index.html.twig'); // une fois fait, redirection sur l'index
+$this->user->deconnexion(); // modifier le ROLE actuel en 'visiteur' et supprime les autres sessions
+$this->redirectUrl('home_index'); // une fois fait, redirection sur l'index
 ```
 
 ## Views

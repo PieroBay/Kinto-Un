@@ -202,6 +202,12 @@
 		}
 
 		public function deconnexion(){
+			$sess = explode("|", $this->connectYml['session']);
+			foreach ($sess as $k => $v) {
+				if($v != 'role'){
+					unset($_SESSION[$v]);
+				}
+			}
 			$_SESSION['ROLE'] = 'visiteur';
 		}
 	}
