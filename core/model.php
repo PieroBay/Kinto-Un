@@ -30,7 +30,7 @@
 			$this->allOk = $tmp;
 		}
 		public function setError($tmp){
-			$this->allOk = $tmp;
+			$this->error = $tmp;
 		}
 
 
@@ -49,11 +49,13 @@
 
 		public function save($data=null, $upload=array(
 			"target"    =>	"upload",
-			"maxSize"   => 2097152,
-			"widthMax"  => 100,
-			"heightMax" => 100,
-			"ext"       => array('jpg','png','jpeg'),
-			"red"       => false,)){
+			"table_name"=>	"image",
+			"champ_name"=>	false, 
+			"maxSize"   => 	2097152,
+			"widthMax"  => 	100,
+			"heightMax" => 	100,
+			"ext"       => 	array('jpg','png','jpeg'),
+			"red"       => 	false,)){
 			
      	   try{
      	   	if(!isset($data) || !is_array($data)) throw new Exception("Aucun tableau n'a été envoyé");
@@ -63,16 +65,35 @@
      	   }
 
 			if($_FILES){
-				foreach ($_FILES as $k => $v) {
-					$uploadEtat = upload($_FILES, $upload);
-					if($uploadEtat['status'] == "ok"){
-						$data[$k] = $uploadEtat['name'];
-					}else{
-						$this->setAllOk(false);
-						$this->setError($uploadEtat['message']);
-						$data[$k] = "";
+				$token = time();
+				
+				$uploading = new Upload($upload,$this->bdd,$token); 			# init la class
+				foreach ($_FILES as $k => $v) { 
+					if(is_array($v['name'])){ 							# Si un multiUpload
+						$file = $uploading->multiple($_FILES[$k]);		# return array
+					}else{												# Si un simple upload ou plusieur champs file
+						$file = $uploading->single($_FILES[$k]);		# return array
 					}
-				}	
+
+					if($file['verif']){  									# Si tout est ok pour l'upload
+						if($upload['champ_name']){ 							# Si avec table champ image = token (dossier)
+							unset($data[$k]);								# Enleve le(s) post file
+							$data[$upload['champ_name']] = $file['token'];	# et tu l'init avec le nom du dossier
+						}else{ 												# 
+							$data[$file[$k]] = $file['file_name'];			# Sinon le post file = le nom du fichier (si image dans la meme table)
+						}
+					}else{
+						$this->setAllOk(false); 							# Genere l'erreur
+						$this->setError($file['message']);					# Genere le message d'erreur
+
+						if($upload['champ_name']){ 							# si avec table champ image = token (dossier)
+							unset($data[$k]);								# Enleve le(s) post file
+							$data[$upload['champ_name']]  = "";				# et tu l'init vide
+						}else{												#
+							$data[$file[$k]] = "";							# Sinon le post = vide
+						}
+					}	
+				}
 			}
 
 			if(isset($data['id']) && !empty($data['id'])){
@@ -111,7 +132,6 @@
 			if($this->allOk){
 				$req = $this->bdd->prepare($sql);
 				$req->execute($data);
-
 				if(!isset($data['id'])){
 					$this->setId($this->bdd->lastInsertId());
 				}else{

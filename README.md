@@ -1,5 +1,5 @@
 # Kinto'un [Framework]
-v 1.0.6
+v 1.0.7
 
 Nécessite PHP 5.4 ou +
 
@@ -89,12 +89,14 @@ $upload (non obligatoire si pas d'upload dans le formulaire) est un array avec p
 
 ```php
 array(
-			"target"    =>	"folder_name", # le dossier sera dans "src/ressources/images/"
+			"target"    =>  "folder_name", "folder_name", # le dossier sera dans "src/ressources/images/"
+			"table_name"=>  "image", # nom de la table ou les url des images seront enregistrées
+			"champ_name"=>  "image",  # nom du champ dans de la liaison de la table images
 			"maxSize"   => 2097152, # poids max en byte
-			"widthMax"  => 1000, # largeur max en pixel
+			"widthMax"  => 1000,  # largeur max en pixel
 			"heightMax" => 1000, # hauteur max en pixel
 			"ext"       => array('jpg','png','jpeg'), # extensions autorisées
-			"red"       => false,) # Si l'image doit être redimensionner mettre une taille en pixel, sinon laisser false.
+			"red"       => false,  # Si l'image doit être redimensionner mettre une taille en pixel, sinon laisser vide
 ```
 
 * `$this->table1->allOk()` => uniquement pour vérifier si l'upload s'est déroulé correctement.

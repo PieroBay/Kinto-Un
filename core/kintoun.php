@@ -1,12 +1,11 @@
 <?php
 session_start();
-
 	define('WEBROOT', str_replace('core/Kintoun.php', '', $_SERVER['SCRIPT_NAME']));
 	define('ROOT', str_replace('core/Kintoun.php', '', $_SERVER['SCRIPT_FILENAME']));
 	require_once(ROOT.'vendor/autoload.php');
 	require_once(ROOT.'core/Routing.php');
 	require_once(ROOT.'core/Controller.php');
-	require_once(ROOT.'libs/Upload.php');
+	//require_once(ROOT.'libs/upload.php');
 
 	$config = spyc_load_file(ROOT.'core/config.yml');
 	$connectYml = $config['connection'];
@@ -36,6 +35,7 @@ session_start();
 			"ROLE" 	=> $_SESSION['ROLE'],
 			"local" => $_SESSION['local'],
 			"lang" => $_SESSION['lang'],
+			"all"	=> $_SESSION,
 		),
 		"Info"	=>	array(
 			"Root"             => 	ROOT,
