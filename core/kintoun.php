@@ -1,15 +1,14 @@
 <?php
 session_start();
+	#ini_set('display_errors', 1);
 	define('WEBROOT', str_replace('core/Kintoun.php', '', $_SERVER['SCRIPT_NAME']));
 	define('ROOT', str_replace('core/Kintoun.php', '', $_SERVER['SCRIPT_FILENAME']));
 	require_once(ROOT.'vendor/autoload.php');
 	require_once(ROOT.'core/Routing.php');
 	require_once(ROOT.'core/Controller.php');
-	//require_once(ROOT.'libs/upload.php');
 
-	$config = spyc_load_file(ROOT.'core/config.yml');
-	$connectYml = $config['connection'];
-	$config = $config['configuration'];
+	$configFile = spyc_load_file(ROOT.'core/config.yml');
+	$config = $configFile['configuration'];
 
 	$dsn = 'mysql:host='.$config['database_host'].';dbname='.$config['database_name'];
 	try{
@@ -43,15 +42,17 @@ session_start();
 			"lang"             => 	$_SESSION['lang'],
 			"Template"         =>	$config['template'],
 			"Parametres"	   =>	"",
+			"Output"	       =>	"",
 		),
 	);
 
-	$setError = new Error($bdd,$info);
+	$setError = new Error($bdd,$info, $configFile['connection']);
 	Routing::start($link,$setError);
 	$urlParams = Routing::$params;
 
 	$info["Info"]['lang'] = $_SESSION['lang'];
 	$info["Session"]['lang'] = $_SESSION['lang'];
+	$info["Info"]['Output'] = $urlParams['output'];
 	$info["Info"] += array(
 			"RouteName"        =>	$urlParams['routeName'],
 			"Project"          =>	$urlParams['project'],
@@ -63,7 +64,7 @@ session_start();
 
 	require(ROOT.'src/project/'.$info["Info"]['Project'].'/controller/'.$info["Info"]['ControllerFolder'].'.php');
 
-	$controllerFolder = new $info["Info"]['ControllerFolder']($bdd, $info, $connectYml);
+	$controllerFolder = new $info["Info"]['ControllerFolder']($bdd, $info, $configFile['connection']);
 
 	if(method_exists($controllerFolder, $info["Info"]['ActionComplete']) && is_array($urlParams['parametres'])){
 		call_user_func_array(array($controllerFolder, $info["Info"]['ActionComplete']), $urlParams['parametres']);

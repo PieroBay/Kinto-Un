@@ -21,7 +21,7 @@ class Routing{
 						$_SESSION['lang'] = $lang;
 					}else{
 						$lang = $_SESSION['lang'];
-						$pattern_tmp = preg_replace('#\/\{_lang\}#', '', $pattern_tmp);
+						$pattern_tmp = ($v['pattern'] == "/{_lang}")? preg_replace('#\{_lang\}#', '', $pattern_tmp): preg_replace('#\/\{_lang\}#', '', $pattern_tmp);						
 					}
 				}
 			}
@@ -32,7 +32,7 @@ class Routing{
 			if(preg_match($linkRegex, $link, $match)){
 				if($match[0] == $link){
 					$patternEx = explode('/', trim($pattern,'/'));
-
+					$output = (isset($_GET['output']) && $_GET['output'] == "xml")? true : false;
 					$para = explode(':', $controller);
 					self::$params = array(
 						'routeName'      => $routeName,
@@ -42,6 +42,7 @@ class Routing{
 						'controller'     => $para[1],
 						'action'         => $para[2],
 						'parametres'     => "",
+						'output'		 => $output,
 						'lang'			 => $lang,
 					);	
 					foreach ($match as $k => $v) {

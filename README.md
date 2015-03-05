@@ -1,5 +1,5 @@
 # Kinto'un [Framework]
-v 1.0.7
+v 1.1.0
 
 Nécessite PHP 5.4 ou +
 
@@ -287,6 +287,17 @@ Votre fichier doit avoir le même nom que votre fonction et se terminer par _fun
 
 Un template de base est situé à `core/errors/error.html.twig` et les ressources sont dans le dossier `ressources`.
 Le controller `errorController.php` se trouvant à `core/errors/errorController.php` vous permet de rendre votre page dynamique.
+
+
+## XML
+
+Générer un xml avec la fonction `$this->renderXml($array,$unset,$rename)`.
+
+Cette fonction prend 3 paramètres dont 2 facultatifs, tous des tableaux.
+
+* $array => le premier paramètre est votre tableau de donnée (array/object);
+* $unset => (facultatif) liste des clés de votre tableau que vous voulez supprimer à la génération du XML. array('id','nom');
+* $rename => (facultatif) renomer les balises de votre xml. array('id_table'=>'id'); modifiera <id_table>1</id_table> en < id>1< /d>
 
 ## REST
 

@@ -7,8 +7,10 @@
 		protected $sendMail;
 		protected $_PUT;
 		protected $connectYml;
+		protected $xml;
 
 		public function __construct($bdd, $info, $connectYml){
+			$this->xml = $info['Info']['Output'];
 			$this->info = $info;
 			$this->connectYml = $connectYml;
 			$this->bdd = $bdd;
@@ -45,6 +47,10 @@
 			$pattern = $route[$url]['pattern'];
 
 			if (strpos($pattern, "{") !== false){
+				if(strpos($pattern, "{_lang}") !== false){
+					$pattern = preg_replace('#\{_lang\}#', $_SESSION['lang'], $pattern);
+				}
+
 				$pattern = preg_replace_callback('#{(\w+)}#', function($m) use($data){ return $data[$m[1]]; }, $pattern);
 			}
 			header('Location: '.WEBROOT.trim($pattern,'/'));
@@ -81,13 +87,44 @@
 			exit(json_encode($data));
 		}
 
+		public function renderXml($data=array(),$unset=null,$rename=null){
+			$d = array();
+			foreach ($data as $k => $v) {
+				$data[$k] = (array)$data[$k];
+
+				if(isset($unset) && is_array($unset)){
+					foreach ($unset as $key) {
+						unset($data[$k][$key]);
+					}
+				}
+				if(isset($rename) && is_array($rename)){
+					foreach ($rename as $key => $value) {
+						$data[$k][$value] = $data[$k][$key];
+						unset($data[$k][$key]);
+					}
+				}
+
+				$d[] = array_flip($data[$k]);
+			}
+
+			header('Content-Type: application/xml');
+			$xml = new SimpleXMLElement('<items/>');
+			
+			foreach ($d as $key => $v) {
+				$node = $xml->addChild('item');
+				array_walk_recursive($v, array ($node, 'addChild'));
+			}
+			
+			exit($xml->asXML());
+		}
+
 		public function loadModel($table){
 			$tableModel = $table.'Model';
 			require_once(ROOT.'core/Model.php');
 			$this->$table = new Model($this->bdd, $table, $this->connectYml);			
-			if(file_exists(ROOT.'models/'.$tableModel.'.php')){
-				require_once(ROOT.'models/'.$tableModel.'.php');
-				$this->$tableModel = new $tableModel($this->bdd, $table);
+			if(file_exists(ROOT.'src/project/'.$this->info['Info']['Project'].'/models/'.$tableModel.'.php')){
+				require_once(ROOT.'src/project/'.$this->info['Info']['Project'].'/models/'.$tableModel.'.php');
+				$this->$tableModel = new $tableModel($this->bdd, $table, $this->connectYml);
 			}
 		}
 	}

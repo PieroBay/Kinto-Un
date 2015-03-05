@@ -4,15 +4,19 @@ class Error{
 	protected $data = array();
 	protected $info = array();
 	protected $bdd;
+	protected $connectYml;
+	protected $xml;
 
-	public function __construct($bdd,$info){
+	public function __construct($bdd,$info,$connectYml){
 		$this->info = $info;
+		$this->xml = $info['Info']['Output'];
+		$this->connectYml = $connectYml;
 		$this->bdd = $bdd;
 		require (ROOT.'core/errors/errorController.php');
 	}
 
 	public function generate($number = '404', $message){
-		$e = new errorController($this->bdd,$this->info);
+		$e = new errorController($this->bdd,$this->info,$this->connectYml);
 		$this->data = $e->errorAction();		
 
 		$erreur = array(
