@@ -1,5 +1,4 @@
 configuration:
-    default_project: home
     database_host: localhost
     database_port: null
     database_name: test

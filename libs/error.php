@@ -12,7 +12,7 @@ class Error{
 		$this->xml = $info['Info']['Output'];
 		$this->connectYml = $connectYml;
 		$this->bdd = $bdd;
-		require (ROOT.'core/errors/errorController.php');
+		require (ROOT.'app/errors/errorController.php');
 	}
 
 	public function generate($number = '404', $message){
@@ -34,7 +34,7 @@ class Error{
 		    case "twig":
 				require(ROOT.'libs/template/twig/LoaderTemplate.php');
 				require (ROOT.'libs/template/autoLoad.php');
-				echo $twig->render('core/errors/error.html.twig',$array);		        
+				echo $twig->render('app/errors/error.html.twig',$array);		        
 				break;
 		    case "smarty":
 		        require(ROOT.'vendor/smarty/smarty/libs/Smarty.class.php');
@@ -43,12 +43,12 @@ class Error{
 				$smarty->compile_dir = ROOT.'libs/template/smarty/templates_c/';
 				$smarty->config_dir = ROOT.'libs/template/smarty/configs/';
 				$smarty->cache_dir = ROOT.'libs/template/smarty/cache/';
-		        $smarty->display(ROOT.'core/errors/error.tpl',$array);
+		        $smarty->display(ROOT.'app/errors/error.tpl',$array);
 		        break;
 		    case "php":
 		    case "none":
 		    	require (ROOT.'libs/template/autoLoad.php');
-		    	require(ROOT.'core/errors/error.php');
+		    	require(ROOT.'app/errors/error.php');
 		        break;
 		}
 		exit();
@@ -74,6 +74,6 @@ class Error{
 		);
 		$array = array_merge($erreur, $e);
 		require(ROOT.'libs/template/twig/LoaderTemplate.php');
-		echo $twig->render('core/errors/warning.html.twig', $array);
+		echo $twig->render('app/errors/warning.html.twig', $array);
 	}
 }

@@ -1,5 +1,5 @@
 <?php
-	function fileExiste(){ 
+	function fileExist(){ 
 		if($_SESSION['lang'] != $_SESSION['local']){
 			$link = ROOT.'src/ressources/translate/'.$_SESSION['lang'].'.yml';
 			if(file_exists($link)){

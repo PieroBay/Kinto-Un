@@ -1,14 +1,14 @@
 <?php
 session_start();
 	#ini_set('display_errors', 1);
-	define('WEBROOT', str_replace('core/Kintoun.php', '', $_SERVER['SCRIPT_NAME']));
-	define('ROOT', str_replace('core/Kintoun.php', '', $_SERVER['SCRIPT_FILENAME']));
+	define('WEBROOT', str_replace('app/core/Kintoun.php', '', $_SERVER['SCRIPT_NAME']));
+	define('ROOT', str_replace('app/core/Kintoun.php', '', $_SERVER['SCRIPT_FILENAME']));
 	require_once(ROOT.'vendor/autoload.php');
-	require_once(ROOT.'core/Routing.php');
-	require_once(ROOT.'core/Controller.php');
+	require_once(ROOT.'app/core/Routing.php');
+	require_once(ROOT.'app/core/Controller.php');
 
-	$configFile = spyc_load_file(ROOT.'core/config.yml');
-	$config = $configFile['configuration'];
+	$configFile = spyc_load_file(ROOT.'app/config/Config.yml');
+	$config     = $configFile['configuration'];
 
 	$dsn = 'mysql:host='.$config['database_host'].';dbname='.$config['database_name'];
 	try{
@@ -21,20 +21,18 @@ session_start();
 	    require_once(ROOT.'libs/'.$class.'.php');
 	});
 	
-	$_SESSION['ROLE'] = !isset($_SESSION['ROLE']) ? 'visiteur' : $_SESSION['ROLE'] ;
-
-	$home = $config['default_project'];
+	$_SESSION['ROLE']  = !isset($_SESSION['ROLE']) ? 'visiteur' : $_SESSION['ROLE'];
 	$_SESSION['local'] = $config['local'];
-	$_SESSION['lang'] = (!isset($_SESSION['lang']))? $config['local'] : $_SESSION['lang'];
+	$_SESSION['lang']  = (!isset($_SESSION['lang']))? $config['local'] : $_SESSION['lang'];
 
 	$link = '/'.trim($_SERVER['PATH_INFO'], '/');
 
 	$info = array(
-		"Session"	=>	array(
-			"ROLE" 	=> $_SESSION['ROLE'],
-			"local" => $_SESSION['local'],
-			"lang" => $_SESSION['lang'],
-			"all"	=> $_SESSION,
+			"Session" =>	array(
+			"ROLE"    => $_SESSION['ROLE'],
+			"local"   => $_SESSION['local'],
+			"lang"    => $_SESSION['lang'],
+			"all"     => $_SESSION,
 		),
 		"Info"	=>	array(
 			"Root"             => 	ROOT,
@@ -50,9 +48,9 @@ session_start();
 	Routing::start($link,$setError);
 	$urlParams = Routing::$params;
 
-	$info["Info"]['lang'] = $_SESSION['lang'];
+	$info["Info"]['lang']    = $_SESSION['lang'];
 	$info["Session"]['lang'] = $_SESSION['lang'];
-	$info["Info"]['Output'] = $urlParams['output'];
+	$info["Info"]['Output']  = $urlParams['output'];
 	$info["Info"] += array(
 			"RouteName"        =>	$urlParams['routeName'],
 			"Project"          =>	$urlParams['project'],

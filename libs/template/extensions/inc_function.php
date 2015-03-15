@@ -1,5 +1,5 @@
 <?php
-	function path($routeName,$params=array()){
+	function inc($routeName,$params=array()){
 		$route = spyc_load_file(ROOT.'app/config/routing.yml');
 		
 		foreach ($route as $key => $value) {
@@ -21,8 +21,7 @@
 				}
 
 				$link = WEBROOT.trim($linkP,'/').'/'.trim($link['pattern'],'/');			
-				return $link;				
+				echo file_get_contents('http://'.$_SERVER['HTTP_HOST'].$link);
 			}
-
 		}		
 	}

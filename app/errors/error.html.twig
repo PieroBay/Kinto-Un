@@ -1,14 +1,14 @@
-{% extends "core/errors/ressources/layout/base.html.twig" %}
+{% extends "app/errors/ressources/layout/base.html.twig" %}
 {% block title %}{{ parent()  }} | Error {{ Error.Number }}{% endblock %}
 {% block stylesheets %}
   <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
-  <link rel="stylesheet" href="{{ Info.Webroot }}core/errors/ressources/css/style.css" />
+  <link rel="stylesheet" href="{{ Info.Webroot }}app/errors/ressources/css/style.css" />
 {% endblock %}
 {% block body %}
 <div id="header">
 	<div id="contentInfoError">
 	 	<div id="errorName">Error {{ Error.Number }} !</div>
-	 	<div id="kintoun"><img src="{{ Info.Webroot }}core/errors/ressources/images/kintoun.png" alt="kinto un"/></div>
+	 	<div id="kintoun"><img src="{{ Info.Webroot }}app/errors/ressources/images/kintoun.png" alt="kinto un"/></div>
 
 	 	<div id="errorContent">{{ Error.Message }}</div>
 	</div>

@@ -1,5 +1,5 @@
 # Kinto'un [Framework]
-v 1.1.0
+v 1.2.0
 
 Nécessite PHP 5.4 ou +
 
@@ -8,8 +8,10 @@ Nécessite PHP 5.4 ou +
 
 ## Installation
 
-Extraire le dossier `Kinto-Un` à la racine de votre site. (/!\ N'oubliez pas le `.htaccess` )
-Configurez le dossier `config.yml` se trouvant à `core/config.yml`, spécifiez correctement les champs demandés.
+Extraire le zip à la racine de votre site. et renomé le dossier.
+Si vous déplacez le contenu du dossier, /!\ N'oubliez pas le `.htaccess` !
+
+Configurez le dossier `Config.yml` se trouvant à `app/config/Config.yml`, spécifiez correctement les champs demandés.
 
 ### Composer
 
@@ -22,7 +24,7 @@ Pour utiliser Smarty, le rajouter dans `composer.json`.
 
 ## Fichier config
 
-Le fichier de config `config.yml` se trouvant à `core/config.yml` vous permettra de vous connecter à la DB, de choisir le template (none/php, Twig ou Smarty) et d'indiquer le projet principal.
+Le fichier de config `Config.yml` se trouvant à `app/config/Config.yml` vous permettra de vous connecter à la DB, de choisir le template (none/php, Twig ou Smarty), de choisir la langue local...
 
 Il permet également de configurer vos connexions. (plus d'info dans la section Connexion).
 
@@ -35,7 +37,7 @@ Les projets sont à placer dans le dossier `src/project`.
 Un projet se compose:
 ![image](http://img11.hostingpics.net/pics/969961folder.png)
 
-Le projet principal (qui sera lancé en premier en visitant le site) doit être indiqué dans le fichier `config.yml` se trouvant dans le dossier `core` sous la clé `default_project`.
+A l'ajout d'un nouveau projet, n'oubliez pas de l'ajouter dans le routing se trouvant dans `app/config/routing.yml`
 
 
 ## Controller
@@ -144,7 +146,7 @@ Recuperez le message dans la vue twig: `{{ flash|raw }}` , renvoie une div `<div
 
 `$this->redirectUrl('home_index', array("id"=>5,"slug"=>"foo"));` 
 
-* `home_index` est le nom de la route vers laquelle vous voulez rediriger;
+* `home_index` est le nom de la route vers laquelle vous voulez rediriger (la route des projets et non celle de la config);
 * `array` Si votre route a besoin de paramètre, indiquez les du même nom que les variables `{...}` qui se trouve dans `routing.yml` dans ce tableau;
 
 ### Envoi de mail
@@ -232,7 +234,7 @@ Dans les vues, le lien pour accèder aux ressources sera
 
 ## Routing
 
-Le fichier de config de routing se trouve à `src/ressources/config/routing.yml`.
+Le fichier de config de routing se trouve à `src/project/*VOTRE PROJET*/config/routing.yml`.
 
 ```yml
 view_article:
@@ -244,13 +246,14 @@ view_article:
 * `pattern` => Est le lien subjectif désiré avec ces paramètres.
 * `controller` => Est le chemin vers le project/controller/action. 
 
-{_lang} peut être absent dans le l'url définitif.
+{_lang} peut être absent dans l'url définitif.
 
 ### lien
 
 Dans les vues, une fonction twig permet de créer des liens dynamiquement.
 `<a href="{{path("view_article",{"slug": "mon-beau-slug", "id": "9"})}}">cliquez moi</a>`
 le parametre {_lang} n'est pas obligatoire, si il est vide, il ajoutera automatiquement la langue de la session.
+le nom de la route est celle qui se trouve dans le fichier config de votre projet et non la route du dossier config.
 
 retournera:
 `<a href="_ROOT_/_session-langue_/article/mon-beau-slug_9">cliquez moi</a>`

@@ -5,7 +5,7 @@
 
 		function indexAction(){
 /*			if(!$this->ROLE('admin')){
-				$this->redirectUrl('public:index.html.twig'); 
+				$this->redirectUrl('home_index'); 
 			}*/
 
 			$this->render(array(

@@ -2,4 +2,4 @@ RewriteEngine on
 
 RewriteCond %{REQUEST_URI} !(css|js|fonts|images)
 
-RewriteRule (.*) core/Kintoun.php/$1 [L]
+RewriteRule (.*) app/core/Kintoun.php/$1 [L]

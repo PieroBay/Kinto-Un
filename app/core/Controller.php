@@ -34,26 +34,33 @@
 			}
 		}
 
-		public function redirectUrl($url, $data=array()){
-			$route = spyc_load_file(ROOT.'src/ressources/config/routing.yml');
+		public function redirectUrl($routeName, $data=array()){
+			$route = spyc_load_file(ROOT.'app/config/routing.yml');
+		
+			foreach ($route as $key => $value) {
+				$project = $route[$key]['project'];
+				$linkP = $route[$key]['pattern'];
+				$routeP = spyc_load_file(ROOT.'src/project/'.$project.'/config/routing.yml');
 
-			try{
-				if(!isset($route[$url])) throw new Exception("Aucune route n'a été trouvé");
-			}catch(Exception $e){
-				Error::renderError($e);
-				exit();
-			}
+				if(isset($routeP[$routeName])){
+					$link = $routeP[$routeName];
+					foreach ($data as $k => $v){
+						$linkP = preg_replace('#\{'.$k.'\}#', $v, $linkP);
+						$link['pattern'] = preg_replace('#\{'.$k.'\}#', $v, $link['pattern']);
+					}
+					if(strpos($link['pattern'], "{_lang}") !== false){
+						$link['pattern'] = preg_replace('#\{_lang\}#', $_SESSION['lang'], $link['pattern']);
+					}
+					if(strpos($linkP, "{_lang}") !== false){
+						$linkP = preg_replace('#\{_lang\}#', $_SESSION['lang'], $linkP);
+					}
 
-			$pattern = $route[$url]['pattern'];
-
-			if (strpos($pattern, "{") !== false){
-				if(strpos($pattern, "{_lang}") !== false){
-					$pattern = preg_replace('#\{_lang\}#', $_SESSION['lang'], $pattern);
+					$link = WEBROOT.trim($linkP,'/').'/'.trim($link['pattern'],'/');
+					$link = preg_replace('#//#', '/', $link);
+					header('Location: /'.trim($link,'/').'/');
 				}
+			}		
 
-				$pattern = preg_replace_callback('#{(\w+)}#', function($m) use($data){ return $data[$m[1]]; }, $pattern);
-			}
-			header('Location: '.WEBROOT.trim($pattern,'/'));
 		}
 
 		public function render($data=array()){
@@ -120,7 +127,7 @@
 
 		public function loadModel($table){
 			$tableModel = $table.'Model';
-			require_once(ROOT.'core/Model.php');
+			require_once(ROOT.'app/core/Model.php');
 			$this->$table = new Model($this->bdd, $table, $this->connectYml);			
 			if(file_exists(ROOT.'src/project/'.$this->info['Info']['Project'].'/models/'.$tableModel.'.php')){
 				require_once(ROOT.'src/project/'.$this->info['Info']['Project'].'/models/'.$tableModel.'.php');
