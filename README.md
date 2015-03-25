@@ -1,5 +1,5 @@
 # Kinto'un [Framework]
-v 1.2.0
+v 1.2.1
 
 Nécessite PHP 5.4 ou +
 
@@ -78,9 +78,11 @@ Pour utiliser ces requetes dans le controller, utilisez `$this->table1Model->enr
 
 Requètes principales:
 
-* `$this->table1->delete($id)` => DELETE FROM $table WHERE id = $id
+* `$this->table1->delete($data)` => DELETE FROM $table WHERE $data. Si $data est int, il supprimera via l'id, sinon justifier le where. "user='John'"
 
 * `$this->table1->findAll(array())` => Dans le tableau, mettre des conditions => "where", "fields", "limit", "order"
+
+* `$this->table1->findOne($where)` => $where = "user='john'". Retournera un objet.
 
 * `$this->table1->findById($id)` => SELECT * FROM $table WHERE id = $id
 
@@ -151,7 +153,7 @@ Recuperez le message dans la vue twig: `{{ flash|raw }}` , renvoie une div `<div
 
 ### Envoi de mail
 
-`$this->SendMail->send($to,$fromName,$fromMail,$subject,$message);`
+`$this->sendMail->send($to,$fromName,$fromMail,$subject,$message);`
 
 (Les messages peuvent contenir de l'html)
 

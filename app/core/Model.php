@@ -50,6 +50,7 @@
 		public function save($data=null, $upload=array(
 			"target"    =>	"upload",
 			"table_name"=>	"image",
+			"edit" 		=>	"add",
 			"champ_name"=>	false, 
 			"maxSize"   => 	2097152,
 			"widthMax"  => 	100,
@@ -66,33 +67,54 @@
 
 			if($_FILES){
 				$token = time();
-				
-				$uploading = new Upload($upload,$this->bdd,$token); 			# init la class
-				foreach ($_FILES as $k => $v) { 
-					if(is_array($v['name'])){ 							# Si un multiUpload
-						$file = $uploading->multiple($_FILES[$k]);		# return array
-					}else{												# Si un simple upload ou plusieur champs file
-						$file = $uploading->single($_FILES[$k]);		# return array
+				$idF = 0;
+				if(isset($data['id'])){
+					$req2 = $this->bdd->query("SELECT * FROM ".$this->table." WHERE id=".$data['id']); # si update, récupere le token de la table
+					$data2 = $req2->fetch(PDO::FETCH_OBJ);
+					$token = $data2->$upload['champ_name'];
+					$idF=$data['id'];
+				}
+				$uploading = new Upload($upload,$this->bdd,$token,$idF); 		# init la class
+				if(COUNT($_FILES) > 1){
+					$newArray = [];
+					foreach ($_FILES as $key => $value) {
+						if(!empty($_FILES[$key]['name'])){
+							foreach($_FILES[$key] as $k => $v) {
+								$newArray[$upload['champ_name']][$k][] = $v;
+							    #$results[$upload['champ_name']][$k] = array_column($_FILES, $k);
+							}
+						}
 					}
+					$_FILES = $newArray;
+				}
 
-					if($file['verif']){  									# Si tout est ok pour l'upload
-						if($upload['champ_name']){ 							# Si avec table champ image = token (dossier)
-							unset($data[$k]);								# Enleve le(s) post file
-							$data[$upload['champ_name']] = $file['token'];	# et tu l'init avec le nom du dossier
-						}else{ 												# 
-							$data[$file[$k]] = $file['file_name'];			# Sinon le post file = le nom du fichier (si image dans la meme table)
+				foreach ($_FILES as $k => $v) { 
+					if($_FILES[$k]['name'] != "" && is_string($_FILES[$k]['name'] != "") || $_FILES[$k]['name'][0] != ""){ # si champs non vide
+						if(is_array($v['name'])){ 							# Si un multiUpload
+							$file = $uploading->multiple($_FILES[$k]);		# return array
+						}else{												# Si un simple upload ou plusieur champs file
+							$file = $uploading->single($_FILES[$k]);		# return array
 						}
-					}else{
-						$this->setAllOk(false); 							# Genere l'erreur
-						$this->setError($file['message']);					# Genere le message d'erreur
 
-						if($upload['champ_name']){ 							# si avec table champ image = token (dossier)
-							unset($data[$k]);								# Enleve le(s) post file
-							$data[$upload['champ_name']]  = "";				# et tu l'init vide
-						}else{												#
-							$data[$file[$k]] = "";							# Sinon le post = vide
+						if($file['verif']){  									# Si tout est ok pour l'upload
+							if($upload['champ_name']){ 							# Si avec table champ image = token (dossier)
+								unset($data[$k]);								# Enleve le(s) post file
+								$data[$upload['champ_name']] = $file['token'];	# et tu l'init avec le nom du dossier
+							}else{ 												# 
+								$data[$file[$k]] = $file['file_name'];			# Sinon le post file = le nom du fichier (si image dans la meme table)
+							}
+						}else{
+							$this->setAllOk(false); 							# Genere l'erreur
+							$this->setError($file['message']);					# Genere le message d'erreur
+
+							if($upload['champ_name']){ 							# si avec table champ image = token (dossier)
+								unset($data[$k]);								# Enleve le(s) post file
+								$data[$upload['champ_name']]  = "";				# et tu l'init vide
+							}else{												#
+								$data[$file[$k]] = "";							# Sinon le post = vide
+							}
 						}
-					}	
+					}
 				}
 			}
 
@@ -159,6 +181,21 @@
 			return $d;
 		}
 
+		public function findOne($where=null){
+			try{
+     	   		if(!isset($where) || is_array($where)) throw new Exception("Aucune data n'a été envoyé");
+     	   	}catch(Exception $e){
+     	   		Error::renderError($e);
+     	   		exit();
+     	   	}
+
+			$sql = "SELECT * FROM ".$this->table." WHERE $where";
+			
+			$req = $this->bdd->query($sql);
+			$data = $req->fetch(PDO::FETCH_OBJ);
+			return $data;
+		}
+		
 		public function findById($id=null){
 			try{
      	   		if(!isset($id) || !is_numeric($id) || is_array($id)) throw new Exception("Aucun ID n'a été envoyé");
@@ -173,15 +210,19 @@
 			return $data;
 		}
 
-		public function delete($id=null){
+		public function delete($data=null){
 			try{
-     	   		if(!isset($id) || !is_numeric($id) || is_array($id)) throw new Exception("Aucun ID n'a été envoyé");
+     	   		if(!isset($data) || is_array($data)) throw new Exception("Aucun ID n'a été envoyé");
      	   	}catch(Exception $e){
      	   		Error::renderError($e);
      	   		exit();
      	   	}
-
-			$sql = "DELETE FROM ".$this->table." WHERE id = $id";
+     	   	if(is_numeric($data)){
+     	   		$where = "id = '".$data."'";
+     	   	}else{
+     	   		$where = $data;
+     	   	}
+			$sql = "DELETE FROM ".$this->table." WHERE $where";
 			$this->bdd->exec($sql);
 		}
 
