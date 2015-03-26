@@ -6,6 +6,11 @@
         "twig/twig": "1.16.*@dev",
         "mustangostang/spyc": "0.5.*@dev"
     },
+    "autoload": {
+        "psr-4": {
+            "Kintoun\\": "libs/"
+        }
+    },
     "authors": [
         {
             "name": "Piero Bay",
