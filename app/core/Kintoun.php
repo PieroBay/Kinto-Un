@@ -1,6 +1,6 @@
 <?php
 session_start();
-	#ini_set('display_errors', 1);
+	ini_set('display_errors', 0);
 	define('WEBROOT', str_replace('app/core/Kintoun.php', '', $_SERVER['SCRIPT_NAME']));
 	define('ROOT', str_replace('app/core/Kintoun.php', '', $_SERVER['SCRIPT_FILENAME']));
 	require_once(ROOT.'vendor/autoload.php');
@@ -20,7 +20,10 @@ session_start();
 	spl_autoload_register(function($class){
 	    require_once(ROOT.'libs/'.$class.'.php');
 	});
-	
+
+	$Security = new Security($configFile);
+	$Security->newToken();
+
 	$_SESSION['ROLE']  = !isset($_SESSION['ROLE']) ? 'visiteur' : $_SESSION['ROLE'];
 	$_SESSION['local'] = $config['local'];
 	$_SESSION['lang']  = (!isset($_SESSION['lang']))? $config['local'] : $_SESSION['lang'];
@@ -32,6 +35,7 @@ session_start();
 			"ROLE"    => $_SESSION['ROLE'],
 			"local"   => $_SESSION['local'],
 			"lang"    => $_SESSION['lang'],
+			"token"   => $_SESSION['KU_TOKEN'],
 			"all"     => $_SESSION,
 		),
 		"Info"	=>	array(
@@ -44,7 +48,7 @@ session_start();
 		),
 	);
 
-	$setError = new Error($bdd,$info, $configFile['connection']);
+	$setError = new Error($bdd,$info, $configFile);
 	Routing::start($link,$setError);
 	$urlParams = Routing::$params;
 
@@ -62,7 +66,7 @@ session_start();
 
 	require(ROOT.'src/project/'.$info["Info"]['Project'].'/controller/'.$info["Info"]['ControllerFolder'].'.php');
 
-	$controllerFolder = new $info["Info"]['ControllerFolder']($bdd, $info, $configFile['connection']);
+	$controllerFolder = new $info["Info"]['ControllerFolder']($bdd, $info, $configFile);
 
 	if(method_exists($controllerFolder, $info["Info"]['ActionComplete']) && is_array($urlParams['parametres'])){
 		call_user_func_array(array($controllerFolder, $info["Info"]['ActionComplete']), $urlParams['parametres']);

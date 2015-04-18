@@ -6,11 +6,11 @@
 		protected $connexion = false;
 		protected $allOk = true;
 		protected $error = "";
-		protected $connectYml;
+		protected $configYml;
 
-		public function __construct(PDO $bdd, $table, $connectYml){
+		public function __construct(PDO $bdd, $table, $configYml){
 			$this->setBdd($bdd);
-			$this->connectYml = $connectYml;
+			$this->configYml = $configYml;
 			$this->setTable($table);
 		}
 
@@ -124,13 +124,13 @@
 				if(isset($data['valider'])){unset($data['valider']);};
 				foreach ($data as $k => $v) {
 					if($k != "id"){
-						$k = strip_tags($k);
-						$v = strip_tags($v);
+						$k = htmlspecialchars($k, ENT_QUOTES);
+						$v = htmlspecialchars($v, ENT_QUOTES);
 						$sql .= "$k='$v',";
 					}
 				}
 				$sql = substr($sql, 0,-1);
-				$i = strip_tags($data['id']);
+				$i = htmlspecialchars($data['id'], ENT_QUOTES);
 				$sql .= "WHERE id = ".$i;
 			}else{
 				$sql = "INSERT INTO ".$this->table."(";
@@ -138,13 +138,15 @@
 				if(isset($data['uniqid'])){unset($data['uniqid']);};
 				if(isset($data['valider'])){unset($data['valider']);};
 				foreach ($data as $k => $v) {
-					$k = strip_tags($k);
+					$k = htmlspecialchars($k, ENT_QUOTES);
+					$v = htmlspecialchars($v, ENT_QUOTES);
 					$sql .= "$k,";
 				}
 				$sql = substr($sql, 0,-1);
 				$sql .= ") VALUES (";
 				foreach ($data as $k => $v) {
-					$k = strip_tags($k);
+					$k = htmlspecialchars($k, ENT_QUOTES);
+					$v = htmlspecialchars($v, ENT_QUOTES);
 					$sql .= ":$k,";
 				}
 				$sql = substr($sql, 0,-1);
@@ -203,7 +205,7 @@
      	   		Error::renderError($e);
      	   		exit();
      	   	}
-
+			$id = htmlspecialchars($id, ENT_QUOTES);
 			$sql = "SELECT * FROM ".$this->table." WHERE id= $id";
 			$req = $this->bdd->query($sql);
 			$data = $req->fetch(PDO::FETCH_OBJ);
@@ -218,6 +220,7 @@
      	   		exit();
      	   	}
      	   	if(is_numeric($data)){
+     	   		$data = htmlspecialchars($data, ENT_QUOTES);
      	   		$where = "id = '".$data."'";
      	   	}else{
      	   		$where = $data;
@@ -234,16 +237,15 @@
 				exit();
 			}
 
-			$login = $this->connectYml['login'];
-			$password = $this->connectYml['password'];
-
-			$connect = strip_tags($d[$login]);
-			$pwd = strip_tags($d[$password]);
+			$login = $this->configYml['connection']['login'];
+			$password = $this->configYml['connection']['password'];
+			$connect = htmlspecialchars($connect, ENT_QUOTES);
+			$pwd = htmlspecialchars($pwd, ENT_QUOTES);
 			$sql = "SELECT *, COUNT(*) AS nb FROM ".$this->table." WHERE ".$login." = '$connect' AND ".$password." = '$pwd'";
 			$req = $this->bdd->query($sql);
 			$data = $req->fetch(PDO::FETCH_OBJ);
 			if($data->nb > 0){
-				$sess = explode("|", $this->connectYml['session']);
+				$sess = explode("|", $this->configYml['connection']['session']);
 				foreach ($sess as $k => $v) {
 					if($v != 'role'){
 						$_SESSION[$v] = $data->$v;
@@ -251,7 +253,7 @@
 				}
 				$_SESSION['ROLE'] = $data->role;
 
-				if($this->connectYml['remember']){
+				if($this->configYml['connection']['remember']){
 					setcookie("ku_login", $d[$login]);
 					setcookie("ku_pwd", $d[$password]);
 				}
@@ -263,12 +265,13 @@
 		}
 
 		public function deconnexion(){
-			$sess = explode("|", $this->connectYml['session']);
+			$sess = explode("|", $this->configYml['connection']['session']);
 			foreach ($sess as $k => $v) {
 				if($v != 'role'){
 					unset($_SESSION[$v]);
 				}
 			}
+			unset($_SESSION['KU_TOKEN']);
 			$_SESSION['ROLE'] = 'visiteur';
 		}
 	}

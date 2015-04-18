@@ -1,5 +1,5 @@
 # Kinto'un [Framework]
-v 1.2.2
+v 1.3.0
 
 Nécessite PHP 5.4 ou +
 
@@ -8,7 +8,7 @@ Nécessite PHP 5.4 ou +
 
 ## Installation
 
-Extraire le zip à la racine de votre site. et renomé le dossier.
+Extraire le zip à la racine de votre site et renomer le dossier.
 Si vous déplacez le contenu du dossier, /!\ N'oubliez pas le `.htaccess` !
 
 Configurez le dossier `Config.yml` se trouvant à `app/config/Config.yml`, spécifiez correctement les champs demandés.
@@ -24,9 +24,13 @@ Pour utiliser Smarty, le rajouter dans `composer.json`.
 
 ## Fichier config
 
-Le fichier de config `Config.yml` se trouvant à `app/config/Config.yml` vous permettra de vous connecter à la DB, de choisir le template (none/php, Twig ou Smarty), de choisir la langue local...
+Le fichier de config `Config.yml` se trouvant à `app/config/Config.yml` vous permettra de: 
 
-Il permet également de configurer vos connexions. (plus d'info dans la section Connexion).
+* Vous connecter à la DB, de choisir le template (none/php, Twig ou Smarty), de choisir la langue local...
+
+* Générer une partie du token qui sera crypté ensuite pour sécurisé votre site de la faille CSRF et choisir le délais (en minute) d'expiration du token. (optionel, vous pouvez laisser les deux champs vide). 
+
+* Configurer vos connexions. (plus d'info dans la section Connexion).
 
 
 ## Project
@@ -42,12 +46,11 @@ A l'ajout d'un nouveau projet, n'oubliez pas de l'ajouter dans le routing se tro
 
 ## Controller
 
-Seulement 2 Controllers
+Les controllers se trouvent dans `src/project/*votre projet*/controller`.
 
-* PublicController
-* AdminController
+Les noms de vos controller auront le même nom que les dossiers contenant vos vues dans le dossier `views`.
 
-Dans les pages Controller (publicController et adminController) créez des actions, le nom des actions auront le même nom que les pages dans les vues **(sans 'Action' à la fin)**.
+Dans les Controller créez des actions, le nom des actions auront le même nom que les pages dans les vues **(sans 'Action' à la fin)**.
 
 ![image](http://img15.hostingpics.net/pics/932424action.png)
 
@@ -115,6 +118,11 @@ if($this->table1->allOk()){
 * `$this->table1->lastId()` ($this->table->lastId()) => Récupere le dernier id ajouté si un save() a été utilisé juste avant
 
 * `if($_POST){}` => test si un post a été fait
+
+* `if($this->is_valid()){}` => vérifie si le token du formulaire est valide (contrer la faille CSRF) et vérifie si il y a un $_POST.
+
+##### Champs hidden token
+Pour ajouter votre token dans vos formulaires, ajoutez la fonction Twig/Smarty `{{ CSRF_TOKEN() }}` avant votre submit.
 
 
 ### Envoyer des données de la DB à la vue
@@ -286,7 +294,7 @@ Dans la vue, pour traduire vos sentences, les manières varient selon le templat
 
 Créez votre fichier php dans le dossier `libs/template/extensions/`.
 Danse ce fichier, créez votre fonction qui servira de filtre ou de fonction.
-Votre fichier doit avoir le même nom que votre fonction et se terminer par _function ou _filter et ce nom servira comme filtre/fonction pour tout les templates.
+Votre fichier doit avoir le même nom que votre fonction et se terminer par `-function` ou `-filter` et ce nom servira comme filtre/fonction pour tout les templates.
 
 ## Personnalisez la page 404 et les autres pages d'erreur
 
@@ -296,13 +304,13 @@ Le controller `errorController.php` se trouvant à `core/errors/errorController.
 
 ## XML
 
-Générer un xml avec la fonction `$this->renderXml($array,$unset,$rename)`.
+Générer un xml avec la fonction `Request::renderXml($array,$unset,$rename)`.
 
 Cette fonction prend 3 paramètres dont 2 facultatifs, tous des tableaux.
 
 * $array => le premier paramètre est votre tableau de donnée (array/object);
 * $unset => (facultatif) liste des clés de votre tableau que vous voulez supprimer à la génération du XML. array('id','nom');
-* $rename => (facultatif) renomer les balises de votre xml. array('id_table'=>'id'); modifiera <id_table>1</id_table> en < id>1< /d>
+* $rename => (facultatif) renomer les balises de votre xml. array('id_table'=>'id'); modifiera <id_table>1</id_table> en < id>1< /id>
 
 ## REST
 
@@ -315,7 +323,7 @@ Dans le controller, testez la requète pour savoir de quel type elle est.
 * DELETE => Request::DELETE();
 
 Toute les requètes doit être testé avec une condition et return true si la requète utilisé est celle de la condition. Une condition n'est pas obligatoire uniquement pour GET et peut envoyer directement un tableau comme option.
-Pour retourner un JSON utiliser $this->renderJson($data);
+Pour retourner un JSON utiliser $Request::renderJson($data);
 
 Pour récupérer la valeur envoyer par une requète:
 * POST => $_POST

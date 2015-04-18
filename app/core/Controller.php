@@ -6,18 +6,23 @@
 		protected $info;
 		protected $sendMail;
 		protected $_PUT;
-		protected $connectYml;
+		protected $configYml;
 		protected $xml;
+		protected $isValid;
 
-		public function __construct($bdd, $info, $connectYml){
-			$this->xml = $info['Info']['Output'];
-			$this->info = $info;
-			$this->connectYml = $connectYml;
-			$this->bdd = $bdd;
-			$session = new Session();
-			$mail = new SendMail();
-			$this->sendMail = $mail;
-			$this->Session = $session;
+		public function __construct($bdd, $info, $configYml){
+			$Security = new Security($configYml);
+			$session  = new Session();
+			$mail     = new SendMail();
+			
+			$this->xml       = $info['Info']['Output'];
+			$this->info      = $info;
+			$this->configYml = $configYml;
+			$this->bdd       = $bdd;
+			$this->isValid   = $Security->isValid();
+			$this->sendMail  = $mail;
+			$this->Session   = $session;
+			
 			if(isset($this->table)){
 				foreach ($this->table as $v) {
 					$this->loadModel($v);
@@ -89,49 +94,13 @@
 			}
 		}
 
-		public function renderJson($data=array()){
-			header('Content-Type: application/json');
-			exit(json_encode($data));
-		}
-
-		public function renderXml($data=array(),$unset=null,$rename=null){
-			$d = array();
-			foreach ($data as $k => $v) {
-				$data[$k] = (array)$data[$k];
-
-				if(isset($unset) && is_array($unset)){
-					foreach ($unset as $key) {
-						unset($data[$k][$key]);
-					}
-				}
-				if(isset($rename) && is_array($rename)){
-					foreach ($rename as $key => $value) {
-						$data[$k][$value] = $data[$k][$key];
-						unset($data[$k][$key]);
-					}
-				}
-
-				$d[] = array_flip($data[$k]);
-			}
-
-			header('Content-Type: application/xml');
-			$xml = new SimpleXMLElement('<items/>');
-			
-			foreach ($d as $key => $v) {
-				$node = $xml->addChild('item');
-				array_walk_recursive($v, array ($node, 'addChild'));
-			}
-			
-			exit($xml->asXML());
-		}
-
 		public function loadModel($table){
 			$tableModel = $table.'Model';
 			require_once(ROOT.'app/core/Model.php');
-			$this->$table = new Model($this->bdd, $table, $this->connectYml);			
+			$this->$table = new Model($this->bdd, $table, $this->configYml);			
 			if(file_exists(ROOT.'src/project/'.$this->info['Info']['Project'].'/models/'.$tableModel.'.php')){
 				require_once(ROOT.'src/project/'.$this->info['Info']['Project'].'/models/'.$tableModel.'.php');
-				$this->$tableModel = new $tableModel($this->bdd, $table, $this->connectYml);
+				$this->$tableModel = new $tableModel($this->bdd, $table, $this->configYml);
 			}
 		}
 	}

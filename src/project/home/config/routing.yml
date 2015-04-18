@@ -1,7 +1,3 @@
 home_index:
     pattern:  /
     controller: home:public:index
-
-home_admin_index:
-    pattern:  /admin
-    controller: home:admin:index

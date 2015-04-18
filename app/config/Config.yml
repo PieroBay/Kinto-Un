@@ -7,6 +7,10 @@ configuration:
     local: fr
     template: Twig
 
+security:
+    token: 
+    expire: 30
+
 connection:
     login: name
     password: password

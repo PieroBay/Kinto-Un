@@ -5,7 +5,7 @@
 	while(false !== ($fichier = readdir($dossier))){
 		if($fichier != '.' && $fichier != '..' && $fichier != 'index.php' && $fichier != '.DS_Store' && $fichier != '.htaccess'){
 			$nomExtension = explode('.php', $fichier)[0];
-			$type = explode('_', $nomExtension);
+			$type = explode('-', $nomExtension);
 			require ROOT.'libs/template/extensions/'.$fichier;
 			if($type[1] == "function"){
 				switch (strtolower($template)){

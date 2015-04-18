@@ -8,6 +8,4 @@
 ehthumbs.db
 Thumbs.db
 
-/vendor/smarty/
-/vendor/twig/
-/vendor/mustangostang/
+/vendor/

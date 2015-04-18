@@ -57,4 +57,40 @@ class Request{
 			self::$_PUT['id'] = $rid;
 		}
 	}
+
+	public static function renderJson($data=array()){
+		header('Content-Type: application/json');
+		exit(json_encode($data));
+	}
+
+	public static function renderXml($data=array(),$unset=null,$rename=null){
+		$d = array();
+		foreach ($data as $k => $v) {
+			$data[$k] = (array)$data[$k];
+
+			if(isset($unset) && is_array($unset)){
+				foreach ($unset as $key) {
+					unset($data[$k][$key]);
+				}
+			}
+			if(isset($rename) && is_array($rename)){
+				foreach ($rename as $key => $value) {
+					$data[$k][$value] = $data[$k][$key];
+					unset($data[$k][$key]);
+				}
+			}
+
+			$d[] = array_flip($data[$k]);
+		}
+
+		header('Content-Type: application/xml');
+		$xml = new SimpleXMLElement('<items/>');
+		
+		foreach ($d as $key => $v) {
+			$node = $xml->addChild('item');
+			array_walk_recursive($v, array ($node, 'addChild'));
+		}
+		
+		exit($xml->asXML());
+	}
 }
