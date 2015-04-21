@@ -1,6 +1,7 @@
 {
     "name": "kinto-un/framework",
     "type": "project",
+    "description": "The Kinto'Un PHP Framework",
     "require": {
         "php": ">=5.4",
         "twig/twig": "1.16.*@dev",
