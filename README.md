@@ -1,5 +1,5 @@
 # Kinto'un [Framework]
-v 1.3.1
+v 1.3.2
 
 Nécessite PHP 5.4 ou +
 
@@ -8,14 +8,24 @@ Nécessite PHP 5.4 ou +
 
 ## Installation
 
+### 1. Installation avec Composer:
+
+Lancer une des commandes: 
+
+* `php composer.phar create-project --prefer-dist kintoun/kintoun:@dev [app_name]`
+* `composer create-project --prefer-dist kintoun/kintoun:@dev [app_name]`
+
+
+### 2. Installation depuis zip:
+
 Extraire le zip à la racine de votre site et renomer le dossier.
 Si vous déplacez le contenu du dossier, /!\ N'oubliez pas le `.htaccess` !
-
-Configurez le dossier `Config.yml` se trouvant à `app/config/Config.yml`, spécifiez correctement les champs demandés.
 
 ### Composer
 
 **/!\ Faire un update de Composer pour installer les templates où le framework ne fonctionnera pas /!\** 
+
+(l'installation avec Composer télécharge automatiquement les fichiers nécessaires).
 
 plus d'info sur Composer => `https://getcomposer.org/doc/00-intro.md`
 
