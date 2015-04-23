@@ -239,8 +239,8 @@
 
 			$login = $this->configYml['connection']['login'];
 			$password = $this->configYml['connection']['password'];
-			$connect = htmlspecialchars($connect, ENT_QUOTES);
-			$pwd = htmlspecialchars($pwd, ENT_QUOTES);
+			$connect = htmlspecialchars($d[$login], ENT_QUOTES);
+			$pwd = htmlspecialchars($d[$password], ENT_QUOTES);
 			$sql = "SELECT *, COUNT(*) AS nb FROM ".$this->table." WHERE ".$login." = '$connect' AND ".$password." = '$pwd'";
 			$req = $this->bdd->query($sql);
 			$data = $req->fetch(PDO::FETCH_OBJ);

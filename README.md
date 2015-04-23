@@ -1,5 +1,5 @@
 # Kinto'un [Framework]
-v 1.3.2
+v 1.3.3
 
 Nécessite PHP 5.4 ou +
 
@@ -12,8 +12,8 @@ Nécessite PHP 5.4 ou +
 
 Lancer une des commandes: 
 
-* `php composer.phar create-project --prefer-dist kintoun/kintoun:@dev [app_name]`
-* `composer create-project --prefer-dist kintoun/kintoun:@dev [app_name]`
+* `php composer.phar create-project --prefer-dist kintoun/kintoun [app_name]`
+* `composer create-project --prefer-dist kintoun/kintoun [app_name]`
 
 
 ### 2. Installation depuis zip:

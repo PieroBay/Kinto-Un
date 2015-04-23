@@ -17,17 +17,19 @@ class Routing{
 				$pattern = ($patternP != "" && self::$route[$k]['pattern'] == "/")? trim(self::$route[$k]['pattern'],'/'): self::$route[$k]['pattern'];
 				$pattern = $patternP.$pattern;
 				$controller = self::$route[$k]['controller'];
+				$valP = $val['pattern'].$v['pattern'];
 				$routeName = $k;
 				$pattern_tmp = $pattern;
 				$patternEx = explode('/', trim($pattern,'/'));
 				foreach($patternEx as $key => $value){
-					if($value == "{_lang}"){
+					if($value == "{_lang}"){ # si langue dans pattern
 						if(isset($linkEx[$key]) && (file_exists(ROOT.'src/ressources/translate/'.$linkEx[$key].'.yml') || $linkEx[$key] == $_SESSION['local'])){ # la langue est dans l'url
 							$lang = $linkEx[$key];
 							$_SESSION['lang'] = $lang;
 						}else{
 							$lang = $_SESSION['lang'];
-							$pattern_tmp = ($v['pattern'] == "/{_lang}")? preg_replace('#\{_lang\}#', '', $pattern_tmp): preg_replace('#\/\{_lang\}#', '', $pattern_tmp);						
+							$pattern_tmp = ($valP == "/{_lang}")? preg_replace('#\{_lang\}#', '', $pattern_tmp): preg_replace('#\/\{_lang\}#', '', $pattern_tmp);
+							$pattern_tmp = ($pattern_tmp == "")? '/' : $pattern_tmp ;			
 						}
 					}
 				}
@@ -63,10 +65,10 @@ class Routing{
 				}
 			}
 		}
-
 		if(empty(self::$params['action'])){
 			$setError->generate('404',"La page que vous tentez d'atteindre n'existe pas ou n'est plus disponible.");
 		}
+
 		return self::$params;
 	}
 }
