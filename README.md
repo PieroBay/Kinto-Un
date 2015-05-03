@@ -1,5 +1,5 @@
 # Kinto'un [Framework]
-v 1.3.3
+v 1.3.4
 
 Nécessite PHP 5.4 ou +
 
@@ -91,11 +91,11 @@ Pour utiliser ces requetes dans le controller, utilisez `$this->table1Model->enr
 
 Requètes principales:
 
-* `$this->table1->delete($data)` => DELETE FROM $table WHERE $data. Si $data est int, il supprimera via l'id, sinon justifier le where. "user='John'"
+* `$this->table1->delete($data)` => DELETE FROM $table WHERE $data. Si $data est int, il supprimera via l'id, sinon justifier le where en array. `array("user"=>"Marc")`
 
 * `$this->table1->findAll(array())` => Dans le tableau, mettre des conditions => "where", "fields", "limit", "order"
 
-* `$this->table1->findOne($where)` => $where = "user='john'". Retournera un objet.
+* `$this->table1->findOne($where)` => $where = array("name"=>"john","surname"=>"Doe"). Retournera un objet.
 
 * `$this->table1->findById($id)` => SELECT * FROM $table WHERE id = $id
 

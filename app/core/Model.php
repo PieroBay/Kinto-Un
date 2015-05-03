@@ -120,33 +120,33 @@
 
 			if(isset($data['id']) && !empty($data['id'])){
 				$sql = "UPDATE ".$this->table." SET ";
-				if(isset($data['uniqid'])){unset($data['uniqid']);};
-				if(isset($data['valider'])){unset($data['valider']);};
+						if(isset($data['uniqid'])){unset($data['uniqid']);};
+						if(isset($data['valider'])){unset($data['valider']);};
 				foreach ($data as $k => $v) {
 					if($k != "id"){
-						$k = htmlspecialchars($k, ENT_QUOTES);
-						$v = htmlspecialchars($v, ENT_QUOTES);
-						$sql .= "$k='$v',";
+						$k = strip_tags($k);
+						$v = strip_tags($v);
+						$sql .= "$k=:$k,";
 					}
 				}
 				$sql = substr($sql, 0,-1);
-				$i = htmlspecialchars($data['id'], ENT_QUOTES);
-				$sql .= "WHERE id = ".$i;
+				$i = strip_tags($data['id']);
+				$sql .= " WHERE id = :id";
 			}else{
 				$sql = "INSERT INTO ".$this->table."(";
 				unset($data['id']);
-				if(isset($data['uniqid'])){unset($data['uniqid']);};
-				if(isset($data['valider'])){unset($data['valider']);};
+						if(isset($data['uniqid'])){unset($data['uniqid']);};
+						if(isset($data['valider'])){unset($data['valider']);};
 				foreach ($data as $k => $v) {
-					$k = htmlspecialchars($k, ENT_QUOTES);
-					$v = htmlspecialchars($v, ENT_QUOTES);
+					$k = strip_tags($k);
+					$v = strip_tags($v);
 					$sql .= "$k,";
 				}
 				$sql = substr($sql, 0,-1);
 				$sql .= ") VALUES (";
 				foreach ($data as $k => $v) {
-					$k = htmlspecialchars($k, ENT_QUOTES);
-					$v = htmlspecialchars($v, ENT_QUOTES);
+					$k = strip_tags($k);
+					$v = strip_tags($v);
 					$sql .= ":$k,";
 				}
 				$sql = substr($sql, 0,-1);
@@ -155,7 +155,14 @@
 
 			if($this->allOk){
 				$req = $this->bdd->prepare($sql);
-				$req->execute($data);
+
+				$c = array();
+				foreach ($data as $k => $v) {
+					$key = ':'.$k;
+					$c[$key] = $v;
+				}
+
+				$req->execute($c);
 				if(!isset($data['id'])){
 					$this->setId($this->bdd->lastInsertId());
 				}else{
@@ -185,15 +192,26 @@
 
 		public function findOne($where=null){
 			try{
-     	   		if(!isset($where) || is_array($where)) throw new Exception("Aucune data n'a été envoyé");
+     	   		if(!isset($where) || !is_array($where)) throw new Exception("Aucune data n'a été envoyé");
      	   	}catch(Exception $e){
      	   		Error::renderError($e);
      	   		exit();
      	   	}
 
-			$sql = "SELECT * FROM ".$this->table." WHERE $where";
-			
-			$req = $this->bdd->query($sql);
+			$sql = "SELECT * FROM ".$this->table." WHERE ";
+
+			foreach ($where as $k => $v) {
+				$sql .= "$k=:$k AND ";
+			}
+			$sql = trim($sql, " AND ");
+			$req = $this->bdd->prepare($sql);
+
+			$c = array();
+			foreach ($where as $k => $v) {
+				$key = ':'.$k;
+				$c[$key] = $v;
+			}
+			$req->execute($c);
 			$data = $req->fetch(PDO::FETCH_OBJ);
 			return $data;
 		}
@@ -205,28 +223,43 @@
      	   		Error::renderError($e);
      	   		exit();
      	   	}
-			$id = htmlspecialchars($id, ENT_QUOTES);
-			$sql = "SELECT * FROM ".$this->table." WHERE id= $id";
-			$req = $this->bdd->query($sql);
+			$id = strip_tags($id);
+			$sql = "SELECT * FROM ".$this->table." WHERE id = :id";
+			$req = $this->bdd->prepare($sql);
+			$req->execute(array(':id' => $id));
+
 			$data = $req->fetch(PDO::FETCH_OBJ);
 			return $data;
 		}
 
 		public function delete($data=null){
 			try{
-     	   		if(!isset($data) || is_array($data)) throw new Exception("Aucun ID n'a été envoyé");
+     	   		if(!isset($data) || is_string((int) $data)) throw new Exception("Mauvaise donnée envoyé à la requète");
      	   	}catch(Exception $e){
      	   		Error::renderError($e);
      	   		exit();
      	   	}
+     	   	$sql = "DELETE FROM ".$this->table." WHERE ";
+
      	   	if(is_numeric($data)){
-     	   		$data = htmlspecialchars($data, ENT_QUOTES);
-     	   		$where = "id = '".$data."'";
+     	   		$data = strip_tags($data);
+     	   		$data = array("id"=>$data);
+     	   		$sql .= "id = :id";
      	   	}else{
-     	   		$where = $data;
+     	   		foreach ($data as $k => $v) {
+     	   			$k = strip_tags($k);
+     	   			$sql .= '$k=:$k AND ';
+     	   		}
+     	   		$sql = trim($sql, " AND ");
      	   	}
-			$sql = "DELETE FROM ".$this->table." WHERE $where";
-			$this->bdd->exec($sql);
+     	   	$req = $this->bdd->prepare($sql);
+
+			$c = array();
+			foreach ($data as $k => $v) {
+				$key = ':'.$k;
+				$c[$key] = $v;
+			}
+			$req->execute($c);
 		}
 
 		public function connexion($d=null){
@@ -239,11 +272,14 @@
 
 			$login = $this->configYml['connection']['login'];
 			$password = $this->configYml['connection']['password'];
-			$connect = htmlspecialchars($d[$login], ENT_QUOTES);
-			$pwd = htmlspecialchars($d[$password], ENT_QUOTES);
-			$sql = "SELECT *, COUNT(*) AS nb FROM ".$this->table." WHERE ".$login." = '$connect' AND ".$password." = '$pwd'";
-			$req = $this->bdd->query($sql);
+			$connect = strip_tags($d[$login]);
+			$pwd = strip_tags($d[$password]);
+			$sql = "SELECT *, COUNT(*) AS nb FROM ".$this->table." WHERE ".$login." = :".$login." AND ".$password." = :".$password;
+			
+			$req = $this->bdd->prepare($sql);
+			$req->execute(array(':'.$login => $connect, ':'.$password => $pwd));
 			$data = $req->fetch(PDO::FETCH_OBJ);
+
 			if($data->nb > 0){
 				$sess = explode("|", $this->configYml['connection']['session']);
 				foreach ($sess as $k => $v) {
