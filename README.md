@@ -1,5 +1,5 @@
 # Kinto'un [Framework]
-v 1.3.4
+v 1.3.5
 
 Nécessite PHP 5.4 ou +
 
@@ -129,7 +129,7 @@ if($this->table1->allOk()){
 
 * `if($_POST){}` => test si un post a été fait
 
-* `if($this->is_valid()){}` => vérifie si le token du formulaire est valide (contrer la faille CSRF) et vérifie si il y a un $_POST.
+* `if($this->is_valid){}` => vérifie si le token du formulaire est valide (contrer la faille CSRF) et vérifie si il y a un $_POST.
 
 ##### Champs hidden token
 Pour ajouter votre token dans vos formulaires, ajoutez la fonction Twig/Smarty `{{ CSRF_TOKEN() }}` avant votre submit.

@@ -20,8 +20,16 @@
 					$linkP = preg_replace('#\{_lang\}#', $_SESSION['lang'], $linkP);
 				}
 
-				$link = WEBROOT.trim($linkP,'/').'/'.trim($link['pattern'],'/');			
-				echo file_get_contents('http://'.$_SERVER['HTTP_HOST'].$link);
+				$link = preg_replace('/(\/+)/','/', WEBROOT.trim($linkP,'/').'/'.trim($link['pattern'],'/'));
+				
+				$opts = array( 'http'=>array( 'method'=>"GET",
+				               'header'=>"Accept-language: en\r\n" .
+				               "Cookie: ".session_name()."=".session_id()."\r\n" ) );
+
+				$context = stream_context_create($opts);
+				session_write_close();
+				
+				echo file_get_contents('http://'.$_SERVER['HTTP_HOST'].$link, false, $context);
 			}
 		}		
 	}

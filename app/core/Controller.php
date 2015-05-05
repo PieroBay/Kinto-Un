@@ -8,7 +8,7 @@
 		protected $_PUT;
 		protected $configYml;
 		protected $xml;
-		protected $isValid;
+		protected $is_valid;
 
 		public function __construct($bdd, $info, $configYml){
 			$Security = new Security($configYml);
@@ -19,7 +19,7 @@
 			$this->info      = $info;
 			$this->configYml = $configYml;
 			$this->bdd       = $bdd;
-			$this->isValid   = $Security->isValid();
+			$this->is_valid   = $Security->isValid();
 			$this->sendMail  = $mail;
 			$this->Session   = $session;
 			
