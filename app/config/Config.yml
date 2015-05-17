@@ -1,7 +1,7 @@
 configuration:
     database_host: localhost
     database_port: null
-    database_name: test
+    database_name: kinto
     database_user: root
     database_password: root
     local: fr

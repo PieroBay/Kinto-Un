@@ -1,5 +1,5 @@
 # Kinto'un [Framework]
-v 1.3.5
+v 1.3.6
 
 Nécessite PHP 5.4 ou +
 
@@ -112,6 +112,7 @@ array(
 			"maxSize"   => 2097152, # poids max en byte
 			"widthMax"  => 1000,  # largeur max en pixel
 			"heightMax" => 1000, # hauteur max en pixel
+			"edit"		=>	"add", # add ou replace. Si à l'ajout ca enlève l'ancien fichier ou il s'ajoute
 			"ext"       => array('jpg','png','jpeg'), # extensions autorisées
 			"red"       => false,  # Si l'image doit être redimensionner mettre une taille en pixel, sinon laisser vide
 ```

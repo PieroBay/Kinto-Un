@@ -19,7 +19,7 @@
 			$this->info      = $info;
 			$this->configYml = $configYml;
 			$this->bdd       = $bdd;
-			$this->is_valid   = $Security->isValid();
+			$this->is_valid  = $Security->isValid();
 			$this->sendMail  = $mail;
 			$this->Session   = $session;
 			

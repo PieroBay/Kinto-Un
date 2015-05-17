@@ -66,15 +66,21 @@
      	   }
 
 			if($_FILES){
-				$token = time();
-				$idF = 0;
+				$token = time().uniqid();
+				$issetT = 0;
 				if(isset($data['id'])){
-					$req2 = $this->bdd->query("SELECT * FROM ".$this->table." WHERE id=".$data['id']); # si update, récupere le token de la table
+					$req2 = $this->bdd->prepare("SELECT * FROM ".$this->table." WHERE id = :id");  # si update, récupere le token de la table
+					$req2->execute(array(':id' => $data['id']));
 					$data2 = $req2->fetch(PDO::FETCH_OBJ);
-					$token = $data2->$upload['champ_name'];
-					$idF=$data['id'];
+					$token = ($data2->$upload['champ_name'] != NULL)?$data2->$upload['champ_name']:$token;
+
+					$req2 = $this->bdd->prepare("SELECT * FROM ".$upload['table_name']." WHERE token = :token");  # si update, récupere le token de la table
+					$req2->execute(array(':token' => $token));
+					$data2 = $req2->fetch(PDO::FETCH_OBJ);
+
+					$issetT = (is_object($data2))? 1: 0;
 				}
-				$uploading = new Upload($upload,$this->bdd,$token,$idF); 		# init la class
+				$uploading = new Upload($upload,$this->bdd,$token,$issetT); 		# init la class
 				if(COUNT($_FILES) > 1){
 					$newArray = [];
 					foreach ($_FILES as $key => $value) {
@@ -248,11 +254,12 @@
      	   	}else{
      	   		foreach ($data as $k => $v) {
      	   			$k = strip_tags($k);
-     	   			$sql .= '$k=:$k AND ';
+     	   			$sql .= "$k=:$k AND ";
      	   		}
      	   		$sql = trim($sql, " AND ");
      	   	}
-     	   	$req = $this->bdd->prepare($sql);
+ 
+     	   	$req = $this->bdd->prepare("D".$sql);
 
 			$c = array();
 			foreach ($data as $k => $v) {

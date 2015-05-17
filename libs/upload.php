@@ -9,31 +9,45 @@
 		private $upload;
 		private $repository;
 		private $bdd;
+		private $id;
 
-		function __construct($upload,$bdd,$token){
+		function __construct($upload,$bdd,$token,$id){
 			$this->upload = $upload;
+			$this->id = $id;
 			$this->bdd = $bdd;
 			$this->ins['token'] = $token;
-			$this->repository =	'../src/ressources/images/'.$this->upload['target'].'/'.$this->ins['token'].'/';
+			$this->repository =	ROOT.'/src/ressources/images/'.$this->upload['target'].'/'.$this->ins['token'].'/';
 		}
 
 		public function multiple($data){
 			$this->FILES = $data;
-			foreach ($this->FILES['name'] as $key => $value) {
-				if($value != ""){
-					$tmp = $this->upload($key);
-					if($tmp['status'] == "ok"){
-						$this->ins['file_name'] = $tmp['name'];
-						$this->ins['principal'] = ($key == 0)? 1: 0;
-						$sql = "INSERT INTO ".$this->upload['table_name']." (token, file_name, principal) VALUES (:token,:file_name,:principal)";
-						$req = $this->bdd->prepare($sql);
-						$req->execute($this->ins);
 
-						$this->final[$key] = "ok";
-					}else{
-						$this->final[$key] = "error";
-						$this->final['message'] = $tmp['message'];
+			if($this->id != 0 && $this->upload['edit'] == "replace"){
+				$req = $this->bdd->query("SELECT * FROM ".$this->upload['table_name']." WHERE token=".$this->ins['token']);
+				while($d = $req->fetch(PDO::FETCH_OBJ)){
+					unlink(ROOT.'src/ressources/images/'.$this->upload['target'].'/'.$this->ins['token'].'/'.$d->file_name);
+				}
+				$this->bdd->exec("DELETE FROM ".$this->upload['table_name']." WHERE token = ".$this->ins['token']);
+			}
+
+			foreach ($this->FILES['name'] as $key => $value) {
+				$tmp = $this->upload($key);
+				if($tmp['status'] == "ok"){
+					$this->ins['file_name'] = $tmp['name'];
+					$this->ins['principal'] = ($key == 0)? 1: 0;
+
+					if($this->id != 0 && $this->upload['edit'] == "add"){
+						$this->ins['principal'] = 0;
 					}
+
+					$sql = "INSERT INTO ".$this->upload['table_name']." (token, file_name, principal) VALUES (:token,:file_name,:principal)";
+					$req = $this->bdd->prepare($sql);
+					$req->execute($this->ins);
+
+					$this->final[$key] = "ok";
+				}else{
+					$this->final[$key] = "error";
+					$this->final['message'] = $tmp['message'];
 				}
 			}
 			return $this->verif();
@@ -41,21 +55,29 @@
 
 		public function single($data){
 			$this->FILES = $data;
-			$this->i++;
-			if($this->FILES['name'] != ""){
-				$tmp = $this->upload();
-				if($tmp['status'] == "ok"){
-					$this->ins['file_name'] = $tmp['name'];
-					$this->ins['principal'] = ($this->i == 1)? 1: 0;
-					$sql = "INSERT INTO ".$this->upload['table_name']." (token, file_name, principal) VALUES (:token,:file_name,:principal)";
-					$req = $this->bdd->prepare($sql);
-					$req->execute($this->ins);
-					
-					$this->final[$this->i] = "ok";
-				}else{
-					$this->final[$this->i] = "error";
-					$this->final['message'] = $tmp['message'];
+			if($this->id != 0 && $this->upload['edit'] == "replace"){
+				$req = $this->bdd->query("SELECT * FROM ".$this->upload['table_name']." WHERE token=".$this->ins['token']);
+				while($d = $req->fetch(PDO::FETCH_OBJ)){
+					unlink(ROOT.'src/ressources/images/'.$this->upload['target'].'/'.$this->ins['token'].'/'.$d->file_name);
 				}
+				$this->bdd->exec("DELETE FROM ".$this->upload['table_name']." WHERE token = ".$this->ins['token']);
+			}
+
+			$this->i = ($this->id != 0 && $this->upload['edit'] != "replace")? 2 : $this->i;
+			
+			$this->i++;
+			$tmp = $this->upload();
+			if($tmp['status'] == "ok"){
+				$this->ins['file_name'] = $tmp['name'];
+				$this->ins['principal'] = ($this->i == 1)? 1: 0;
+				$sql = "INSERT INTO ".$this->upload['table_name']." (token, file_name, principal) VALUES (:token,:file_name,:principal)";
+				$req = $this->bdd->prepare($sql);
+				$req->execute($this->ins);
+				
+				$this->final[$this->i] = "ok";
+			}else{
+				$this->final[$this->i] = "error";
+				$this->final['message'] = $tmp['message'];
 			}
 			return $this->verif();
 		}
@@ -181,6 +203,3 @@
 			return $return;
 		}
 	}
-
-
-

@@ -43,7 +43,6 @@ session_start();
 			"Webroot"          => 	WEBROOT,
 			"lang"             => 	$_SESSION['lang'],
 			"Template"         =>	$config['template'],
-			"Parametres"	   =>	"",
 			"Output"	       =>	"",
 		),
 	);
@@ -62,8 +61,8 @@ session_start();
 			"ControllerFolder" =>	$urlParams['controller'].'Controller',
 			"Action"           =>	$urlParams['action'],
 			"ActionComplete"   =>	$urlParams['action'].'Action',
+			"Parametres"       =>	$urlParams['parametres'],
 	);
-
 	require(ROOT.'src/project/'.$info["Info"]['Project'].'/controller/'.$info["Info"]['ControllerFolder'].'.php');
 
 	$controllerFolder = new $info["Info"]['ControllerFolder']($bdd, $info, $configFile);
