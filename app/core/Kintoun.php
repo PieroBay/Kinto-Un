@@ -41,9 +41,11 @@ session_start();
 		"Info"	=>	array(
 			"Root"             => 	ROOT,
 			"Webroot"          => 	WEBROOT,
+			"Ressources"        => 	WEBROOT."src/ressources/",
 			"lang"             => 	$_SESSION['lang'],
 			"Template"         =>	$config['template'],
 			"Output"	       =>	"",
+			"Parametres"	   =>	"",
 		),
 	);
 
@@ -51,9 +53,10 @@ session_start();
 	Routing::start($link,$setError);
 	$urlParams = Routing::$params;
 
-	$info["Info"]['lang']    = $_SESSION['lang'];
-	$info["Session"]['lang'] = $_SESSION['lang'];
-	$info["Info"]['Output']  = $urlParams['output'];
+	$info["Info"]['lang']       = $_SESSION['lang'];
+	$info["Session"]['lang']    = $_SESSION['lang'];
+	$info["Info"]['Output']     = $urlParams['output'];
+	$info["Info"]['Parametres'] = $urlParams['parametres'];
 	$info["Info"] += array(
 			"RouteName"        =>	$urlParams['routeName'],
 			"Project"          =>	$urlParams['project'],
@@ -61,7 +64,6 @@ session_start();
 			"ControllerFolder" =>	$urlParams['controller'].'Controller',
 			"Action"           =>	$urlParams['action'],
 			"ActionComplete"   =>	$urlParams['action'].'Action',
-			"Parametres"       =>	$urlParams['parametres'],
 	);
 	require(ROOT.'src/project/'.$info["Info"]['Project'].'/controller/'.$info["Info"]['ControllerFolder'].'.php');
 

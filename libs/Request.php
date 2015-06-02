@@ -93,4 +93,22 @@ class Request{
 		
 		exit($xml->asXML());
 	}
+
+	public static function isPost(){
+		if(!isset($_POST['update'])){
+			if(isset($_POST['id'])){ unset($_POST['id']); }
+			return true;
+		}else{
+			return false;
+		}
+	}
+
+	public static function isPut(){
+		if(isset($_POST['update'])){
+			if(isset($_POST['id'])){ unset($_POST['id']); }
+			return true;
+		}else{
+			return false;
+		}
+	}
 }

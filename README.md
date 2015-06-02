@@ -1,5 +1,5 @@
 # Kinto'un [Framework]
-v 1.3.6
+v 1.3.7
 
 Nécessite PHP 5.4 ou +
 
@@ -96,6 +96,8 @@ Requètes principales:
 * `$this->table1->findAll(array())` => Dans le tableau, mettre des conditions => "where", "fields", "limit", "order"
 
 * `$this->table1->findOne($where)` => $where = array("name"=>"john","surname"=>"Doe"). Retournera un objet.
+
+* `$this->table1->find($request)` => $request = array("name"=>"john","surname"=>"Doe"). Retournera un objet.
 
 * `$this->table1->findById($id)` => SELECT * FROM $table WHERE id = $id
 

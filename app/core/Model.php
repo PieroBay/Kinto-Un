@@ -196,6 +196,35 @@
 			return $d;
 		}
 
+		public function find($where=null){
+			try{
+     	   		if(!isset($where) || !is_array($where)) throw new Exception("Aucune data n'a été envoyé");
+     	   	}catch(Exception $e){
+     	   		Error::renderError($e);
+     	   		exit();
+     	   	}
+
+			$sql = "SELECT * FROM ".$this->table." WHERE ";
+
+			foreach ($where as $k => $v) {
+				$sql .= "$k=:$k AND ";
+			}
+			$sql = rtrim($sql, " AND ");
+			$req = $this->bdd->prepare($sql);
+
+			$c = array();
+			foreach ($where as $k => $v) {
+				$key = ':'.$k;
+				$c[$key] = $v;
+			}
+			$d = array();
+			$req->execute($c);
+			while($data = $req->fetch(PDO::FETCH_OBJ)){
+				$d[] = $data;
+			}
+			return $d;
+		}
+
 		public function findOne($where=null){
 			try{
      	   		if(!isset($where) || !is_array($where)) throw new Exception("Aucune data n'a été envoyé");
@@ -209,7 +238,7 @@
 			foreach ($where as $k => $v) {
 				$sql .= "$k=:$k AND ";
 			}
-			$sql = trim($sql, " AND ");
+			$sql = rtrim($sql, " AND ");
 			$req = $this->bdd->prepare($sql);
 
 			$c = array();
@@ -247,7 +276,7 @@
      	   	}
      	   	$sql = "DELETE FROM ".$this->table." WHERE ";
 
-     	   	if(is_numeric($data)){
+     	   	if(!is_array($data)){
      	   		$data = strip_tags($data);
      	   		$data = array("id"=>$data);
      	   		$sql .= "id = :id";
@@ -256,10 +285,10 @@
      	   			$k = strip_tags($k);
      	   			$sql .= "$k=:$k AND ";
      	   		}
-     	   		$sql = trim($sql, " AND ");
+     	   		$sql = rtrim($sql, " AND ");
      	   	}
- 
-     	   	$req = $this->bdd->prepare("D".$sql);
+
+     	   	$req = $this->bdd->prepare($sql);
 
 			$c = array();
 			foreach ($data as $k => $v) {

@@ -23,11 +23,14 @@
 			$this->FILES = $data;
 
 			if($this->id != 0 && $this->upload['edit'] == "replace"){
-				$req = $this->bdd->query("SELECT * FROM ".$this->upload['table_name']." WHERE token=".$this->ins['token']);
+				$req = $this->bdd->prepare("SELECT * FROM ".$this->upload['table_name']." WHERE token=:token");
+				$req->execute(array(':token' => $this->ins['token']));
 				while($d = $req->fetch(PDO::FETCH_OBJ)){
 					unlink(ROOT.'src/ressources/images/'.$this->upload['target'].'/'.$this->ins['token'].'/'.$d->file_name);
 				}
-				$this->bdd->exec("DELETE FROM ".$this->upload['table_name']." WHERE token = ".$this->ins['token']);
+
+				$req = $this->bdd->prepare("DELETE FROM ".$this->upload['table_name']." WHERE token = :token");
+				$req->execute(array(":token"=>$this->ins['token']));
 			}
 
 			foreach ($this->FILES['name'] as $key => $value) {
@@ -56,11 +59,13 @@
 		public function single($data){
 			$this->FILES = $data;
 			if($this->id != 0 && $this->upload['edit'] == "replace"){
-				$req = $this->bdd->query("SELECT * FROM ".$this->upload['table_name']." WHERE token=".$this->ins['token']);
+				$req = $this->bdd->prepare("SELECT * FROM ".$this->upload['table_name']." WHERE token=:token");
+				$req->execute(array(':token' => $this->ins['token']));
 				while($d = $req->fetch(PDO::FETCH_OBJ)){
 					unlink(ROOT.'src/ressources/images/'.$this->upload['target'].'/'.$this->ins['token'].'/'.$d->file_name);
 				}
-				$this->bdd->exec("DELETE FROM ".$this->upload['table_name']." WHERE token = ".$this->ins['token']);
+				$req = $this->bdd->prepare("DELETE FROM ".$this->upload['table_name']." WHERE token = :token");
+				$req->execute(array(":token"=>$this->ins['token']));
 			}
 
 			$this->i = ($this->id != 0 && $this->upload['edit'] != "replace")? 2 : $this->i;

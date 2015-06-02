@@ -28,6 +28,7 @@
 					$this->loadModel($v);
 				}
 			}
+			
 			$this->_PUT = Request::parsePutReq($this->info["Info"]['Parametres']);
 		}
 
