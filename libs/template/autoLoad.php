@@ -1,5 +1,6 @@
 <?php
-	$template = $this->info['Info']['Template'];
+	$configFile = spyc_load_file(ROOT.'app/config/Config.yml');
+	$template     = $configFile['configuration']['template'];
 
 	$dossier = opendir(ROOT.'libs/template/extensions/');
 	while(false !== ($fichier = readdir($dossier))){

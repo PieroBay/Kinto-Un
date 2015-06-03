@@ -1,8 +1,14 @@
 <?php
 session_start();
-	ini_set('display_errors', 0);
-	define('WEBROOT', str_replace('app/core/Kintoun.php', '', $_SERVER['SCRIPT_NAME']));
+	ini_set('display_errors', 1);
+	if($_SERVER['REMOTE_ADDR'] != '::1'){
+		define('WEBROOT', 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URl'].'/');
+	}else{
+		define('WEBROOT', str_replace('app/core/Kintoun.php', '', $_SERVER['SCRIPT_NAME']));
+	}
+
 	define('ROOT', str_replace('app/core/Kintoun.php', '', $_SERVER['SCRIPT_FILENAME']));
+
 	require_once(ROOT.'vendor/autoload.php');
 	require_once(ROOT.'app/core/Routing.php');
 	require_once(ROOT.'app/core/Controller.php');

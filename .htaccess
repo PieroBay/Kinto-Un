@@ -1,8 +1,8 @@
 RewriteEngine on
-
+#RewriteBase "/"
 RewriteCond %{REQUEST_URI} !(css|js|fonts|images)
 
-RewriteRule (.*) app/core/Kintoun.php/$1 [L]
+RewriteRule (.*) ./app/core/Kintoun.php/$1 [L]
 
 RewriteCond %{REQUEST_FILENAME} -s [OR]
 RewriteCond %{REQUEST_FILENAME} -l 
