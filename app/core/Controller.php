@@ -41,7 +41,7 @@
 		}
 
 		public function redirectUrl($routeName, $data=array()){
-			$route = spyc_load_file(ROOT.'app/config/routing.yml');
+			$route = spyc_load_file(ROOT.'app/config/Routing.yml');
 		
 			foreach ($route as $key => $value) {
 				$project = $route[$key]['project'];

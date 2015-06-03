@@ -1,12 +1,12 @@
 {% extends "ressources/layout/base.html.twig" %}
 {% block title %}{{ parent()  }} | Public{% endblock %}
 {% block stylesheets %}
-  <link rel="stylesheet" href="{{ Info.Webroot }}src/ressources/css/style.css" />
+  <link rel="stylesheet" href="{{ Info.Ressources }}css/style.css" />
 {% endblock %}
 {% block body %}
  	{{ message }} du projet</a> <strong>{{ Info.Project }}</strong>, du controller <strong>{{ Info.Controller }}</strong> et de l'action <strong>{{ Info.Action }}</strong>. 
 {% endblock %}
 
 {% block javascripts %}
-  <script type="text/javascript" src="{{ Info.Webroot }}src/ressources/js/app.js"></script>
+  <script type="text/javascript" src="{{ Info.Ressources }}js/app.js"></script>
 {% endblock %}
