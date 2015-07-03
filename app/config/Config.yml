@@ -14,5 +14,6 @@ security:
 connection:
     login: name
     password: password
+    activation: true
     remember: false
-    session: id
+    session: id|name

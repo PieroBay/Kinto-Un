@@ -7,7 +7,7 @@
 		if($fichier != '.' && $fichier != '..' && $fichier != 'index.php' && $fichier != '.DS_Store' && $fichier != '.htaccess'){
 			$nomExtension = explode('.php', $fichier)[0];
 			$type = explode('-', $nomExtension);
-			require ROOT.'libs/template/extensions/'.$fichier;
+			require_once ROOT.'libs/template/extensions/'.$fichier;
 			if($type[1] == "function"){
 				switch (strtolower($template)){
 				    case "twig":

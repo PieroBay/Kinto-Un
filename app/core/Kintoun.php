@@ -1,5 +1,10 @@
 <?php
+if (substr($_SERVER['HTTP_HOST'], 0, 4) === 'www.') {
+    header('Location: http'.(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']=='on' ? 's':'').'://' . substr($_SERVER['HTTP_HOST'], 4).$_SERVER['REQUEST_URI']);
+    exit;
+}
 session_start();
+	header('Access-Control-Allow-Origin: *');
 	ini_set('display_errors', 1);
 	if($_SERVER['REMOTE_ADDR'] != '::1'){
 		define('WEBROOT', 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URl'].'/');
@@ -47,11 +52,12 @@ session_start();
 		"Info"	=>	array(
 			"Root"             => 	ROOT,
 			"Webroot"          => 	WEBROOT,
-			"Ressources"        => 	WEBROOT."src/ressources/",
+			"Ressources"       => 	WEBROOT."src/ressources/",
 			"lang"             => 	$_SESSION['lang'],
 			"Template"         =>	$config['template'],
 			"Output"	       =>	"",
 			"Parametres"	   =>	"",
+			"GET"			   =>	$_GET,
 		),
 	);
 

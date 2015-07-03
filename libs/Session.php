@@ -20,8 +20,9 @@ class Session{
 
 	public function flash(){
 		if(isset($_SESSION['flash'])){
-			echo '<div class="flash flash-'.$_SESSION['flash']['type'].'">'.$_SESSION['flash']['message'].'</div>';
+			$e = $_SESSION['flash'];
 			unset($_SESSION['flash']);
+			return('<div class="flash flash-'.$e['type'].'">'.$e['message'].'</div>');
 		}
 	}
 }

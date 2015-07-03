@@ -20,8 +20,8 @@
 					$linkP = preg_replace('#\{_lang\}#', $_SESSION['lang'], $linkP);
 				}
 
-				$link = preg_replace('/(\/+)/','/', WEBROOT.trim($linkP,'/').'/'.trim($link['pattern'],'/'));
-				return $link;				
+				$link = preg_replace('/(\/+)/','/', trim($linkP,'/').'/'.trim($link['pattern'],'/'));
+				return WEBROOT.trim($link,'/');				
 			}
 
 		}		

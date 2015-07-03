@@ -4,6 +4,7 @@
 		protected $id;
 		protected $bdd;
 		protected $connexion = false;
+		protected $connexionError = "";
 		protected $allOk = true;
 		protected $error = "";
 		protected $configYml;
@@ -23,6 +24,9 @@
 		public function setConnexion($tmp){
 			$this->connexion = $tmp;
 		}
+		public function setConnexionError($tmp){
+			$this->connexionError = $tmp;
+		}
 		public function setId($tmp){
 			$this->id = $tmp;
 		}
@@ -39,6 +43,9 @@
 		}
 		public function getError(){
 			return $this->error;
+		}
+		public function getCoError(){
+			return $this->connexionError;
 		}
 		public function allOk(){
 			return $this->allOk;
@@ -72,6 +79,7 @@
 					$req2 = $this->bdd->prepare("SELECT * FROM ".$this->table." WHERE id = :id");  # si update, récupere le token de la table
 					$req2->execute(array(':id' => $data['id']));
 					$data2 = $req2->fetch(PDO::FETCH_OBJ);
+
 					$token = ($data2->$upload['champ_name'] != NULL)?$data2->$upload['champ_name']:$token;
 
 					$req2 = $this->bdd->prepare("SELECT * FROM ".$upload['table_name']." WHERE token = :token");  # si update, récupere le token de la table
@@ -310,6 +318,8 @@
 			$password = $this->configYml['connection']['password'];
 			$connect = strip_tags($d[$login]);
 			$pwd = strip_tags($d[$password]);
+			$activation = $this->configYml['connection']['activation'];
+
 			$sql = "SELECT *, COUNT(*) AS nb FROM ".$this->table." WHERE ".$login." = :".$login." AND ".$password." = :".$password;
 			
 			$req = $this->bdd->prepare($sql);
@@ -317,22 +327,28 @@
 			$data = $req->fetch(PDO::FETCH_OBJ);
 
 			if($data->nb > 0){
-				$sess = explode("|", $this->configYml['connection']['session']);
-				foreach ($sess as $k => $v) {
-					if($v != 'role'){
-						$_SESSION[$v] = $data->$v;
+				if($activation && $data->activation == "1"){
+					$sess = explode("|", $this->configYml['connection']['session']);
+					foreach ($sess as $k => $v) {
+						if($v != 'role'){
+							$_SESSION[$v] = $data->$v;
+						}
 					}
-				}
-				$_SESSION['ROLE'] = $data->role;
+					$_SESSION['ROLE'] = $data->role;
 
-				if($this->configYml['connection']['remember']){
-					setcookie("ku_login", $d[$login]);
-					setcookie("ku_pwd", $d[$password]);
-				}
+					if($this->configYml['connection']['remember']){
+						setcookie("ku_login", $d[$login]);
+						setcookie("ku_pwd", $d[$password]);
+					}
 
-				$this->setConnexion(true);
+					$this->setConnexion(true);
+				}else{
+				$this->setConnexion(false);
+				$this->setConnexionError("act");
+				}
 			}else{
 				$this->setConnexion(false);
+				$this->setConnexionError("id");
 			}
 		}
 

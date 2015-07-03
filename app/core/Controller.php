@@ -61,9 +61,15 @@
 						$linkP = preg_replace('#\{_lang\}#', $_SESSION['lang'], $linkP);
 					}
 
-					$link = WEBROOT.trim($linkP,'/').'/'.trim($link['pattern'],'/');
+					$link = trim($linkP,'/').'/'.trim($link['pattern'],'/');
 					$link = preg_replace('#//#', '/', $link);
-					header('Location: /'.trim($link,'/').'/');
+					if(empty(trim($link,'/'))){
+						header('Location: '.WEBROOT);
+					}else{
+						header('Location: '.WEBROOT.trim($link,'/').'/');
+					}
+					
+					die();
 				}
 			}		
 
