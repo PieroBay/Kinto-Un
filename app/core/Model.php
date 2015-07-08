@@ -9,6 +9,8 @@
 		protected $error = "";
 		protected $configYml;
 
+		protected $data;
+
 		public function __construct(PDO $bdd, $table, $configYml){
 			$this->setBdd($bdd);
 			$this->configYml = $configYml;
@@ -52,6 +54,9 @@
 		}
 		public function testConnect(){
 			return $this->connexion;
+		}
+		public function exec(){
+			return $this->data;
 		}
 
 		public function save($data=null, $upload=array(
@@ -201,7 +206,8 @@
 			while($data = $req->fetch(PDO::FETCH_OBJ)){
 				$d[] = $data;
 			};
-			return $d;
+			$this->data = $d;
+			return $this;
 		}
 
 		public function find($where=null){
@@ -230,7 +236,8 @@
 			while($data = $req->fetch(PDO::FETCH_OBJ)){
 				$d[] = $data;
 			}
-			return $d;
+			$this->data = $d;
+			return $this;
 		}
 
 		public function findOne($where=null){
@@ -256,7 +263,8 @@
 			}
 			$req->execute($c);
 			$data = $req->fetch(PDO::FETCH_OBJ);
-			return $data;
+			$this->data = $data;
+			return $this;
 		}
 		
 		public function findById($id=null){
@@ -271,8 +279,9 @@
 			$req = $this->bdd->prepare($sql);
 			$req->execute(array(':id' => $id));
 
-			$data = $req->fetch(PDO::FETCH_OBJ);
-			return $data;
+			$this->data = $req->fetch(PDO::FETCH_OBJ);
+
+			return $this;
 		}
 
 		public function delete($data=null){
@@ -306,6 +315,43 @@
 			$req->execute($c);
 		}
 
+		public function link($array=array()){
+			$key  = $array[0];
+			$as   = $array[1];
+			$from = $array[2];
+
+			$result = (is_array($this->data))? $this->data[0]->$key : $this->data->$key;
+			
+			if(is_array($this->data)){
+				foreach ($this->data as $k => $v) {
+					$d = array();
+					$req = $this->bdd->query($sql = "SELECT * FROM ".$from." WHERE ".$as."='".$this->data[$k]->$key."'");
+					while($data = $req->fetch(PDO::FETCH_OBJ)){
+						$d[] = $data;
+					}
+					$d = (count($d) == 1)?$d[0]:$d;
+					$this->data[$k]->$from = $d;
+					if($key != $from){
+						unset($this->data[$k]->$key);
+					}
+				}
+			}else{
+				$d = array();
+				$req = $this->bdd->query($sql = "SELECT * FROM ".$from." WHERE ".$as."='".$this->data->$key."'");
+				while($data = $req->fetch(PDO::FETCH_OBJ)){
+					$d[] = $data;
+				}
+
+				$d = (count($d) == 1)?$d[0]:$d;
+				$this->data->$from = $d;
+				if($key != $from){
+					unset($this->data->$key);
+				}
+			}
+
+			return $this;
+		}
+
 		public function connexion($d=null){
 			try{
 				if(!isset($d) || !is_array($d)) throw new Exception("Aucun tableau n'a été envoyé");
@@ -327,7 +373,10 @@
 			$data = $req->fetch(PDO::FETCH_OBJ);
 
 			if($data->nb > 0){
-				if($activation && $data->activation == "1"){
+				if($activation && $data->activation != "1"){
+					$this->setConnexion(false);
+					$this->setConnexionError("act");
+				}else{
 					$sess = explode("|", $this->configYml['connection']['session']);
 					foreach ($sess as $k => $v) {
 						if($v != 'role'){
@@ -342,9 +391,6 @@
 					}
 
 					$this->setConnexion(true);
-				}else{
-				$this->setConnexion(false);
-				$this->setConnexionError("act");
 				}
 			}else{
 				$this->setConnexion(false);

@@ -1,5 +1,5 @@
 # Kinto'un [Framework]
-v 1.4.1
+v 1.5.0
 
 Nécessite PHP 5.4 ou +
 
@@ -93,16 +93,61 @@ Requètes principales:
 
 * `$this->table1->delete($data)` => DELETE FROM $table WHERE $data. Si $data est int, il supprimera via l'id, sinon justifier le where en array. `array("user"=>"Marc")`
 
-* `$this->table1->findAll(array())` => Dans le tableau, mettre des conditions => "where", "fields", "limit", "order"
+* `$this->table1->findAll(array())->exec()` => Dans le tableau, mettre des conditions => "where", "fields", "limit", "order"
 
-* `$this->table1->findOne($where)` => $where = array("name"=>"john","surname"=>"Doe"). Retournera un objet.
+* `$this->table1->findOne($where)->exec()` => $where = array("name"=>"john","surname"=>"Doe"). Retournera un objet.
 
-* `$this->table1->find($request)` => $request = array("name"=>"john","surname"=>"Doe"). Retournera un objet.
+* `$this->table1->find($request)->exec()` => $request = array("name"=>"john","surname"=>"Doe"). Retournera un objet.
 
-* `$this->table1->findById($id)` => SELECT * FROM $table WHERE id = $id
+* `$this->table1->findById($id)->exec()` => SELECT * FROM $table WHERE id = $id
 
 * `$this->table1->save($_POST, $upload)` => $_POST ou array en paramètre => si le tableau contient un id, un UPDATE sera fait sinon un INSERT. 
 $upload (non obligatoire si pas d'upload dans le formulaire) est un array avec plusieurs parametres.
+
+Si une table a besoin d'une liaison, après recupération des données avec "finAll()","findOne()","find()","findById()", utiliser "->link(array("key","as","from"))".
+
+
+* key => Le champ des données récupérer à lier
+* as => Le champ de la table a lié aux données récupérées
+* from => La table à lier.
+
+Le nom du champ 'key' sera remplacé par 'form'.
+
+
+### Exemple
+
+```php
+	# return $this->foo->findAll()->exec();
+
+stdClass Object
+(
+    [id] => 1
+    [name] => Kinto
+    [id_tag] => 3
+    [id_picture] => 9
+)
+
+	# return $this->foo->findAll()->link("id_tag","id","tag")->link("id_picture","id","picture")->exec();
+
+stdClass Object
+(
+    [id] => 1
+    [name] => Kinto
+    [tag] => stdClass Object
+        (
+            [id] => 1
+            [name] => Framework
+        )
+    [picture] => stdClass Object
+        (
+            [id] => 1
+            [name] => Yellow Cloud
+            [link] => http://...
+        )
+)
+?>
+```
+ 
 
 /!\ Ne pas oublier `enctype="multipart/form-data"` dans la balise form.
 
