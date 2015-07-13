@@ -38,7 +38,7 @@ Le fichier de config `Config.yml` se trouvant à `app/config/Config.yml` vous pe
 
 * Vous connecter à la DB, de choisir le template (none/php, Twig ou Smarty), de choisir la langue local...
 
-* Générer une partie du token qui sera crypté ensuite pour sécurisé votre site de la faille CSRF et choisir le délais (en minute) d'expiration du token. (optionel, vous pouvez laisser les deux champs vide). 
+* Générer un token qui sera crypté ensuite pour sécuriser votre site de la faille CSRF et choisir le délais (en minute) d'expiration du token. (optionel, vous pouvez laisser les deux champs vide). 
 
 * Configurer vos connexions. (plus d'info dans la section Connexion).
 
@@ -60,7 +60,7 @@ Les controllers se trouvent dans `src/project/*votre projet*/controller`.
 
 Les noms de vos controller auront le même nom que les dossiers contenant vos vues dans le dossier `views`.
 
-Dans les Controller créez des actions, le nom des actions auront le même nom que les pages dans les vues **(sans 'Action' à la fin)**.
+Dans les Controller, créez des actions. Le nom des actions auront le même nom que les pages dans les vues **(sans 'Action' à la fin)**.
 
 ![image](http://img15.hostingpics.net/pics/932424action.png)
 
@@ -74,7 +74,7 @@ Dans le controller, dans le tableau `$table`, séparez par des virgules les tabl
 Un model principal avec des requetes de base est par défaut dans le framework.
 
 Si vous désirez des requètes personelles, créez un fichier table1Model.php (prennons l'exemple de la photo du dessus, table1 est le nom de la table) dans le dossier `models`.
-Dans ce fichier, créer une classe du même nom que le fichier (table1Model.php) qui extends de `Model`.
+Dans ce fichier, créez une classe du même nom que le fichier (table1Model.php) qui extends de `Model`.
 
 ```php
 <?php
@@ -107,8 +107,8 @@ $upload (non obligatoire si pas d'upload dans le formulaire) est un array avec p
 Si une table a besoin d'une liaison, après recupération des données avec "finAll()","findOne()","find()","findById()", utiliser "->link(array("key","as","from"))".
 
 
-* key => Le champ des données récupérer à lier
-* as => Le champ de la table a lié aux données récupérées
+* key => Le champ des données récupéré à lier
+* as => Le champ de la table à lier aux données récupérées
 * from => La table à lier.
 
 Le nom du champ 'key' sera remplacé par 'form'.
@@ -208,7 +208,7 @@ $this->render(array(
 ));
 ```
 
-Recuperez le message dans la vue twig: `{{ flash|raw }}` , renvoie une div `<div class="flash flash-'type'">message</div>` (type = error ou ok).
+Recuperer le message dans la vue twig: `{{ flash|raw }}` , renvoie un div `<div class="flash flash-'type'">message</div>` (type = error ou ok).
 
 ### Redirection
 
@@ -251,7 +251,8 @@ connection:
     login: name 			# Champs login du formulaire qui a le même nom que dans votre table
     password: password		# Champs password du formulaire qui a le même nom que dans votre table
     remember: false			# Si vous voulez que le navigateur se rappel des identifians de l'utilisateur (true ou false)
-    session: id|nom			# la liste des sessions une fois l'utilisateur connecté. séparer par des pipes `|`
+    activation: true 		# Si une vérification est nécessaire pour voir si le compte est actif
+    session: id|nom			# La liste des sessions une fois l'utilisateur connecté. séparer par des pipes `|`
 ```
 
 ###### Récupérer les cookies si true
@@ -264,7 +265,7 @@ Utilisez `$this->table->connexion($_POST);` dans une action au nom de votre choi
 `$this->user->testConnect()`, si tout est ok, return true
 
 ```php
-$this->user->connexion($_POST); // envoi le formulaire
+$this->user->connexion($_POST); // envoie le formulaire
 if($this->user->testConnect()){ // si la connexion s'est bien passée, return true
   $this->redirectUrl('public:choice.html.twig'); // on redirige
 }else{
@@ -276,11 +277,11 @@ Créera automatiquement une session ROLE qui sera repris de la DB.
 
 ### Deconnexion
 
-Utilisez le code ci bas dans une action au nom de votre choix pour une déconnexion.
+Utilisez le code ci dessous dans une action au nom de votre choix pour une déconnexion.
 
 ```php
-$this->user->deconnexion(); // modifier le ROLE actuel en 'visiteur' et supprime les autres sessions
-$this->redirectUrl('home_index'); // une fois fait, redirection sur l'index
+$this->user->deconnexion(); // modifie le ROLE actuel en 'visiteur' et supprime les autres sessions
+$this->redirectUrl('home_index'); // ensuite, redirection sur l'index
 ```
 
 ## Views
@@ -298,7 +299,7 @@ Les ressources Css/Js/Images/fonts, sont à placer dans `src / ressources`, chac
 
 Dans les vues, le lien pour accèder aux ressources sera
 
-`href="{{ Info.Webroot }}/src/ressources/css/style.css"`
+`href="{{ Info.Ressources }}css/style.css"`
 
 ## Routing
 
@@ -311,7 +312,7 @@ view_article:
 ```
 
 * `view_article` => Est le nom de la route, qui sera utile pour la fonction path().
-* `pattern` => Est le lien subjectif désiré avec ces paramètres.
+* `pattern` => Est le lien subjectif désiré avec ses paramètres.
 * `controller` => Est le chemin vers le project/controller/action. 
 
 {_lang} peut être absent dans l'url définitif.
@@ -319,7 +320,7 @@ view_article:
 ### lien
 
 Dans les vues, une fonction twig permet de créer des liens dynamiquement.
-`<a href="{{path("view_article",{"slug": "mon-beau-slug", "id": "9"})}}">cliquez moi</a>`
+`<a href="{{path("view_article",{"slug": "mon-beau-slug", "id": "9"})}}">cliquez ici</a>`
 le parametre {_lang} n'est pas obligatoire, si il est vide, il ajoutera automatiquement la langue de la session.
 le nom de la route est celle qui se trouve dans le fichier config de votre projet et non la route du dossier config.
 
@@ -345,7 +346,7 @@ Dans la vue, pour traduire vos sentences, les manières varient selon le templat
 
 * Twig => `{{"Bonjour"|trans}}`
 * Smarty => `{"Bonjour"|trans}`
-* Php => `<?= echo trans("Bonjour"); ?>`
+* Php => `<?= trans("Bonjour"); ?>`
 
 
 ## Créez vos filtres/fonctions
@@ -380,8 +381,8 @@ Dans le controller, testez la requète pour savoir de quel type elle est.
 * PUT => Request::PUT();
 * DELETE => Request::DELETE();
 
-Toute les requètes doit être testé avec une condition et return true si la requète utilisé est celle de la condition. Une condition n'est pas obligatoire uniquement pour GET et peut envoyer directement un tableau comme option.
-Pour retourner un JSON utiliser $Request::renderJson($data);
+Toutes les requètes doivent être testée avec une condition et return true si la requète utilisée est celle de la condition. Une condition n'est pas obligatoire uniquement pour GET et peut envoyer directement un tableau comme option.
+Pour retourner un JSON utiliser Request::renderJson($data);
 
 Pour récupérer la valeur envoyer par une requète:
 * POST => $_POST

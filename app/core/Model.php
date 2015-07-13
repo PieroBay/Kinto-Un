@@ -319,13 +319,11 @@
 			$key  = $array[0];
 			$as   = $array[1];
 			$from = $array[2];
-
-			$result = (is_array($this->data))? $this->data[0]->$key : $this->data->$key;
 			
 			if(is_array($this->data)){
 				foreach ($this->data as $k => $v) {
 					$d = array();
-					$req = $this->bdd->query($sql = "SELECT * FROM ".$from." WHERE ".$as."='".$this->data[$k]->$key."'");
+					$req = $this->bdd->query("SELECT * FROM ".$from." WHERE ".$as."='".$this->data[$k]->$key."'");
 					while($data = $req->fetch(PDO::FETCH_OBJ)){
 						$d[] = $data;
 					}
@@ -337,7 +335,7 @@
 				}
 			}else{
 				$d = array();
-				$req = $this->bdd->query($sql = "SELECT * FROM ".$from." WHERE ".$as."='".$this->data->$key."'");
+				$req = $this->bdd->query("SELECT * FROM ".$from." WHERE ".$as."='".$this->data->$key."'");
 				while($data = $req->fetch(PDO::FETCH_OBJ)){
 					$d[] = $data;
 				}
