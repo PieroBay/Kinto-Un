@@ -1,5 +1,5 @@
 # Kinto'un [Framework]
-v 1.5.0
+v 1.6.0
 
 Nécessite PHP 5.4 ou +
 
@@ -307,7 +307,7 @@ Le fichier de config de routing se trouve à `src/project/*VOTRE PROJET*/config/
 
 ```yml
 view_article:
-    pattern:  /{_lang}/article/{slug}_{id}
+    pattern:  /{_lang}/article/{slug}_{id}/{_name}
     controller: home:public:view
 ```
 
@@ -315,7 +315,9 @@ view_article:
 * `pattern` => Est le lien subjectif désiré avec ses paramètres.
 * `controller` => Est le chemin vers le project/controller/action. 
 
-{_lang} peut être absent dans l'url définitif.
+Les parametres avec un underscore "_" peuvent être absent dans l'url et dans la génération de lien `path()` et à la redirection `redirectUrl()`.
+
+{_lang} permet de récupérer la langue dans l'url et peut être absent dans l'url.
 
 ### lien
 

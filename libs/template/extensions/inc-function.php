@@ -33,8 +33,28 @@
 
 				$json = file_get_contents($prev.WEBROOT.$link, false, $context);
 				$obj = (array) json_decode($json);		
-		
-				require(ROOT.'libs/template/twig/LoaderTemplate.php');
+
+				$info = array(
+						"Session" =>	array(
+						"ROLE"    => $_SESSION['ROLE'],
+						"local"   => $_SESSION['local'],
+						"lang"    => $_SESSION['lang'],
+						"token"   => $_SESSION['KU_TOKEN'],
+						"all"     => $_SESSION,
+					),
+					"Info"	=>	array(
+						"Root"             => 	ROOT,
+						"Webroot"          => 	WEBROOT,
+						"Ressources"       => 	WEBROOT."src/ressources/",
+						"lang"             => 	$_SESSION['lang'],
+						"Output"	       =>	"",
+						"Parametres"	   =>	"",
+						"GET"			   =>	$_GET,
+					),
+				);
+
+				$obj = array_merge($obj, $info);
+				require (ROOT.'libs/template/twig/LoaderTemplate.php');
 				require (ROOT.'libs/template/autoLoad.php');
 				echo $twig->render('src/project/'.$patternEx[0].'/views/'.$patternEx[1].'/'.$patternEx[2].'.html.twig',$obj);
 			}
