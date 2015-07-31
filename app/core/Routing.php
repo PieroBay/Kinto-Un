@@ -8,6 +8,7 @@ class Routing{
 		$routeP = spyc_load_file(ROOT.'app/config/Routing.yml');
 		$linkEx = explode('/', trim($link,'/'));
 		$lang = $_SESSION['lang'];
+		$parametreP = array();
 		$ct = 0;
 
 		# parcoure le routage principal
@@ -43,9 +44,10 @@ class Routing{
 					if($verif){
 						# Si contient un underscore et différent de lang
 						if(isset($value[1]) && $value[1] == "_" && $value != "{_lang}"){
-							unset($patternEx[$key]);
-							$pattern_tmp = str_replace("/".$value, "", $pattern_tmp);
-						}						
+							$pattern_tmp	= str_replace("/".$value, "", $pattern_tmp);
+							
+							$parametreP[substr($value,1,-1)] = "";
+						}
 					}
 				}
 				/* END */
@@ -70,18 +72,14 @@ class Routing{
 							'parametres'     => "",
 							'output'		 => $output,
 							'lang'			 => $lang,
-						);	
+						);
 
-						$parametreP = array();
 						foreach ($match as $k => $v) {
 							if(is_string($k)){
-								if($k[0] == "_"){
-									$parametreP[$k]=$match[$k];
-								}else{
-									$parametreP[$k]=$match[$k];
-								}
+								$parametreP[$k]=$match[$k];
 							}
 						}
+
 						self::$params['parametres'] = $parametreP;
 					}
 				}

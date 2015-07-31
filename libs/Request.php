@@ -111,4 +111,15 @@ class Request{
 			return false;
 		}
 	}
+
+	public static function getContent($link){
+		$opts = array('http'=>array('method'=>"GET",
+		              'header'=>"Accept: application/json"));
+
+		$context = stream_context_create($opts);
+		session_write_close();
+
+		$json = json_decode(file_get_contents($link, false, $context));
+		return $json;
+	}
 }

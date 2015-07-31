@@ -52,8 +52,9 @@
 					$link = $routeP[$routeName];
 
 					$patternEx = explode('/', trim($link['pattern'],'/'));
-					foreach ($patternEx as $k => $v) {
-						if($v[0] == "{" && $v[1] == "_" && $v != "{_lang}"){
+					foreach ($patternEx as $k => $v){
+						
+						if(!empty($v) && $v[0] == "{" && $v[1] == "_" && $v != "{_lang}"){
 							$v = substr($v,1,-1);
 							
 							if(!array_key_exists($v, $data)){
@@ -61,7 +62,7 @@
 							}
 						}
 					}
-					
+
 					foreach ($data as $k => $v){
 						$linkP = preg_replace('#\{'.$k.'\}#', $v, $linkP);
 						$link['pattern'] = preg_replace('#\{'.$k.'\}#', $v, $link['pattern']);
