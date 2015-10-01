@@ -14,21 +14,23 @@
 			$Security = new Security($configYml);
 			$session  = new Session();
 			$mail     = new SendMail();
-			
+
 			$this->xml       = $info['Info']['Output'];
 			$this->info      = $info;
 			$this->configYml = $configYml;
 			$this->bdd       = $bdd;
-			$this->is_valid  = $Security->isValid();
+			
 			$this->sendMail  = $mail;
 			$this->Session   = $session;
-			
+			if(get_class($this) != "layoutController"){
+				$this->is_valid  = $Security->isValid();
+			}
 			if(isset($this->table)){
 				foreach ($this->table as $v) {
 					$this->loadModel($v);
 				}
 			}
-			
+
 			$this->_PUT = Request::parsePutReq($this->info["Info"]['Parametres']);
 		}
 
@@ -85,7 +87,6 @@
 					die();
 				}
 			}		
-
 		}
 
 		public function render($data=array()){
@@ -95,7 +96,7 @@
 			    case "twig":
 					require(ROOT.'libs/template/twig/LoaderTemplate.php');
 					require (ROOT.'libs/template/autoLoad.php');
-					echo $twig->render('src/project/'.$this->info['Info']['Project'].'/views/'.$this->info['Info']['Controller'].'/'.$filename.'.html.twig', $data);
+					echo $twig->render('src/project/'.$this->info['Info']['Project'].'/views/'.$this->info['Info']['Controller'].'/'.$filename.'.html.twig', json_decode(json_encode($data), true));
 			        break;
 			    case "smarty":
 			        require(ROOT.'vendor/smarty/smarty/libs/Smarty.class.php');
@@ -104,7 +105,7 @@
 					$smarty->compile_dir = ROOT.'libs/template/smarty/templates_c/';
 					$smarty->config_dir = ROOT.'libs/template/smarty/configs/';
 					$smarty->cache_dir = ROOT.'libs/template/smarty/cache/';
-			        $smarty->display(ROOT.'src/project/'.$this->info['Info']['Project'].'/views/'.$this->info['Info']['Controller'].'/'.$filename.'.tpl', $data);
+			        $smarty->display(ROOT.'src/project/'.$this->info['Info']['Project'].'/views/'.$this->info['Info']['Controller'].'/'.$filename.'.tpl', json_decode(json_encode($data), true));
 			        break;
 			    case "php":
 			    case "none":

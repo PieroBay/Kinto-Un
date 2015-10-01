@@ -60,15 +60,14 @@
 		}
 
 		public function save($data=null, $upload=array(
-			"target"    =>	"upload",
+			"target"    =>	"uploads",
 			"table_name"=>	"image",
 			"edit" 		=>	"add",
 			"champ_name"=>	false, 
-			"maxSize"   => 	2097152,
-			"widthMax"  => 	100,
-			"heightMax" => 	100,
-			"ext"       => 	array('jpg','png','jpeg'),
-			"red"       => 	false,)){
+			"size"		=>	["100x100"], 
+			"maxWeight" => 	2097152,
+			"ext"       => 	array('jpg','png','jpeg','gif'),
+			"resize"    => 	false,)){
 			
      	   try{
      	   	if(!isset($data) || !is_array($data)) throw new Exception("Aucun tableau n'a été envoyé");
@@ -76,8 +75,9 @@
      	   		Error::renderError($e);
      	   		exit();
      	   }
+     	   	$fl = ""; if($_FILES){foreach ($_FILES as $key => $value) { $fl = (count($_FILES[$key]['name']) > 1)? $_FILES[$key]['name'][0]:$_FILES[$key]['name'];}}
 
-			if($_FILES){
+			if(!empty($fl)){
 				$token = time().uniqid();
 				$issetT = 0;
 				if(isset($data['id'])){
@@ -195,11 +195,15 @@
 			$fields = "*";
 			$limit = "";
 			$order = "";
-			if(isset($data['where'])){ $where = $data['where']; }
+			$group = "";
+			$like = "";
+			if(isset($data['where'])){  $where  = $data['where']; }
 			if(isset($data['fields'])){ $fields = $data['fields']; }
-			if(isset($data['limit'])){ $limit = "LIMIT ".$data['limit']; }
-			if(isset($data['order'])){ $order = $data['order']; if($order != ""){ $order = "ORDER BY ".$order; } }
-			$sql = "SELECT $fields FROM ".$this->table." WHERE $where $order $limit";
+			if(isset($data['limit'])){  $limit  = "LIMIT ".$data['limit']; }
+			if(isset($data['group'])){  $limit  = "GROUP BY ".$data['group']; }
+			if(isset($data['order'])){  $order  = "ORDER BY ".$data['order']; }
+			if(isset($data['like'])){  $like    = "LIKE ".$data['like']; }
+			$sql = "SELECT $fields FROM ".$this->table." WHERE $where $order $limit $group $like";
 			$d = array();
 
 			$req = $this->bdd->query($sql);
@@ -315,34 +319,51 @@
 			$req->execute($c);
 		}
 
-		public function link($array=array()){
+		public function link($array=array(), $field=null){
 			$key  = $array[0];
 			$as   = $array[1];
 			$from = $array[2];
-			
+
+			$field = (is_array($field))?implode(",", $field):"*";
+
+			if(strpos($key, "[]") !== false){
+				$key = explode("[]", $key)[0];
+				$ar  = true;
+			}else{ $ar  = false; }
+
 			if(is_array($this->data)){
 				foreach ($this->data as $k => $v) {
 					$d = array();
-					$req = $this->bdd->query("SELECT * FROM ".$from." WHERE ".$as."='".$this->data[$k]->$key."'");
+					$req = $this->bdd->query("SELECT $field FROM ".$from." WHERE ".$as."='".$this->data[$k]->$key."'");
 					while($data = $req->fetch(PDO::FETCH_OBJ)){
 						$d[] = $data;
 					}
-					$d = (count($d) == 1)?$d[0]:$d;
-					$this->data[$k]->$from = $d;
-					if($key != $from){
+					if($ar){
+						$this->data[$k]->$from = (object) $d;
+					}else{
+						$d = (count($d) == 1)?$d[0]:$d;
+						$this->data[$k]->$from = (object) $d;
+					}
+					
+					if($key != $from && $key != "id"){
 						unset($this->data[$k]->$key);
 					}
 				}
 			}else{
 				$d = array();
-				$req = $this->bdd->query("SELECT * FROM ".$from." WHERE ".$as."='".$this->data->$key."'");
+				$req = $this->bdd->query("SELECT $field FROM ".$from." WHERE ".$as."='".$this->data->$key."'");
 				while($data = $req->fetch(PDO::FETCH_OBJ)){
 					$d[] = $data;
 				}
 
-				$d = (count($d) == 1)?$d[0]:$d;
-				$this->data->$from = $d;
-				if($key != $from){
+				if($ar){
+					$this->data->$from = (object) $d;
+				}else{
+					$d = (count($d) == 1)?$d[0]:$d;
+					$this->data->$from = (object) $d;
+				}
+				
+				if($key != $from && $key != "id"){
 					unset($this->data->$key);
 				}
 			}

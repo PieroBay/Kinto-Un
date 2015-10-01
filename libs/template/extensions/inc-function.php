@@ -56,7 +56,7 @@
 				$obj = array_merge($obj, $info);
 				require (ROOT.'libs/template/twig/LoaderTemplate.php');
 				require (ROOT.'libs/template/autoLoad.php');
-				echo $twig->render('src/project/'.$patternEx[0].'/views/'.$patternEx[1].'/'.$patternEx[2].'.html.twig',$obj);
+				echo $twig->render('src/project/'.$patternEx[0].'/views/'.$patternEx[1].'/'.$patternEx[2].'.html.twig',json_decode(json_encode($obj), true));
 			}
 		}		
 	}

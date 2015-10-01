@@ -16,7 +16,7 @@
 			$this->id = $id;
 			$this->bdd = $bdd;
 			$this->ins['token'] = $token;
-			$this->repository =	ROOT.'/src/ressources/images/'.$this->upload['target'].'/'.$this->ins['token'].'/';
+			$this->repository =	ROOT.'/src/ressources/files/'.$this->upload['target'].'/'.$this->ins['token'].'/';
 		}
 
 		public function multiple($data){
@@ -26,7 +26,7 @@
 				$req = $this->bdd->prepare("SELECT * FROM ".$this->upload['table_name']." WHERE token=:token");
 				$req->execute(array(':token' => $this->ins['token']));
 				while($d = $req->fetch(PDO::FETCH_OBJ)){
-					unlink(ROOT.'src/ressources/images/'.$this->upload['target'].'/'.$this->ins['token'].'/'.$d->file_name);
+					unlink(ROOT.'src/ressources/files/'.$this->upload['target'].'/'.$this->ins['token'].'/'.$d->file_name);
 				}
 
 				$req = $this->bdd->prepare("DELETE FROM ".$this->upload['table_name']." WHERE token = :token");
@@ -62,7 +62,7 @@
 				$req = $this->bdd->prepare("SELECT * FROM ".$this->upload['table_name']." WHERE token=:token");
 				$req->execute(array(':token' => $this->ins['token']));
 				while($d = $req->fetch(PDO::FETCH_OBJ)){
-					unlink(ROOT.'src/ressources/images/'.$this->upload['target'].'/'.$this->ins['token'].'/'.$d->file_name);
+					unlink(ROOT.'src/ressources/files/'.$this->upload['target'].'/'.$this->ins['token'].'/'.$d->file_name);
 				}
 				$req = $this->bdd->prepare("DELETE FROM ".$this->upload['table_name']." WHERE token = :token");
 				$req->execute(array(":token"=>$this->ins['token']));
@@ -109,8 +109,8 @@
 		public function verif(){
 			foreach ($this->final as $k => $v) {
 				if($v == "error"){
-					if(file_exists(ROOT.'src/ressources/images/'.$this->upload['target'].'/'.$this->ins['token'])){
-						self::deleteDir(ROOT.'src/ressources/images/'.$this->upload['target'].'/'.$this->ins['token'].'/');
+					if(file_exists(ROOT.'src/ressources/files/'.$this->upload['target'].'/'.$this->ins['token'])){
+						self::deleteDir(ROOT.'src/ressources/files/'.$this->upload['target'].'/'.$this->ins['token'].'/');
 					}
 					$this->final['verif'] = false;
 					$this->final['file_name'] = "";
@@ -155,51 +155,79 @@
 			$extension = $extension['extension'];
 			$name = uniqid().'_'.time().'.'.$extension;
 
+
 			if(in_array(strtolower($extension),$tabExt)){
 
-				$infosImg = getimagesize($fTmp_name);
+				$infosImg  = getimagesize($fTmp_name);
+				$condition = "";
 
-				//if($infosImg[2] >= 1 && $infosImg[2] <= 14){
+				if(count($this->upload['size']) > 1){
+					foreach ($this->upload['size'] as $key) {
+						$e = explode("x", $key);
+						$condition .= $infosImg[0] == $e[0] && $infosImg[1] == $e[1]." || "; 
+					}
+					$condition = rtrim($condition, " || ");
+				}else{
+					$e = explode("x", $this->upload['size'][0]);
+					$condition = $infosImg[0] <= $e[0] && $infosImg[1] <= $e[1];
+				}
 
-					if(($infosImg[0] <= $this->upload['widthMax']) && ($infosImg[1] <= $this->upload['heightMax'])){ 
+				if($condition){ 
+					if(filesize($fTmp_name) <= $this->upload['maxWeight']){
 
-						if(filesize($fTmp_name) <= $this->upload['maxSize']){
+          				if(isset($fTmp_name) && UPLOAD_ERR_OK === $fError){
 
-	          				if(isset($fTmp_name) && UPLOAD_ERR_OK === $fError){
+          					if($this->upload['resize'] != false){
 
-	          					if($this->upload['red'] != false){
-									$image = imagecreatefromjpeg($fTmp_name);
-									$plus_grande_des_tailles = max(imagesx($image), imagesy($image));
-									$taille_maximum_autorisee = $this->upload['red'];
-									$nouvelle_largeur = imagesx($image) * $taille_maximum_autorisee / $plus_grande_des_tailles;
-									$nouvelle_hauteur = imagesy($image) * $taille_maximum_autorisee / $plus_grande_des_tailles;
-									 
-									$image_redimensionnee = imagecreatetruecolor($nouvelle_largeur, $nouvelle_hauteur);
-									imagecopyresized($image_redimensionnee, $image, 0, 0, 0, 0, $nouvelle_largeur, $nouvelle_hauteur, imagesx($image), imagesy($image));
-									imagejpeg( $image_redimensionnee,$this->repository.$name,90 );
+					            switch ($extension) {
+					                case 'jpg':
+					                    $image = imagecreatefromjpeg($fTmp_name);
+					                    break;
+					                case 'jpeg':
+					                    $image = imagecreatefromjpeg($fTmp_name);
+					                    break;
+					                case 'png':
+					                    $image = imagecreatefrompng($fTmp_name);
+					                    break;
+					                case 'gif':
+					                    $image = imagecreatefromgif($fTmp_name);
+					                    break;
+					                default:
+					                    $image = imagecreatefromjpeg($fTmp_name);
+					            }
+
+								if(is_int($this->upload['resize'])){
+									$big_size = max(imagesx($image), imagesy($image));
+									$max_size = $this->upload['resize'];
+									$new_W    = imagesx($image) * $max_size / $big_size;
+									$new_H    = imagesy($image) * $max_size / $big_size;
 								}else{
-									move_uploaded_file($fTmp_name,$this->repository.$name);
+									$size  = explode("x", $this->upload['resize']);
+									$new_W = $size[0];
+									$new_H = $size[1];
 								}
-					
-								$return["status"] = "ok";
-								$return["name"] = $name;
-
+								$virtu_img = imagecreatetruecolor($new_W, $new_H);
+								imagecopyresampled($virtu_img, $image, 0, 0, 0, 0, $new_W, $new_H, imagesx($image), imagesy($image));
+								imagejpeg( $virtu_img,$this->repository.$name,90 );
 							}else{
-								$return["status"] = 'error';
-								$return["message"] = 'Erreur lors de l\'upload';
+								move_uploaded_file($fTmp_name,$this->repository.$name);
 							}
+				
+							$return["status"] = "ok";
+							$return["name"] = $name;
+
 						}else{
 							$return["status"] = 'error';
-							$return["message"] = 'Fichier trop volumineux (2mb max)';
+							$return["message"] = 'Erreur lors de l\'upload';
 						}
 					}else{
 						$return["status"] = 'error';
-						$return["message"] = 'Fichier trop grand ('.$this->upload['widthMax'].'x'.$this->upload['heightMax'].')';
+						$return["message"] = 'Fichier trop volumineux';
 					}
-				/*}else{
+				}else{
 					$return["status"] = 'error';
-					$return["message"] ='Le fichier à uploader n\'est pas une image';
-				}*/
+					$return["message"] = 'Fichier trop grand ('.$this->upload['size'][0].')';
+				}
 			
 			}else{
 				$return["status"] = 'error';

@@ -17,6 +17,7 @@ session_start();
 	require_once(ROOT.'vendor/autoload.php');
 	require_once(ROOT.'app/core/Routing.php');
 	require_once(ROOT.'app/core/Controller.php');
+	require_once(ROOT.'src/ressources/layout/layoutController.php');
 
 	$configFile = spyc_load_file(ROOT.'app/config/Config.yml');
 	$config     = $configFile['configuration'];
@@ -61,8 +62,9 @@ session_start();
 		),
 	);
 
-	$setError = new Error($bdd,$info, $configFile);
-	Routing::start($link,$setError);
+	$setError  = new Error($bdd,$info, $configFile);
+
+	Routing::start($link,$setError,$configFile["whis"]["owner"]);
 	$urlParams = Routing::$params;
 
 	$info["Info"]['lang']       = $_SESSION['lang'];
@@ -70,13 +72,16 @@ session_start();
 	$info["Info"]['Output']     = $urlParams['output'];
 	$info["Info"]['Parametres'] = $urlParams['parametres'];
 	$info["Info"] += array(
-			"RouteName"        =>	$urlParams['routeName'],
-			"Project"          =>	$urlParams['project'],
-			"Controller"       =>	$urlParams['controller'],
-			"ControllerFolder" =>	$urlParams['controller'].'Controller',
-			"Action"           =>	$urlParams['action'],
-			"ActionComplete"   =>	$urlParams['action'].'Action',
+			"RouteName"         =>	 $urlParams['routeName'],
+			"Project"           =>	 $urlParams['project'],
+			"Controller"        =>	 $urlParams['controller'],
+			"ControllerFolder"  =>	 $urlParams['controller'].'Controller',
+			"Action"            =>	 $urlParams['action'],
+			"ActionComplete"    =>	 $urlParams['action'].'Action',
 	);
+	$layout      		        = new layoutController($bdd,$info,$configFile);
+	$info["Layout"]			    = $layout->layout();
+
 	require(ROOT.'src/project/'.$info["Info"]['Project'].'/controller/'.$info["Info"]['ControllerFolder'].'.php');
 
 	$controllerFolder = new $info["Info"]['ControllerFolder']($bdd, $info, $configFile);

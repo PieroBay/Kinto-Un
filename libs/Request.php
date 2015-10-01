@@ -63,11 +63,21 @@ class Request{
 		exit(json_encode($data));
 	}
 
-	public static function renderXml($data=array(),$unset=null,$rename=null){
-		$d = array();
-		foreach ($data as $k => $v) {
-			$data[$k] = (array)$data[$k];
+	public static function headerResponse($code){
+		header('HTTP/1.1 '.$code);
+	}
 
+	public static function renderXml($data=array(),$unset=null,$rename=null){
+		$d  = array();
+
+		if(count($data) == 1){
+			$tmp_d[] = $data;
+			$data    = $tmp_d;
+		}
+
+		$data = json_decode(json_encode($data), true);
+
+		foreach ($data as $k => $v){
 			if(isset($unset) && is_array($unset)){
 				foreach ($unset as $key) {
 					unset($data[$k][$key]);
@@ -80,18 +90,29 @@ class Request{
 				}
 			}
 
-			$d[] = array_flip($data[$k]);
+			$d[] = $data[$k];
 		}
 
 		header('Content-Type: application/xml');
-		$xml = new SimpleXMLElement('<items/>');
-		
-		foreach ($d as $key => $v) {
-			$node = $xml->addChild('item');
-			array_walk_recursive($v, array ($node, 'addChild'));
-		}
-		
+		$xml = new SimpleXMLElement("<?xml version=\"1.0\"?><items></items>");
+		self::array_to_xml($d,$xml);
 		exit($xml->asXML());
+	}
+
+	public static function array_to_xml($array, &$xml) {
+	    foreach($array as $key => $value){
+	        if(is_array($value)){
+	            if(!is_numeric($key)){
+	                $subnode = $xml->addChild("$key");
+	                self::array_to_xml($value, $subnode);
+	            }else{
+	                $subnode = $xml->addChild("item");
+	                self::array_to_xml($value, $subnode);
+	            }
+	        }else{
+	            $xml->addChild("$key",htmlspecialchars("$value"));
+	        }
+	    }
 	}
 
 	public static function isPost(){
