@@ -3,7 +3,7 @@
     "description": "Kinto'Un PHP Framework",
     "keywords": ["framework", "kintoUn", "kinto-Un", "PHP"],
     "type": "project",
-    "version": "1.6.1",
+    "version": "1.7.0",
     "license": "MIT",
     "require": {
         "php": ">=5.4",
