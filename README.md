@@ -1,5 +1,5 @@
 # Kinto'un [Framework]
-v 1.6.1
+v 1.7.0
 
 Nécessite PHP 5.4 ou +
 
