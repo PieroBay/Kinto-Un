@@ -4,25 +4,43 @@
 
 		private $final = array();
 		private $i=0;
+		private $j=1;
 		private $ins = array();
 		private $FILES;
 		private $upload;
 		private $repository;
 		private $bdd;
-		private $id;
+		private $edition;
 
-		function __construct($upload,$bdd,$token,$id){
-			$this->upload = $upload;
-			$this->id = $id;
-			$this->bdd = $bdd;
+		function __construct($upload,$bdd,$token,$edition){
+			$this->upload       = $upload;
+			$this->edition      = $edition;
+			$this->bdd          = $bdd;
 			$this->ins['token'] = $token;
-			$this->repository =	ROOT.'/src/ressources/files/'.$this->upload['target'].'/'.$this->ins['token'].'/';
+			$this->repository   =	ROOT.'/src/ressources/files/'.$this->upload['target'].'/'.$this->ins['token'].'/';
+			
+			if($upload["edit"] == "replace"){
+				$this->upload["sort"] = false;
+			}
+
+			# si c'est un sort
+			if($upload['sort']){
+				# Si une modification, on récupere le dernier sort
+				if($edition){
+					$req = $this->bdd->prepare("SELECT MAX(sort) as max FROM ".$this->upload['table_name']." WHERE token=:token");
+					$req->execute(array(':token' => $this->ins['token']));
+					$d 		 = $req->fetch(PDO::FETCH_OBJ);
+					$this->j = $d->max+1;
+				}else{
+					$this->j = 1;
+				}
+			}
 		}
 
 		public function multiple($data){
 			$this->FILES = $data;
 
-			if($this->id != 0 && $this->upload['edit'] == "replace"){
+			if($this->edition && $this->upload['edit'] == "replace"){
 				$req = $this->bdd->prepare("SELECT * FROM ".$this->upload['table_name']." WHERE token=:token");
 				$req->execute(array(':token' => $this->ins['token']));
 				while($d = $req->fetch(PDO::FETCH_OBJ)){
@@ -37,13 +55,20 @@
 				$tmp = $this->upload($key);
 				if($tmp['status'] == "ok"){
 					$this->ins['file_name'] = $tmp['name'];
-					$this->ins['principal'] = ($key == 0)? 1: 0;
+					if(!$this->upload["sort"]){
+						$this->ins['sort'] = ($key == 0)? 1: 0;
 
-					if($this->id != 0 && $this->upload['edit'] == "add"){
-						$this->ins['principal'] = 0;
+						if($this->edition && $this->upload['edit'] == "add"){
+							$this->ins['sort'] = 0;
+						}
+					}else{
+						$this->ins['sort'] = $this->j;
+
+						$this->j++;
 					}
 
-					$sql = "INSERT INTO ".$this->upload['table_name']." (token, file_name, principal) VALUES (:token,:file_name,:principal)";
+
+					$sql = "INSERT INTO ".$this->upload['table_name']." (token, file_name, sort) VALUES (:token,:file_name,:sort)";
 					$req = $this->bdd->prepare($sql);
 					$req->execute($this->ins);
 
@@ -58,7 +83,7 @@
 
 		public function single($data){
 			$this->FILES = $data;
-			if($this->id != 0 && $this->upload['edit'] == "replace"){
+			if($this->edition && $this->upload['edit'] == "replace"){
 				$req = $this->bdd->prepare("SELECT * FROM ".$this->upload['table_name']." WHERE token=:token");
 				$req->execute(array(':token' => $this->ins['token']));
 				while($d = $req->fetch(PDO::FETCH_OBJ)){
@@ -68,14 +93,23 @@
 				$req->execute(array(":token"=>$this->ins['token']));
 			}
 
-			$this->i = ($this->id != 0 && $this->upload['edit'] != "replace")? 2 : $this->i;
-			
+			$this->i = ($this->edition && $this->upload['edit'] != "replace")? 2 : $this->i;
 			$this->i++;
+
 			$tmp = $this->upload();
+
+			if(!$this->upload["sort"]){
+				$this->ins['sort'] = ($this->i == 1)? 1: 0;
+			}else{
+				$this->ins['sort'] = $this->j;
+				
+				$this->j++;
+			}
+
 			if($tmp['status'] == "ok"){
 				$this->ins['file_name'] = $tmp['name'];
-				$this->ins['principal'] = ($this->i == 1)? 1: 0;
-				$sql = "INSERT INTO ".$this->upload['table_name']." (token, file_name, principal) VALUES (:token,:file_name,:principal)";
+				
+				$sql = "INSERT INTO ".$this->upload['table_name']." (token, file_name, sort) VALUES (:token,:file_name,:sort)";
 				$req = $this->bdd->prepare($sql);
 				$req->execute($this->ins);
 				

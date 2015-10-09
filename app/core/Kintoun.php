@@ -5,7 +5,6 @@ if (substr($_SERVER['HTTP_HOST'], 0, 4) === 'www.') {
 }
 session_start();
 	header('Access-Control-Allow-Origin: *');
-	ini_set('display_errors', 1);
 	if($_SERVER['REMOTE_ADDR'] != '::1'){
 		define('WEBROOT', 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URl'].'/');
 	}else{
@@ -21,7 +20,7 @@ session_start();
 
 	$configFile = spyc_load_file(ROOT.'app/config/Config.yml');
 	$config     = $configFile['configuration'];
-
+	if($config['development']){ini_set('display_errors', 1);}
 	$dsn = 'mysql:host='.$config['database_host'].';dbname='.$config['database_name'];
 	try{
 	    $bdd = new PDO($dsn, $config['database_user'], $config['database_password']);
@@ -64,7 +63,7 @@ session_start();
 
 	$setError  = new Error($bdd,$info, $configFile);
 
-	Routing::start($link,$setError,$configFile["whis"]["owner"]);
+	Routing::start($link,$setError);
 	$urlParams = Routing::$params;
 
 	$info["Info"]['lang']       = $_SESSION['lang'];

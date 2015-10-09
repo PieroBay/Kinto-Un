@@ -7,7 +7,6 @@ class Routing{
 	static $deletedParams = array();
 	static $patternP;
 	static $setError;
-	static $configYml;
 	static $lang;
 
 
@@ -56,14 +55,13 @@ class Routing{
 		}
 	}
 
-	public static function start($link,$setError,$configYml,$verif=false,$secondPatt=array()){
+	public static function start($link,$setError,$verif=false,$secondPatt=array()){
 		$routeP          = spyc_load_file(ROOT.'app/config/Routing.yml');
 		$linkEx          = explode('/', trim($link,'/'));
 		self::$lang      = $_SESSION['lang'];
 		$ct              = 0;
 		$linkTrim        = trim($link,'/').'/';
 		self::$setError  = $setError;
-		self::$configYml = $configYml;
 		$exis 			 = false;
 
 		# parcoure le routage principal si première verif
@@ -135,7 +133,7 @@ class Routing{
 				}
 			}
 		}elseif(empty(self::$patternP)){
-			self::start($link,self::$setError,self::$configYml,true,self::$patternList);
+			self::start($link,self::$setError,true,self::$patternList);
 		}
 
 		foreach (self::$patternP as $key => $value){

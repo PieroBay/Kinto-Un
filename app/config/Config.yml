@@ -6,6 +6,7 @@ configuration:
     database_password: root
     local: fr
     template: Twig
+    development: true
 
 security:
     token: 

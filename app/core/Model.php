@@ -64,6 +64,7 @@
 			"table_name"=>	"image",
 			"edit" 		=>	"add",
 			"champ_name"=>	false, 
+			"sort"		=>	false, 
 			"size"		=>	["100x100"], 
 			"maxWeight" => 	2097152,
 			"ext"       => 	array('jpg','png','jpeg','gif'),
@@ -75,11 +76,12 @@
      	   		Error::renderError($e);
      	   		exit();
      	   }
-     	   	$fl = ""; if($_FILES){foreach ($_FILES as $key => $value) { $fl = (count($_FILES[$key]['name']) > 1)? $_FILES[$key]['name'][0]:$_FILES[$key]['name'];}}
+
+     	   	$fl = ""; if(isset($_FILES) && !empty($_FILES['images']['name'][0])){foreach ($_FILES as $key => $value) { $fl = (count($_FILES[$key]['name']) > 1)? $_FILES[$key]['name'][0]:$_FILES[$key]['name'];}}
 
 			if(!empty($fl)){
 				$token = time().uniqid();
-				$issetT = 0;
+				$issetT = false;
 				if(isset($data['id'])){
 					$req2 = $this->bdd->prepare("SELECT * FROM ".$this->table." WHERE id = :id");  # si update, récupere le token de la table
 					$req2->execute(array(':id' => $data['id']));
@@ -91,7 +93,7 @@
 					$req2->execute(array(':token' => $token));
 					$data2 = $req2->fetch(PDO::FETCH_OBJ);
 
-					$issetT = (is_object($data2))? 1: 0;
+					$issetT = (is_object($data2))? true: false;
 				}
 				$uploading = new Upload($upload,$this->bdd,$token,$issetT); 		# init la class
 				if(COUNT($_FILES) > 1){
@@ -100,7 +102,6 @@
 						if(!empty($_FILES[$key]['name'])){
 							foreach($_FILES[$key] as $k => $v) {
 								$newArray[$upload['champ_name']][$k][] = $v;
-							    #$results[$upload['champ_name']][$k] = array_column($_FILES, $k);
 							}
 						}
 					}
@@ -182,6 +183,7 @@
 				}
 
 				$req->execute($c);
+				unset($_FILES);
 				if(!isset($data['id'])){
 					$this->setId($this->bdd->lastInsertId());
 				}else{
