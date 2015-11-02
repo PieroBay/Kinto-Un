@@ -3,13 +3,9 @@ if (substr($_SERVER['HTTP_HOST'], 0, 4) === 'www.') {
     header('Location: http'.(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']=='on' ? 's':'').'://' . substr($_SERVER['HTTP_HOST'], 4).$_SERVER['REQUEST_URI']);
     exit;
 }
+
 session_start();
 	header('Access-Control-Allow-Origin: *');
-	if($_SERVER['REMOTE_ADDR'] != '::1'){
-		define('WEBROOT', 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URl'].'/');
-	}else{
-		define('WEBROOT', str_replace('app/core/Kintoun.php', '', $_SERVER['SCRIPT_NAME']));
-	}
 
 	define('ROOT', str_replace('app/core/Kintoun.php', '', $_SERVER['SCRIPT_FILENAME']));
 
@@ -19,6 +15,14 @@ session_start();
 	require_once(ROOT.'src/ressources/layout/layoutController.php');
 
 	$configFile = spyc_load_file(ROOT.'app/config/Config.yml');
+	$ifFolder   = ($configFile["configuration"]["folder"])?trim($configFile["configuration"]["folder"],"/")."/":"";
+	
+	if($_SERVER['REMOTE_ADDR'] != '::1'){
+		define('WEBROOT', 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URl'].'/'.$ifFolder);
+	}else{
+		define('WEBROOT', str_replace('app/core/Kintoun.php', '', $_SERVER['SCRIPT_NAME']));
+	}
+
 	$config     = $configFile['configuration'];
 	if($config['development']){ini_set('display_errors', 1);}
 	$dsn = 'mysql:host='.$config['database_host'].';dbname='.$config['database_name'];

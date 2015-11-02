@@ -9,6 +9,7 @@
 		protected $configYml;
 		protected $xml;
 		protected $is_valid;
+		protected $ROLE;
 
 		public function __construct($bdd, $info, $configYml){
 			$Security = new Security($configYml);
@@ -19,6 +20,8 @@
 			$this->info      = $info;
 			$this->configYml = $configYml;
 			$this->bdd       = $bdd;
+
+			$this->ROLE      = $_SESSION['ROLE'];
 			
 			$this->sendMail  = $mail;
 			$this->Session   = $session;
@@ -35,7 +38,7 @@
 		}
 
 		public function ROLE($typeRole='visiteur'){
-			if($_SESSION['ROLE'] == $typeRole){
+			if($this->ROLE == $typeRole){
 				return true;
 			}else{
 				return false;

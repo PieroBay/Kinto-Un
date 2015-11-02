@@ -7,6 +7,7 @@ configuration:
     local: fr
     template: Twig
     development: true
+    folder: false
 
 security:
     token: 

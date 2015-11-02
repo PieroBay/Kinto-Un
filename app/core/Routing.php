@@ -3,6 +3,7 @@ class Routing{
 	static $params;
 	static $pattern       = array();
 	static $patternList   = array();
+	static $patternListW  = array();
 	static $parametreP    = array();
 	static $deletedParams = array();
 	static $patternP;
@@ -13,7 +14,7 @@ class Routing{
 	/**
 	 * Check if lang in pattern and change self::$pattern
 	 * @param  Array: $linkEx: Explode of link
-	 * @param   Bool:  $verif:  ...
+	 * @param  Bool:  $verif:  ...
 	 */
 	public static function ifLang($linkEx,$verif){
 		foreach(self::$patternList as $key => $value){
@@ -34,20 +35,6 @@ class Routing{
 						unset(self::$patternList[$key]);
 					}else{
 						self::$patternList[preg_replace('#\{_lang\}/#', '', $key)] = $value;
-						unset(self::$patternList[$key]);
-					}
-				}
-			}
-			# Si deuxième passage
-			if($verif){
-				# Si contient un underscore et différent de lang
-				$e = explode("/",$key);
-				foreach ($e as $k => $v) {
-					if(strpos($v,"{_") !== false && $v != "{_lang}"){
-						$kj = str_replace($v."/", "", $key);
-						$kj = trim($kj,"/")."/";
-						self::$patternList[$kj] = $value;
-						self::$deletedParams[$kj][] = $v;
 						unset(self::$patternList[$key]);
 					}
 				}
@@ -80,14 +67,21 @@ class Routing{
 			self::$patternList = $secondPatt;
 		}
 
+		# Check si lang dans pattern et change self::$pattern
+		# Si 2ème passage, remplace les '_'
 		self::ifLang($linkEx,$verif);
-		if(isset(self::$patternList[$linkTrim]) && $verif == false){ // Si pas de paramètres
-			self::quick($linkTrim, self::$patternList[$linkTrim]);
-			$exis = true;
+
+		# Si premier passage, vire les parametres optionel
+		if(!$verif){
+			foreach (self::$patternList as $key => $value) {
+				$nv = preg_replace('/'.preg_quote('{_').'.*?'.preg_quote('}').'/','', $key);
+				$nv = str_replace("//", "/", $nv);
+				self::$patternListW[$nv] = $value;
+				self::$patternListW[$nv][] = $key;
+			}
 		}
-		if(!$exis){
-			self::finals($linkTrim);			
-		}
+		
+		self::finals($linkTrim,$verif);
 	}
 
 	/**
@@ -95,12 +89,12 @@ class Routing{
 	 * @param  String: $link "Current link"
 	 * @return   Json
 	 */
-	public static function finals($link){
+	public static function finals($link,$verif){
 		$matchList = array();
 
-		foreach (self::$patternList as $k => $v){
+		$patL = (!$verif)?self::$patternListW:self::$patternList;
+		foreach ($patL as $k => $v){
 			$linkRegex = '/'.str_replace('/', '\/', preg_replace('#{(\w+)}#', '(?P<${1}>([a-zA-Z0-9\-\_\+]+))', $k)).'/';
-			
 			if(preg_match($linkRegex, $link, $match)){
 				$t = explode("/",$k);
 				$s = explode("/",$link);
@@ -124,6 +118,16 @@ class Routing{
 				}
 			}
 		}
+		if(!$verif){
+			if(isset(self::$patternP)){
+				$k = array_keys(self::$patternP)[0];
+
+				if(strpos(self::$patternP[$k][0][2],"{_") !== false){
+					preg_match('#\{_(.*?)\}#', self::$patternP[$k][0][2], $match);
+					self::$parametreP[$match[1]] = "";
+				}				
+			}
+		}
 
 		# Si il en trouve plusieur, tu prends celui sans parametres
 		if(count(self::$patternP) > 1){
@@ -133,7 +137,11 @@ class Routing{
 				}
 			}
 		}elseif(empty(self::$patternP)){
-			self::start($link,self::$setError,true,self::$patternList);
+			if($verif){
+				self::$setError->generate('404',"La page que vous tentez d'atteindre n'existe pas ou n'est plus disponible.");
+			}else{
+				self::start($link,self::$setError,true,self::$patternList);
+			}
 		}
 
 		foreach (self::$patternP as $key => $value){
@@ -165,30 +173,6 @@ class Routing{
 		if(empty(self::$params['action'])){
 			self::$setError->generate('404',"La page que vous tentez d'atteindre n'existe pas ou n'est plus disponible.");
 		}
-		return self::$params;
-	}
-
-	/**
-	 * Quick return if not params in pattern
-	 * @param  String: $link   Current link
-	 * @param   Array: $params Route info
-	 * @return   Json:         Route params
-	 */
-	public static function quick($link,$params){
-		$output = (isset($_GET['output']) && $_GET['output'] == "xml")? true : false;
-		$param  = explode(':', $params[0]);
-
-		self::$params = array(
-			'routeName'      => $params[1],
-			'controllerLink' => $link,
-			'pattern'        => $link,
-			'project'        => $param[0],
-			'controller'     => $param[1],
-			'action'         => $param[2],
-			'parametres'     => array(),
-			'output'		 => $output,
-			'lang'			 => self::$lang,
-		);
 
 		return self::$params;
 	}
