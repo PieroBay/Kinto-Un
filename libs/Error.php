@@ -26,6 +26,7 @@ class Error{
 			),
 			"Info" => array(
 				"Webroot"	=> WEBROOT,
+				"Ressources"=> WEBROOT."/src/ressources/",
 			)
 		);
 		$array = array_merge($erreur, $this->data);

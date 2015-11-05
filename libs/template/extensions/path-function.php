@@ -12,7 +12,7 @@
 
 				$patternEx = explode('/', trim($link['pattern'],'/'));
 				foreach ($patternEx as $k => $v) {
-					if($v[0] == "{" && $v[1] == "_" && $v != "{_lang}"){
+					if(isset($v[0]) && $v[0] == "{" && $v[1] == "_" && $v != "{_lang}"){
 						$v = substr($v,1,-1);
 						
 						if(!array_key_exists($v, $params)){

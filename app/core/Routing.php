@@ -5,7 +5,6 @@ class Routing{
 	static $patternList   = array();
 	static $patternListW  = array();
 	static $parametreP    = array();
-	static $deletedParams = array();
 	static $patternP;
 	static $setError;
 	static $lang;
@@ -14,12 +13,11 @@ class Routing{
 	/**
 	 * Check if lang in pattern and change self::$pattern
 	 * @param  Array: $linkEx: Explode of link
-	 * @param  Bool:  $verif:  ...
 	 */
-	public static function ifLang($linkEx,$verif){
+	public static function ifLang($linkEx){
 		foreach(self::$patternList as $key => $value){
 			# si langue dans pattern
-			if(strpos($key,"{_lang}") !== false && !$verif){
+			if(strpos($key,"{_lang}") !== false){
 				$explPatt = explode('/', trim($key,'/'));
 				$lang     = $linkEx[array_search('{_lang}', $explPatt)];
 
@@ -52,7 +50,7 @@ class Routing{
 		$exis 			 = false;
 
 		# parcoure le routage principal si première verif
-		# Crée un array avec toute les routes
+		# Crée un array avec toutes les routes
 		if(!$verif){
 			foreach($routeP as $key => $val){
 				$project  = $routeP[$key]['project'];
@@ -68,10 +66,9 @@ class Routing{
 		}
 
 		# Check si lang dans pattern et change self::$pattern
-		# Si 2ème passage, remplace les '_'
-		self::ifLang($linkEx,$verif);
+		if(!$verif){self::ifLang($linkEx);}
 
-		# Si premier passage, vire les parametres optionel
+		# Si premier passage, vire les parametres optionnels
 		if(!$verif){
 			foreach (self::$patternList as $key => $value) {
 				$nv = preg_replace('/'.preg_quote('{_').'.*?'.preg_quote('}').'/','', $key);
@@ -80,7 +77,7 @@ class Routing{
 				self::$patternListW[$nv][] = $key;
 			}
 		}
-		
+
 		self::finals($linkTrim,$verif);
 	}
 
@@ -95,41 +92,61 @@ class Routing{
 		$patL = (!$verif)?self::$patternListW:self::$patternList;
 		foreach ($patL as $k => $v){
 			$linkRegex = '/'.str_replace('/', '\/', preg_replace('#{(\w+)}#', '(?P<${1}>([a-zA-Z0-9\-\_\+]+))', $k)).'/';
+			
 			if(preg_match($linkRegex, $link, $match)){
-				$t = explode("/",$k);
-				$s = explode("/",$link);
+				$t = array_filter(explode("/",$k));
+				$s = array_filter(explode("/",$link));
+				
 				if(count($t) == count($s)){
-					if($match[0] == $link){
-						self::$patternP[$linkRegex] = array($v,$k);
-					}
-					$matchList[] = $match;
+					self::$patternP[$linkRegex] = array($v,$k);
+					$nP  = (!isset(self::$patternP[$linkRegex][0][2]))?$k:self::$patternP[$linkRegex][0][2];
+					$arM = array("pattern"=>$nP,"match"=>$match);
+					$matchList[] = $arM;
+					if($k == $link){break;}
 				}
 			}
 		}
-
+		
 		# Si il y a des paramètres, on les ajoutes dans le tableau
-		if(!empty($matchList)){
-			$count = array_map('count', $matchList);
-			$min   = $matchList[array_keys($count, min($count))[0]];
+		if(!empty($matchList) && count($matchList) > 0){
+			foreach ($matchList as $k => $v) {
+				$count[] = array_map('count', $v)["match"];
+			}
 
-			foreach($min as $key => $val){
-				if(is_string($key) && $key != "_lang"){
-					self::$parametreP[$key]=$val;
+			# Supprimer l'item avec le plus de clé dans self::$patternP
+			if(count(self::$patternP) > 1){
+				$i = 0;
+				foreach (self::$patternP as $key => $value) {
+					if($i == array_keys($count, max($count))[0]){
+						unset(self::$patternP[$key]);
+					}
+					$i++;
+				}
+			}
+			
+			foreach ($matchList as $k => $v) {
+				$min   = $matchList[array_keys($count, min($count))[0]]["match"];
+				foreach($min as $key => $val){
+					if(is_string($key)){
+						self::$parametreP[$key]=$val;
+					}
 				}
 			}
 		}
+
+		# Si premier passage, et si il y a des parametres facultatif, les ajouter dans les parametres avec une valeur vide.
+		# Ne passe jamais aux 2eme passage, l'index 2 ne posera donc pas de problème car l'index 2 n'existe pas au 2eme passage.
 		if(!$verif){
 			if(isset(self::$patternP)){
 				$k = array_keys(self::$patternP)[0];
-
 				if(strpos(self::$patternP[$k][0][2],"{_") !== false){
 					preg_match('#\{_(.*?)\}#', self::$patternP[$k][0][2], $match);
-					self::$parametreP[$match[1]] = "";
+					self::$parametreP["_".$match[1]] = "";
 				}				
 			}
 		}
 
-		# Si il en trouve plusieur, tu prends celui sans parametres
+		# Si il en trouve plusieurs, tu prends celui sans parametres
 		if(count(self::$patternP) > 1){
 			foreach (self::$patternP as $key => $value){
 				if(strpos($value[1],"{") === false){
@@ -147,13 +164,6 @@ class Routing{
 		foreach (self::$patternP as $key => $value){
 			$output = (isset($_GET['output']) && $_GET['output'] == "xml")? true : false;
 			$param  = explode(':', $value[0][0]);
-
-			if(isset(self::$deletedParams[$value[1]])){
-				foreach(self::$deletedParams[$value[1]] as $k => $v){
-					$v = str_replace(array( '{', '}' ), '', $v);
-					self::$parametreP[$v] = "";
-				}				
-			}
 
 			self::$params = array(
 				'routeName'      => $value[0][1],

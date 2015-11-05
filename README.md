@@ -1,5 +1,5 @@
 # Kinto'un [Framework]
-v 1.7.2
+v 1.7.3
 
 Nécessite PHP 5.4 ou +
 
@@ -36,7 +36,7 @@ Pour utiliser Smarty, le rajouter dans `composer.json`.
 
 Le fichier de config `Config.yml` se trouvant à `app/config/Config.yml` vous permettra de: 
 
-* Vous connecter à la DB, de choisir le template (none/php, Twig ou Smarty), de choisir la langue local...
+* Vous connecter à la DB, de choisir le template (none/php, Twig ou Smarty), de choisir la langue local, préciser si le dossier n'est pas à la racine du domaine (folder)...
 
 * Générer un token qui sera crypté ensuite pour sécuriser votre site de la faille CSRF et choisir le délais (en minute) d'expiration du token. (optionel, vous pouvez laisser les deux champs vide). 
 
@@ -155,12 +155,13 @@ stdClass Object
 array(
 			"target"      =>  "folder_name", "folder_name", # le dossier sera dans "src/ressources/images/"
 			"table_name"  =>  "image", # nom de la table ou les url des images seront enregistrées
-			"champ_name"  =>  "image",  # nom du champ dans de la liaison de la table images
+			"champ_name"  =>  "image",  # nom du champ dans de la liaison de la table image
 			"maxWeight"   =>  2097152, # poids max en byte
-			"size"  	  =>  ['1000x1000'],  # taille max en pixel.
-			"edit"		  =>	 "add", # add ou replace. Si à l'ajout ca enlève l'ancien fichier ou il s'ajoute
+			"sort"        =>  true, Si true, trie les images par position.
+			"size"  	  =>  ['1000x1000','2000x2000','1280x1080'],  # taille max en pixel. Si plusieurs parametres, uniquement ces tailles sont autorisées
+			"edit"		  =>  "add", # add ou replace. Si à l'ajout ça remplace l'ancien fichier ou il s'ajoute
 			"ext"         =>  array('jpg','png','jpeg'), # extensions autorisées
-			"resize"      =>  false,  # Si l'image doit être redimensionner mettre une taille en pixel, sinon laisser vide
+			"resize"      =>  false,  # Si l'image doit être redimensionnée et doit garder le ratio, mettre une taille en pixel `ex: 200`, sinon mettre les deux tailles `ex: 100x200`. sinon laisser à false
 ```
 
 * `$this->table1->allOk()` => uniquement pour vérifier si l'upload s'est déroulé correctement.
@@ -238,6 +239,9 @@ if(!$this->ROLE('admin')){ // exemple, la page est limitée aux membres qui ont 
 
 Par défaut, `$this->ROLE()` contient 'visiteur' et return true. 
 
+`$this->ROLE` retourne le role de l'utilisateur.
+
+
 ### Connexion
 
 Un champs `role` doit être créé dans la table.
@@ -246,7 +250,7 @@ Par défaut une session role visiteur est créée.
 Pour configurer une connexion, dans le fichier `config.yml` se trouvant à `core/config.yml` remplissez les champs demandé:
 
 ```yml
-connection:
+login:
     login: name 			# Champs login du formulaire qui a le même nom que dans votre table
     password: password		# Champs password du formulaire qui a le même nom que dans votre table
     remember: false			# Si vous voulez que le navigateur se rappel des identifians de l'utilisateur (true ou false)

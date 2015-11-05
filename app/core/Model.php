@@ -381,11 +381,11 @@
 				exit();
 			}
 
-			$login = $this->configYml['connection']['login'];
-			$password = $this->configYml['connection']['password'];
+			$login = $this->configYml['login']['login'];
+			$password = $this->configYml['login']['password'];
 			$connect = strip_tags($d[$login]);
 			$pwd = strip_tags($d[$password]);
-			$activation = $this->configYml['connection']['activation'];
+			$activation = $this->configYml['login']['activation'];
 
 			$sql = "SELECT *, COUNT(*) AS nb FROM ".$this->table." WHERE ".$login." = :".$login." AND ".$password." = :".$password;
 			
@@ -398,7 +398,7 @@
 					$this->setConnexion(false);
 					$this->setConnexionError("act");
 				}else{
-					$sess = explode("|", $this->configYml['connection']['session']);
+					$sess = explode("|", $this->configYml['login']['session']);
 					foreach ($sess as $k => $v) {
 						if($v != 'role'){
 							$_SESSION[$v] = $data->$v;
@@ -406,7 +406,7 @@
 					}
 					$_SESSION['ROLE'] = $data->role;
 
-					if($this->configYml['connection']['remember']){
+					if($this->configYml['login']['remember']){
 						setcookie("ku_login", $d[$login]);
 						setcookie("ku_pwd", $d[$password]);
 					}
@@ -420,7 +420,7 @@
 		}
 
 		public function deconnexion(){
-			$sess = explode("|", $this->configYml['connection']['session']);
+			$sess = explode("|", $this->configYml['login']['session']);
 			foreach ($sess as $k => $v) {
 				if($v != 'role'){
 					unset($_SESSION[$v]);

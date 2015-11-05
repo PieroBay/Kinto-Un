@@ -7,13 +7,13 @@ configuration:
     local: fr
     template: Twig
     development: true
-    folder: false
+    folder: false # If Kinto-Un is not at the root of the domain
 
 security:
     token: 
     expire: 30
 
-connection:
+login:
     login: name
     password: password
     activation: true
