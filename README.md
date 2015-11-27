@@ -1,5 +1,5 @@
 # Kinto'un [Framework]
-v 1.7.3
+v 1.7.4
 
 Nécessite PHP 5.4 ou +
 
@@ -154,10 +154,11 @@ stdClass Object
 ```php
 array(
 			"target"      =>  "folder_name", "folder_name", # le dossier sera dans "src/ressources/images/"
-			"table_name"  =>  "image", # nom de la table ou les url des images seront enregistrées
+			"table_name"  =>  "image", # nom de la table ou les url des images seront enregistrées. Si false, enregistre dans la table envoyé.
 			"champ_name"  =>  "image",  # nom du champ dans de la liaison de la table image
 			"maxWeight"   =>  2097152, # poids max en byte
 			"sort"        =>  true, Si true, trie les images par position.
+			"thumbnail"   =>  false, Si false, ne créera pas de thumbnail sinon mettre une taille en pixel (la thumbnail sera toujours carrée).
 			"size"  	  =>  ['1000x1000','2000x2000','1280x1080'],  # taille max en pixel. Si plusieurs parametres, uniquement ces tailles sont autorisées
 			"edit"		  =>  "add", # add ou replace. Si à l'ajout ça remplace l'ancien fichier ou il s'ajoute
 			"ext"         =>  array('jpg','png','jpeg'), # extensions autorisées

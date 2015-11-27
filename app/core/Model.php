@@ -59,26 +59,30 @@
 			return $this->data;
 		}
 
-		public function save($data=null, $upload=array(
-			"target"    =>	"uploads",
-			"table_name"=>	"image",
-			"edit" 		=>	"add",
-			"champ_name"=>	false, 
-			"sort"		=>	false, 
-			"size"		=>	["100x100"], 
-			"maxWeight" => 	2097152,
-			"ext"       => 	array('jpg','png','jpeg','gif'),
-			"resize"    => 	false,)){
+		public function save($data=null, $upload=array()){
 			
-     	   try{
-     	   	if(!isset($data) || !is_array($data)) throw new Exception("Aucun tableau n'a été envoyé");
-     	   }catch(Exception $e){
+     	   	try{
+     	   		if(!isset($data) || !is_array($data)) throw new Exception("Aucun tableau n'a été envoyé");
+     	   	}catch(Exception $e){
      	   		Error::renderError($e);
      	   		exit();
-     	   }
+     	   	}
 
-     	   	$fl = ""; if(isset($_FILES) && !empty($_FILES['images']['name'][0])){foreach ($_FILES as $key => $value) { $fl = (count($_FILES[$key]['name']) > 1)? $_FILES[$key]['name'][0]:$_FILES[$key]['name'];}}
+			$uploadDefault = array(
+			"target"    =>  "uploads",
+			"table_name"=>  "image",
+			"edit"      =>  "add",
+			"champ_name"=>  false,
+			"sort"      =>  false,
+			"thumbnail" =>  false,
+			"size"      =>  ["100x100"],
+			"maxWeight" =>  2097152,
+			"ext"       =>  array('jpg','png','jpeg','gif'),
+			"resize"    =>  false,);
 
+			$upload = array_merge($uploadDefault, $upload);
+
+     	   	$fl = ""; if(isset($_FILES) && !empty($_FILES[$upload["champ_name"]]['name'][0])){foreach ($_FILES as $key => $value) { $fl = (count($_FILES[$key]['name']) > 1)? $_FILES[$key]['name'][0]:$_FILES[$key]['name'];}}
 			if(!empty($fl)){
 				$token = time().uniqid();
 				$issetT = false;
@@ -110,16 +114,23 @@
 
 				foreach ($_FILES as $k => $v) { 
 					if($_FILES[$k]['name'] != "" && is_string($_FILES[$k]['name'] != "") || $_FILES[$k]['name'][0] != ""){ # si champs non vide
-						if(is_array($v['name'])){ 							# Si un multiUpload
-							$file = $uploading->multiple($_FILES[$k]);		# return array
-						}else{												# Si un simple upload ou plusieur champs file
-							$file = $uploading->single($_FILES[$k]);		# return array
+						if(!$upload['table_name']){								# Si enregistré dans la même table
+							$file = $uploading->current($_FILES[$k]);			
+						}else{
+							if(is_array($v['name'])){ 							# Si un multiUpload
+								$file = $uploading->multiple($_FILES[$k]);		# return array
+							}else{												# Si un simple upload ou plusieur champs file
+								$file = $uploading->single($_FILES[$k]);		# return array
+							}
 						}
-
 						if($file['verif']){  									# Si tout est ok pour l'upload
 							if($upload['champ_name']){ 							# Si avec table champ image = token (dossier)
 								unset($data[$k]);								# Enleve le(s) post file
-								$data[$upload['champ_name']] = $file['token'];	# et tu l'init avec le nom du dossier
+								if($upload['table_name']){
+									$data[$upload['champ_name']] = $file['token'];	# et tu l'init avec le nom du dossier
+								}else{
+									$data[$upload['champ_name']] = $file['file_name'];
+								}
 							}else{ 												# 
 								$data[$file[$k]] = $file['file_name'];			# Sinon le post file = le nom du fichier (si image dans la meme table)
 							}
@@ -137,7 +148,6 @@
 					}
 				}
 			}
-
 			if(isset($data['id']) && !empty($data['id'])){
 				$sql = "UPDATE ".$this->table." SET ";
 						if(isset($data['uniqid'])){unset($data['uniqid']);};

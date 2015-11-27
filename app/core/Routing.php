@@ -66,10 +66,10 @@ class Routing{
 		}
 
 		# Check si lang dans pattern et change self::$pattern
-		if(!$verif){self::ifLang($linkEx);}
-
 		# Si premier passage, vire les parametres optionnels
 		if(!$verif){
+			self::ifLang($linkEx);
+			
 			foreach (self::$patternList as $key => $value) {
 				$nv = preg_replace('/'.preg_quote('{_').'.*?'.preg_quote('}').'/','', $key);
 				$nv = str_replace("//", "/", $nv);
@@ -91,7 +91,7 @@ class Routing{
 
 		$patL = (!$verif)?self::$patternListW:self::$patternList;
 		foreach ($patL as $k => $v){
-			$linkRegex = '/'.str_replace('/', '\/', preg_replace('#{(\w+)}#', '(?P<${1}>([a-zA-Z0-9\-\_\+]+))', $k)).'/';
+			$linkRegex = '/'.str_replace('/', '\/', preg_replace('#{(\w+)}#', '(?P<${1}>([a-zA-Z0-9\-\_\+\.]+))', $k)).'/';
 			
 			if(preg_match($linkRegex, $link, $match)){
 				$t = array_filter(explode("/",$k));

@@ -1,6 +1,6 @@
 <?php
 	function datePost($datePoste){
-		$date = time() - $datePoste; 
+		$date = time() - strtotime($datePoste); 
 		if($date <= 60){
 			$date = $date;
 			$unite = 'secondes';
@@ -30,7 +30,7 @@
 			}
 			$affiche_date = 'Il y a '.round($date).' '.$unite;
 		}elseif ($date > 423000) {
-			 $affiche_date = 'Le '.date('d M Y',$datePoste);
+			 $affiche_date = 'Le '.date('d M Y',strtotime($datePoste));
 		}
 		return $affiche_date;
 	}
