@@ -5,11 +5,13 @@ class Request{
 
 	public static function POST($data=null){
 		if($_SERVER['REQUEST_METHOD'] == __FUNCTION__ && preg_match('#application/json#', $_SERVER['HTTP_ACCEPT'])){
+			$_POST = (!empty($_POST))?$_POST:json_decode(file_get_contents("php://input"), true);
 			return true;
 		}
 	}
 	public static function GET($data=null){
 		if($_SERVER['REQUEST_METHOD'] == __FUNCTION__ && preg_match('#application/json#', $_SERVER['HTTP_ACCEPT'])){
+			$_POST = (!empty($_POST))?$_POST:json_decode(file_get_contents("php://input"), true);
 			if(!isset($data)){
 				return true;
 			}elseif($data){
@@ -23,11 +25,13 @@ class Request{
 	}
 	public static function PUT(){
 		if($_SERVER['REQUEST_METHOD'] == __FUNCTION__ && preg_match('#application/json#', $_SERVER['HTTP_ACCEPT'])){
+			$_POST = (!empty($_POST))?$_POST:json_decode(file_get_contents("php://input"), true);
 			return true;
 		}
 	}
 	public static function DELETE(){
 		if($_SERVER['REQUEST_METHOD'] == __FUNCTION__ && preg_match('#application/json#', $_SERVER['HTTP_ACCEPT'])){
+			$_POST = (!empty($_POST))?$_POST:json_decode(file_get_contents("php://input"), true);
 			return true;
 		}
 	}
