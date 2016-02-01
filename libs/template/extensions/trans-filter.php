@@ -14,7 +14,7 @@
 
 	function trans($tmp){
 		if($_SESSION['lang'] != $_SESSION['local']){
-			$traduction = array_change_key_case(fileExiste(), CASE_LOWER);
+			$traduction = array_change_key_case(fileExist(), CASE_LOWER);
 			return $traduction[strtolower($tmp)];
 		}else{
 			return $tmp;

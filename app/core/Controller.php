@@ -81,7 +81,9 @@
 
 					$link = trim($linkP,'/').'/'.trim($link['pattern'],'/');
 					$link = preg_replace('#//#', '/', $link);
-					if(empty(trim($link,'/'))){
+					$tri = trim($link,'/');
+
+					if(empty($tri)){
 						header('Location: '.WEBROOT);
 					}else{
 						header('Location: '.WEBROOT.trim($link,'/').'/');

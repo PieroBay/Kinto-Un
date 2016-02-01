@@ -1,10 +1,43 @@
 # Kinto'un [Framework]
-v 1.7.5
+v 1.7.6
 
 Nécessite PHP 5.4 ou +
 
 [Utilise le template Twig/Smarty ou Php classique] 
 
+
+## Sommaire
+
+* [installation](#installation)
+	* [Installation avec Composer](#installation-avec-composer)
+		* [Composer](#composer)
+	* [Installation manuelle](#installation-manuelle)
+* [Fichier config](#fichier-config)
+* [Info](#info)
+* [Project](#project)
+* [Controller](#controller)
+	* [Récupérer des données de la DB](#récupérer-des-données-de-la-db)
+	* [Exemple](#exemple)
+	* [Upload](#upload)
+	* [Champs hidden token (Faille CSRF)](#champs-hidden-token-Faille-csrf)
+	* [Envoyer des données de la DB à la vue](#envoyer-des-données-de-la-db-à-la-vue)
+	* [Message Flash](#message-flash)
+	* [Redirection](#redirection)
+	* [Envoi de mail](#envoi-de-mail)
+	* [ROLE](#role)
+	* [Connexion](#connexion)
+	* [Déconnexion](#deconnexion)
+* [Views](#views)
+	* [Ressources](#ressources)
+* [Routing](#routing)
+	* [Lien](#lien)
+* [Multilangage](#multilangage)
+* [Créez vos filtres/fonctions](#créez-vos-filtresfonctions)
+* [Personnalisez la page 404 et les autres pages d'erreur](#personnalisez-la-page-404-et-les-autres-pages-derreur)
+* [XML](#xml)
+* [API RESTFUL](#api-restful)
+
+**[Back to top](#sommaire)**
 
 ## Installation
 
@@ -15,13 +48,7 @@ Lancer une des commandes:
 * `php composer.phar create-project --prefer-dist kintoun/kintoun [app_name]`
 * `composer create-project --prefer-dist kintoun/kintoun [app_name]`
 
-
-### 2. Installation depuis zip:
-
-Extraire le zip à la racine de votre site et renomer le dossier.
-Si vous déplacez le contenu du dossier, /!\ N'oubliez pas le `.htaccess` !
-
-### Composer
+#### Composer
 
 **/!\ Faire un update de Composer pour installer les templates où le framework ne fonctionnera pas /!\** 
 
@@ -29,12 +56,20 @@ Si vous déplacez le contenu du dossier, /!\ N'oubliez pas le `.htaccess` !
 
 plus d'info sur Composer => `https://getcomposer.org/doc/00-intro.md`
 
-Par défault, le template est Twig.
-Pour utiliser Smarty, le rajouter dans `composer.json`.
+Par défaut, le template est Twig.
+Pour utiliser Smarty, le rajouter dans `composer.json` et modifier le `Config.yml.
 
-## Fichier config
 
-Le fichier de config `Config.yml` se trouvant à `app/config/Config.yml` vous permettra de: 
+### 2. Installation manuelle:
+
+Extraire le zip à la racine de votre site et renomer le dossier.
+Si vous déplacez le contenu du dossier, /!\ N'oubliez pas le `.htaccess` !
+
+**[Back to top](#sommaire)**
+
+## Fichier Config
+
+Le fichier de configuration `Config.yml` se trouvant à `app/config/Config.yml` vous permettra de: 
 
 * Vous connecter à la DB, de choisir le template (none/php, Twig ou Smarty), de choisir la langue local, préciser si le dossier n'est pas à la racine du domaine (folder)...
 
@@ -42,32 +77,39 @@ Le fichier de config `Config.yml` se trouvant à `app/config/Config.yml` vous pe
 
 * Configurer vos connexions. (plus d'info dans la section Connexion).
 
+**[Back to top](#sommaire)**
+
+## Infos
+
+Si problème serveur 500, enlever le `# de `#RewriteBase "/"` du .htaccess se trouvant à la racine.
 
 ## Project
 
-Les projets sont des dossiers contenant un enssemble de code permettant par la suite d'être réutilisé plus facilement.
+Les projets sont des dossiers contenant un ensemble de fonctionnalité permettant par la suite d'être réutilisé plus facilement.
 
 Les projets sont à placer dans le dossier `src/project`.
 Un projet se compose:
 ![image](http://img11.hostingpics.net/pics/969961folder.png)
 
-A l'ajout d'un nouveau projet, n'oubliez pas de l'ajouter dans le routing se trouvant dans `app/config/routing.yml`
+A l'ajout d'un nouveau projet, n'oubliez pas de rajouter le nom du dossier dans le routing se trouvant dans `app/config/routing.yml`
 
+**[Back to top](#sommaire)**
 
 ## Controller
 
-Les controllers se trouvent dans `src/project/*votre projet*/controller`.
+Les contrôleurs se trouvent dans `src/project/*votre projet*/controller`.
 
-Les noms de vos controller auront le même nom que les dossiers contenant vos vues dans le dossier `views`.
+Les noms de vos contrôleurs auront le même nom que les dossiers contenant vos vues dans le dossier `views`.
 
-Dans les Controller, créez des actions. Le nom des actions auront le même nom que les pages dans les vues **(sans 'Action' à la fin)**.
+Dans les contrôleurs, créez des actions. Le nom des actions auront le même nom que les pages dans les vues **(sans 'Action' à la fin)**.
 
 ![image](http://img15.hostingpics.net/pics/932424action.png)
 
+**[Back to top](#sommaire)**
 
-### Récuperer des données de la DB
+### Récupérer des données de la DB
 
-Dans le controller, dans le tableau `$table`, séparez par des virgules les tables nécessaires pour les actions.
+Dans le contrôleur, dans le tableau `$table`, séparez par des virgules les tables nécessaires pour les actions.
 
 ![image](http://imageshack.com/a/img541/8637/c9ef.png)
 
@@ -87,9 +129,9 @@ class table1Model extends Model{
 ?>
 ```
 
-Pour utiliser ces requetes dans le controller, utilisez `$this->table1Model->enregistrementPersonnel()`.
+Pour utiliser ces requêtes dans le controller, utilisez `$this->table1Model->enregistrementPersonnel()`.
 
-Requètes principales:
+Requêtes principales:
 
 * `$this->table1->delete($data)` => DELETE FROM $table WHERE $data. Si $data est int, il supprimera via l'id, sinon justifier le where en array. `array("user"=>"Marc")`
 
@@ -102,17 +144,18 @@ Requètes principales:
 * `$this->table1->findById($id)->exec()` => SELECT * FROM $table WHERE id = $id
 
 * `$this->table1->save($_POST, $upload)` => $_POST ou array en paramètre => si le tableau contient un id, un UPDATE sera fait sinon un INSERT. 
-$upload (non obligatoire si pas d'upload dans le formulaire) est un array avec plusieurs parametres.
+$upload (non obligatoire si pas d'upload dans le formulaire) est un array avec plusieurs paramètres.
 
 Si une table a besoin d'une liaison, après recupération des données avec "finAll()","findOne()","find()","findById()", utiliser "->link(array("key","as","from"))".
 
 
-* key => Le champ des données récupéré à lier
-* as => Le champ de la table à lier aux données récupérées
+* key  => Le champ des données récupéré à lier
+* as   => Le champ de la table à lier aux données récupérées
 * from => La table à lier.
 
 Le nom du champ 'key' sera remplacé par 'form'.
 
+**[Back to top](#sommaire)**
 
 ### Exemple
 
@@ -147,13 +190,16 @@ stdClass Object
 )
 ?>
 ```
- 
+
+**[Back to top](#sommaire)**
+
+### Upload
 
 /!\ Ne pas oublier `enctype="multipart/form-data"` dans la balise form.
 
 ```php
 array(
-			"target"      =>  "folder_name", "folder_name", # le dossier sera dans "src/ressources/images/"
+			"target"      =>  "folder_name", "folder_name", # le dossier sera dans "src/ressources/files/"
 			"table_name"  =>  "image", # nom de la table ou les url des images seront enregistrées. Si false, enregistre dans la table envoyé.
 			"champ_name"  =>  "image",  # nom du champ dans de la liaison de la table image
 			"maxWeight"   =>  2097152, # poids max en byte
@@ -180,9 +226,12 @@ if($this->table1->allOk()){
 
 * `if($this->is_valid){}` => vérifie si le token du formulaire est valide (contrer la faille CSRF) et vérifie si il y a un $_POST.
 
-##### Champs hidden token
+**[Back to top](#sommaire)**
+
+### Champs hidden token (Faille CSRF)
 Pour ajouter votre token dans vos formulaires, ajoutez la fonction Twig/Smarty `{{ CSRF_TOKEN() }}` avant votre submit.
 
+**[Back to top](#sommaire)**
 
 ### Envoyer des données de la DB à la vue
 
@@ -197,10 +246,11 @@ $this->render(array(
 ));
 ```
 
+**[Back to top](#sommaire)**
 
 ### Message Flash
 
-Créez un message Flash `$this->Session->setFlash('error', 'Mauvais identifiant');` (le type du message en premier paramètre)
+Créer un message Flash `$this->Session->setFlash('error', 'Mauvais identifiant');` (le type du message en premier paramètre)
 
 envoyer le message à la vue:
 ```php
@@ -211,18 +261,24 @@ $this->render(array(
 
 Recuperer le message dans la vue twig: `{{ flash|raw }}` , renvoie un div `<div class="flash flash-'type'">message</div>` (type = error ou ok).
 
+**[Back to top](#sommaire)**
+
 ### Redirection
 
 `$this->redirectUrl('home_index', array("id"=>5,"slug"=>"foo"));` 
 
 * `home_index` est le nom de la route vers laquelle vous voulez rediriger (la route des projets et non celle de la config);
-* `array` Si votre route a besoin de paramètre, indiquez les du même nom que les variables `{...}` qui se trouve dans `routing.yml` dans ce tableau;
+* `array` Si votre route a besoin de paramètres, indiquez les du même nom que les variables `{...}` qui se trouve dans `routing.yml` dans ce tableau;
+
+**[Back to top](#sommaire)**
 
 ### Envoi de mail
 
 `$this->sendMail->send($to,$fromName,$fromMail,$subject,$message);`
 
 (Les messages peuvent contenir de l'html)
+
+**[Back to top](#sommaire)**
 
 ### ROLE 
 
@@ -234,7 +290,7 @@ Pour limiter l'accès à certaines pages, utiliser:
 
 ```php
 if(!$this->ROLE('admin')){ // exemple, la page est limitée aux membres qui ont comme ROLE admin.
-  $this->redirectUrl('public:index.html.twig'); // ceux qui ne sont pas admin, ils seront redirigé sur l'index.
+  $this->redirectUrl('home_index'); // ceux qui ne sont pas admin, ils seront redirigé sur l'index.
 }
 ```
 
@@ -242,6 +298,7 @@ Par défaut, `$this->ROLE()` contient 'visiteur' et return true.
 
 `$this->ROLE` retourne le role de l'utilisateur.
 
+**[Back to top](#sommaire)**
 
 ### Connexion
 
@@ -264,14 +321,14 @@ login:
 * $_COOKIE['ku_password']
 
 
-Utilisez `$this->table->connexion($_POST);` dans une action au nom de votre choix pour un connexion.
+Utiliser `$this->table->connexion($_POST);` dans une action au nom de votre choix pour un connexion.
 
 `$this->user->testConnect()`, si tout est ok, return true
 
 ```php
 $this->user->connexion($_POST); // envoie le formulaire
 if($this->user->testConnect()){ // si la connexion s'est bien passée, return true
-  $this->redirectUrl('public:choice.html.twig'); // on redirige
+  $this->redirectUrl('home_index'); // on redirige
 }else{
 	$this->Session->setFlash('error', 'Mauvais identifiant'); // sinon on envoie un message flash
 }
@@ -279,14 +336,18 @@ if($this->user->testConnect()){ // si la connexion s'est bien passée, return tr
 
 Créera automatiquement une session ROLE qui sera repris de la DB.
 
-### Deconnexion
+**[Back to top](#sommaire)**
 
-Utilisez le code ci dessous dans une action au nom de votre choix pour une déconnexion.
+### Déconnexion
+
+Utiliser le code ci dessous dans une action au nom de votre choix pour une déconnexion.
 
 ```php
 $this->user->deconnexion(); // modifie le ROLE actuel en 'visiteur' et supprime les autres sessions
 $this->redirectUrl('home_index'); // ensuite, redirection sur l'index
 ```
+
+**[Back to top](#sommaire)**
 
 ## Views
 
@@ -295,6 +356,8 @@ Les vues sont dans le dossier `views`.
 Les pages ont les mêmes noms que les actions (sans 'Action' à la fin) et sont placées dans le dossier des controllers et ont comme extension `.html.twig` (si Twig) `.tpl` (si Smarty) ou `.php` (si aucun template).
 
 Si vous avez choisi le php classique, récupérez les données dans la vue avec `<?php echo $data['foo']; ?>` .
+
+**[Back to top](#sommaire)**
 
 ### Ressources
 Les ressources Css/Js/Images/fonts, sont à placer dans `src / ressources`, chacun sont dans un dossier respectif.
@@ -305,9 +368,11 @@ Dans les vues, le lien pour accèder aux ressources sera
 
 `href="{{ Info.Ressources }}css/style.css"`
 
+**[Back to top](#sommaire)**
+
 ## Routing
 
-Le fichier de config de routing se trouve à `src/project/*VOTRE PROJET*/config/routing.yml`.
+Le fichier de configuration de routing se trouve à `src/project/*VOTRE PROJET*/config/routing.yml`.
 
 ```yml
 view_article:
@@ -323,7 +388,9 @@ Les parametres avec un underscore "_" peuvent être absent dans l'url et dans la
 
 {_lang} permet de récupérer la langue dans l'url et peut être absent dans l'url.
 
-### lien
+**[Back to top](#sommaire)**
+
+### Liens
 
 Dans les vues, une fonction twig permet de créer des liens dynamiquement.
 `<a href="{{path("view_article",{"slug": "mon-beau-slug", "id": "9"})}}">cliquez ici</a>`
@@ -332,6 +399,8 @@ le nom de la route est celle qui se trouve dans le fichier config de votre proje
 
 retournera:
 `<a href="_ROOT_/_session-langue_/article/mon-beau-slug_9">cliquez moi</a>`
+
+**[Back to top](#sommaire)**
 
 ## Multilangage
 
@@ -354,18 +423,22 @@ Dans la vue, pour traduire vos sentences, les manières varient selon le templat
 * Smarty => `{"Bonjour"|trans}`
 * Php => `<?= trans("Bonjour"); ?>`
 
+**[Back to top](#sommaire)**
 
 ## Créez vos filtres/fonctions
 
 Créez votre fichier php dans le dossier `libs/template/extensions/`.
 Danse ce fichier, créez votre fonction qui servira de filtre ou de fonction.
-Votre fichier doit avoir le même nom que votre fonction et se terminer par `-function` ou `-filter` et ce nom servira comme filtre/fonction pour tout les templates.
+Votre fichier doit avoir le même nom que votre fonction et se terminer par `-function` ou `-filter` et ce nom servira comme filtre/fonction pour tous les templates.
+
+**[Back to top](#sommaire)**
 
 ## Personnalisez la page 404 et les autres pages d'erreur
 
 Un template de base est situé à `core/errors/error.html.twig` et les ressources sont dans le dossier `ressources`.
 Le controller `errorController.php` se trouvant à `core/errors/errorController.php` vous permet de rendre votre page dynamique.
 
+**[Back to top](#sommaire)**
 
 ## XML
 
@@ -377,24 +450,26 @@ Cette fonction prend 3 paramètres dont 2 facultatifs, tous des tableaux.
 * $unset => (facultatif) liste des clés de votre tableau que vous voulez supprimer à la génération du XML. array('id','nom');
 * $rename => (facultatif) renomer les balises de votre xml. array('id_table'=>'id'); modifiera <id_table>1</id_table> en < id>1< /id>
 
-## REST
+**[Back to top](#sommaire)**
 
-Kinto'Un permet l'utilisation de REST.
-Dans le controller, testez la requète pour savoir de quel type elle est.
+## API RESTFUL
 
-* POST => Request::POST();
-* GET => Request::GET();
-* PUT => Request::PUT();
+Kinto'Un permet l'utilisation d'API RESTFUL.
+Dans le contrôleur, testez la requète pour savoir de quel type elle est.
+
+* POST   => Request::POST();
+* GET    => Request::GET();
+* PUT    => Request::PUT();
 * DELETE => Request::DELETE();
 
 Toutes les requètes doivent être testée avec une condition et return true si la requète utilisée est celle de la condition. Une condition n'est pas obligatoire uniquement pour GET et peut envoyer directement un tableau comme option.
 Pour retourner un JSON utiliser Request::renderJson($data);
 
 Pour récupérer la valeur envoyer par une requète:
-* POST => $_POST
-* PUT => $this->_PUT ou Request::$_PUT
+* POST   => $_POST
+* PUT    => $this->_PUT ou Request::$_PUT
 * DELETE => le paramètre de l'action
-* GET => une requète de la class Model ($this->table->findAll(); / $this->table->findById($id))
+* GET    => une requète de la class Model ($this->table->findAll(); / $this->table->findById($id))
 
 
 
@@ -435,3 +510,5 @@ public function viewAction($id){
 	}
 }
 ```
+
+**[Back to top](#sommaire)**
