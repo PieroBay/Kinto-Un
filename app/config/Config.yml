@@ -1,7 +1,7 @@
 configuration:
     database_host: localhost
     database_port: null
-    database_name: kinto
+    database_name: 
     database_user: root
     database_password: root
     local: fr
@@ -16,6 +16,6 @@ security:
 login:
     login: name
     password: password
-    activation: true
+    activation: false
     remember: false
     session: id|name

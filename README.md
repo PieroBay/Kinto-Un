@@ -1,5 +1,5 @@
 # Kinto'un [Framework]
-v 1.7.6
+v 1.8.0
 
 Nécessite PHP 5.4 ou +
 
@@ -12,14 +12,16 @@ Nécessite PHP 5.4 ou +
 	* [Installation avec Composer](#installation-avec-composer)
 		* [Composer](#composer)
 	* [Installation manuelle](#installation-manuelle)
-* [Fichier config](#fichier-config)
+* [Configuration](#configuration)
+	* [Config manuelle](#config-manuelle)
+	* [Config navigateur](#config-navigateur)
 * [Info](#info)
 * [Project](#project)
 * [Controller](#controller)
 	* [Récupérer des données de la DB](#récupérer-des-données-de-la-db)
 	* [Exemple](#exemple)
 	* [Upload](#upload)
-	* [Champs hidden token (Faille CSRF)](#champs-hidden-token-Faille-csrf)
+	* [Champs hidden token (Faille CSRF)](#champs-hidden-token-faille-csrf)
 	* [Envoyer des données de la DB à la vue](#envoyer-des-données-de-la-db-à-la-vue)
 	* [Message Flash](#message-flash)
 	* [Redirection](#redirection)
@@ -67,15 +69,56 @@ Si vous déplacez le contenu du dossier, /!\ N'oubliez pas le `.htaccess` !
 
 **[Back to top](#sommaire)**
 
-## Fichier Config
+## Configuration
 
-Le fichier de configuration `Config.yml` se trouvant à `app/config/Config.yml` vous permettra de: 
+Kinto'Un a besoin d'être configurer avant sa première utilisation.
+
+Ces configurations sont nécessaire pour :
 
 * Vous connecter à la DB, de choisir le template (none/php, Twig ou Smarty), de choisir la langue local, préciser si le dossier n'est pas à la racine du domaine (folder)...
 
 * Générer un token qui sera crypté ensuite pour sécuriser votre site de la faille CSRF et choisir le délais (en minute) d'expiration du token. (optionel, vous pouvez laisser les deux champs vide). 
 
 * Configurer vos connexions. (plus d'info dans la section Connexion).
+
+
+### Config Manuelle
+
+Le fichier de configuration `Config.yml` se trouve à `app/config/Config.yml`.
+Ce fichier contient:
+
+```yml
+configuration:
+    database_host: localhost
+    database_port: null
+    database_name: kinto
+    database_user: root
+    database_password: root
+    local: fr 					# Langue principal du site
+    template: twig 				# Twig, Smarty ou none (php)
+    development: true			# Si true, les erreurs PHP sont affichées
+    folder: false 				# Si Kinto'un n'est pas à la racine du domaine
+	
+security:
+    token: 						# Renforcez le token avec une chaine aléatoire de votre choix (facultatif)
+    expire: 30					# Expriration du token en minute
+	
+login:
+    login: name 				# Nom du champ login lors d'une connexion
+    password: password			# Nom du champ password lors d'une connexion
+    activation: false			# Si une activation est nécessaire
+    remember: false				# Si enregistrement cookies
+    session: id|name 			# Liste des champs à récupérer dans la $_SESSION
+
+```
+
+Complétez correctement les valeurs.
+
+### Config navigateur
+
+Vous pouvez vous rendre à l'adresse `_your-path_/app/config/init/index.php` avec votre navigateur.
+Une fois le formulaire envoyé, le fichier `yml` se complétera et il ne sera plus possible d'accéder à ce formulaire.
+Vous pouvez également supprimer le dossier `init` si vous le désirez.
 
 **[Back to top](#sommaire)**
 

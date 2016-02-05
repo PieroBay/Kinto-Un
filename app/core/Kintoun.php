@@ -1,10 +1,9 @@
 <?php
-if (substr($_SERVER['HTTP_HOST'], 0, 4) === 'www.') {
-    header('Location: http'.(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']=='on' ? 's':'').'://' . substr($_SERVER['HTTP_HOST'], 4).$_SERVER['REQUEST_URI']);
-    exit;
-}
-
-session_start();
+	if (substr($_SERVER['HTTP_HOST'], 0, 4) === 'www.') {
+	    header('Location: http'.(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']=='on' ? 's':'').'://' . substr($_SERVER['HTTP_HOST'], 4).$_SERVER['REQUEST_URI']);
+	    exit;
+	}
+	session_start();
 	header('Access-Control-Allow-Origin: *');
 
 	define('ROOT', str_replace('app/core/Kintoun.php', '', $_SERVER['SCRIPT_FILENAME']));

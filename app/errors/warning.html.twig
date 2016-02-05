@@ -1,27 +1,20 @@
-{% extends "app/errors/ressources/layout/base.html.twig" %}
-{% block title %}{{ parent()  }} | Error{% endblock %}
+{% extends "ressources/layout/base.html.twig" %}
+{% block title %}{{ parent()  }} | Error {{ Error.Number }}{% endblock %}
 {% block stylesheets %}
-  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+<link href='https://fonts.googleapis.com/css?family=Roboto:400,500,700,300' rel='stylesheet' type='text/css'>
   <link rel="stylesheet" href="{{ Info.Webroot }}app/errors/ressources/css/style.css" />
 {% endblock %}
 {% block body %}
-<div id="header" class="warning">
+	<div id="bg" class="er-{{ random(1) }}"></div>
+<article>
 	<div id="contentInfoError">
 	 	<div id="errorName">Error !</div>
 	 	<div id="kintoun"><img src="{{ Info.Webroot }}app/errors/ressources/images/kintoun.png" alt="kinto un"/></div>
 
-	 	<div id="errorContent">{{ message }}</div>
+	 	<div id="errorContent"><span>Erreur ligne</span> <strong>{{ trace.0.line }}</strong> <span>au Controller </span><strong>"{{ trace.1.class }}"</strong> <span>, action </span><strong>{{ trace.1.function }}</strong><span> et méthode</span> <strong>"$this->[table]->{{ trace.0.function }}()"</strong><span>.</span></div>
 	</div>
-</div>
+</article>
 
-<div id="search">
-</div>
-
-<div id="content">
-
-	<span>Erreur ligne</span> <strong>{{ trace.0.line }}</strong> <span>au Controller </span><strong>"{{ trace.1.class }}"</strong> <span>, action </span><strong>{{ trace.1.function }}</strong><span> et méthode</span> <strong>"$this->[table]->{{ trace.0.function }}()"</strong><span>.</span>
-
-</div>
 {% endblock %}
 
 {% block javascripts %}
