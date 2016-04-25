@@ -91,7 +91,7 @@ class Routing{
 
 		$patL = (!$verif)?self::$patternListW:self::$patternList;
 		foreach ($patL as $k => $v){
-			$linkRegex = '/'.str_replace('/', '\/', preg_replace('#{(\w+)}#', '(?P<${1}>([a-zA-Z0-9\-\_\+\.]+))', $k)).'/';
+			$linkRegex = '/'.str_replace('/', '\/', preg_replace('#{(\w+)}#', '(?P<${1}>([a-zA-Z0-9\-\_\+\.\@]+))', $k)).'/';
 			
 			if(preg_match($linkRegex, $link, $match)){
 				$t = array_filter(explode("/",$k));

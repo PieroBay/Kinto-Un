@@ -1,5 +1,5 @@
 # Kinto'un [Framework]
-v 1.8.0
+v 1.9.0
 
 Nécessite PHP 5.4 ou +
 
@@ -173,6 +173,9 @@ class table1Model extends Model{
 ```
 
 Pour utiliser ces requêtes dans le controller, utilisez `$this->table1Model->enregistrementPersonnel()`.
+
+Les models personelles peuvent être utilisés dans d'autres projet en appelant la fonction `includeModel($project_name,$table_name);`
+Cette fonctione retourne une instance de la classe personelle.
 
 Requêtes principales:
 

@@ -64,7 +64,7 @@
 		),
 	);
 
-	$setError  = new Error($bdd,$info, $configFile);
+	$setError  = new ErrorRender($bdd,$info, $configFile);
 
 	Routing::start($link,$setError);
 	$urlParams = Routing::$params;

@@ -129,4 +129,10 @@
 				$this->$tableModel = new $tableModel($this->bdd, $table, $this->configYml);
 			}
 		}
+
+		public function includeModel($projectName,$tableName){
+			require_once(ROOT.'src/project/'.$projectName.'/models/'.$tableName.'Model.php');
+			$className = $tableName."Model";
+			return new $className($this->bdd, $tableName, $this->configYml);
+		}
 	}

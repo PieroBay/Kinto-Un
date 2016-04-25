@@ -1,5 +1,5 @@
 <?php
-class Error{
+class ErrorRender{
 
 	protected $data = array();
 	protected $info = array();
