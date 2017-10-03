@@ -1,4 +1,18 @@
 <?php 
+	
+	namespace KintoUn\core;
+
+	use KintoUn\libs\Security;
+	use KintoUn\libs\Session;
+	use KintoUn\libs\SendMail;
+	use KintoUn\libs\Request;
+	use KintoUn\libs\Debug;
+
+	use KintoUn\core\Model;
+
+	/**
+	 * Controller Class
+	 */
 	class Controller{
 
 		protected $bdd;
@@ -11,6 +25,13 @@
 		protected $is_valid;
 		protected $ROLE;
 
+		/**
+		 * Constructor
+		 *
+		 * @param object $bdd
+		 * @param array $info
+		 * @param array $configYml
+		 */
 		public function __construct($bdd, $info, $configYml){
 			$Security = new Security($configYml);
 			$session  = new Session();
@@ -37,6 +58,12 @@
 			$this->_PUT = Request::parsePutReq($this->info["Info"]['Parametres']);
 		}
 
+		/**
+		 * Check the role of users
+		 *
+		 * @param string $typeRole
+		 * @return void
+		 */
 		public function ROLE($typeRole='visiteur'){
 			if($this->ROLE == $typeRole){
 				return true;
@@ -45,6 +72,13 @@
 			}
 		}
 
+		/**
+		 * Redirect to route
+		 *
+		 * @param string $routeName
+		 * @param array $data [route params]
+		 * @return void
+		 */
 		public function redirectUrl($routeName, $data=array()){
 			$route = spyc_load_file(ROOT.'app/config/Routing.yml');
 		
@@ -94,35 +128,47 @@
 			}		
 		}
 
+		/**
+		 * Render view and send data from controller to view
+		 *
+		 * @param array $data
+		 * @return void
+		 */
 		public function render($data=array()){
 			$filename = explode("Action", $this->info['Info']['Action'])[0];
 			$data = array_merge($data, $this->info);
 			switch (strtolower($this->info['Info']['Template'])){
 			    case "twig":
-					require(ROOT.'libs/template/twig/LoaderTemplate.php');
-					require (ROOT.'libs/template/autoLoad.php');
+					require(APP.'libs/template/twig/LoaderTemplate.php');
+					require (APP.'libs/template/autoLoad.php');
 					echo $twig->render('src/project/'.$this->info['Info']['Project'].'/views/'.$this->info['Info']['Controller'].'/'.$filename.'.html.twig', json_decode(json_encode($data), true));
 			        break;
 			    case "smarty":
 			        require(ROOT.'vendor/smarty/smarty/libs/Smarty.class.php');
 			        $smarty = new Smarty();
-			        require (ROOT.'libs/template/autoLoad.php');
-					$smarty->compile_dir = ROOT.'libs/template/smarty/templates_c/';
-					$smarty->config_dir = ROOT.'libs/template/smarty/configs/';
-					$smarty->cache_dir = ROOT.'libs/template/smarty/cache/';
+			        require (APP.'libs/template/autoLoad.php');
+					$smarty->compile_dir = APP.'libs/template/smarty/templates_c/';
+					$smarty->config_dir = APP.'libs/template/smarty/configs/';
+					$smarty->cache_dir = APP.'libs/template/smarty/cache/';
 			        $smarty->display(ROOT.'src/project/'.$this->info['Info']['Project'].'/views/'.$this->info['Info']['Controller'].'/'.$filename.'.tpl', json_decode(json_encode($data), true));
 			        break;
 			    case "php":
 			    case "none":
-			    	require (ROOT.'libs/template/autoLoad.php');
+			    	require (APP.'libs/template/autoLoad.php');
 			    	require(ROOT.'src/project/'.$this->info['Info']['Project'].'/views/'.$this->info['Info']['Controller'].'/'.$filename.'.php');
 			        break;
 			}
 		}
 
+		/**
+		 * Load external model
+		 *
+		 * @param string $table
+		 * @return void
+		 */
 		public function loadModel($table){
 			$tableModel = $table.'Model';
-			require_once(ROOT.'app/core/Model.php');
+		//	require_once(APP.'app/core/Model.php');
 			$this->$table = new Model($this->bdd, $table, $this->configYml);			
 			if(file_exists(ROOT.'src/project/'.$this->info['Info']['Project'].'/models/'.$tableModel.'.php')){
 				require_once(ROOT.'src/project/'.$this->info['Info']['Project'].'/models/'.$tableModel.'.php');
@@ -130,6 +176,13 @@
 			}
 		}
 
+		/**
+		 * Load automatically model
+		 *
+		 * @param string $projectName
+		 * @param string $tableName
+		 * @return void
+		 */
 		public function includeModel($projectName,$tableName){
 			require_once(ROOT.'src/project/'.$projectName.'/models/'.$tableName.'Model.php');
 			$className = $tableName."Model";

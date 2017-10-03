@@ -1,3 +1,0 @@
-home_index:
-    pattern:  /
-    controller: home:public:index

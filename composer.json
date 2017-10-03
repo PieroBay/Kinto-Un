@@ -1,40 +1,26 @@
 {
-    "name": "kintoun/kintoun",
+    "name": "pierobay/kintoun",
     "description": "Kinto'Un PHP Framework",
     "keywords": ["framework", "kintoUn", "kinto-Un", "PHP"],
-    "type": "project",
-    "version": "1.9.0",
+    "type": "library",
     "license": "MIT",
     "require": {
         "php": ">=5.4",
-        "twig/twig": "1.16.*@dev",
+        "twig/twig": "1.26.*@dev",
         "mustangostang/spyc": "0.5.*@dev"
     },
     "autoload": {
         "psr-4": {
-            "Kintoun\\": "libs/"
+            "KintoUn\\": "app/"
         }
     },
-    "repositories":[
-        {
-            "type": "vcs",
-            "url": "https://github.com/PieroBay/Kinto-Un.git"
-        }
-    ],
     "authors": [
         {
             "name": "Piero Bay",
-            "email": "Piero.Sarpante@Gmail.com"
+            "email": "mail@pierobay.be"
         }
     ],
-    "config": {
-        "preferred-install": "dist"
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "1.x.x-dev"
-        }
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": true
+    "config": { 
+        "preferred-install": "dist" 
+    }
 }

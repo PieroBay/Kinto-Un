@@ -1,4 +1,12 @@
 <?php
+
+	namespace KintoUn\core;
+
+	use KintoUn\libs\Upload;
+
+	/**
+	 * Model db class
+	 */
 	class Model{
 		protected $table;
 		protected $id;
@@ -11,35 +19,40 @@
 
 		protected $data;
 
-		public function __construct(PDO $bdd, $table, $configYml){
-			$this->setBdd($bdd);
+		/**
+		 * Constructor class
+		 *
+		 * @param \PDO $bdd
+		 * @param string $table
+		 * @param array $configYml
+		 */
+		public function __construct(\PDO $bdd, $table, $configYml){
+			$this->bdd 		 = $bdd;
 			$this->configYml = $configYml;
-			$this->setTable($table);
+			$this->table 	 = $table;
 		}
 
-		public function setBdd($tmp){
-			$this->bdd = $tmp;
-		}
-		public function setTable($tmp){
-			$this->table = $tmp;
-		}
-		public function setConnexion($tmp){
+		protected function setConnexion($tmp){
 			$this->connexion = $tmp;
 		}
-		public function setConnexionError($tmp){
+		protected function setConnexionError($tmp){
 			$this->connexionError = $tmp;
 		}
-		public function setId($tmp){
+		protected function setId($tmp){
 			$this->id = $tmp;
 		}
-		public function setAllOk($tmp){
+		protected function setAllOk($tmp){
 			$this->allOk = $tmp;
 		}
-		public function setError($tmp){
+		protected function setError($tmp){
 			$this->error = $tmp;
 		}
 
-
+		/**
+		 * Return last id saved
+		 *
+		 * @return void
+		 */
 		public function lastId(){
 			return $this->id;
 		}
@@ -49,16 +62,41 @@
 		public function getCoError(){
 			return $this->connexionError;
 		}
+
+		/**
+		 * Check if save is ok
+		 *
+		 * @return void
+		 */
 		public function allOk(){
 			return $this->allOk;
 		}
+
+		/**
+		 * Test connect
+		 *
+		 * @return void
+		 */
 		public function testConnect(){
 			return $this->connexion;
 		}
+
+		/**
+		 * Return data
+		 *
+		 * @return void
+		 */
 		public function exec(){
 			return $this->data;
 		}
 
+		/**
+		 * Save in db
+		 *
+		 * @param array $data
+		 * @param array $upload
+		 * @return void
+		 */
 		public function save($data=null, $upload=array()){
 			
      	   	try{
@@ -89,13 +127,13 @@
 				if(isset($data['id'])){
 					$req2 = $this->bdd->prepare("SELECT * FROM ".$this->table." WHERE id = :id");  # si update, récupere le token de la table
 					$req2->execute(array(':id' => $data['id']));
-					$data2 = $req2->fetch(PDO::FETCH_OBJ);
+					$data2 = $req2->fetch(\PDO::FETCH_OBJ);
 
 					$token = ($data2->$upload['champ_name'] != NULL)?$data2->$upload['champ_name']:$token;
 
 					$req2 = $this->bdd->prepare("SELECT * FROM ".$upload['table_name']." WHERE token = :token");  # si update, récupere le token de la table
 					$req2->execute(array(':token' => $token));
-					$data2 = $req2->fetch(PDO::FETCH_OBJ);
+					$data2 = $req2->fetch(\PDO::FETCH_OBJ);
 
 					$issetT = (is_object($data2))? true: false;
 				}
@@ -202,6 +240,12 @@
 			}
 		}
 
+		/**
+		 * Find all data from table with specific params
+		 *
+		 * @param array $data
+		 * @return void
+		 */
 		public function findAll($data=array()){
 			$where = "1=1";
 			$fields = "*";
@@ -219,12 +263,13 @@
 			$d = array();
 
 			$req = $this->bdd->query($sql);
-			while($data = $req->fetch(PDO::FETCH_OBJ)){
+			while($data = $req->fetch(\PDO::FETCH_OBJ)){
 				$d[] = $data;
 			};
 			$this->data = $d;
 			return $this;
 		}
+
 
 		public function find($where=null){
 			try{
@@ -249,13 +294,19 @@
 			}
 			$d = array();
 			$req->execute($c);
-			while($data = $req->fetch(PDO::FETCH_OBJ)){
+			while($data = $req->fetch(\PDO::FETCH_OBJ)){
 				$d[] = $data;
 			}
 			$this->data = $d;
 			return $this;
 		}
 
+		/**
+		 * Find only one row in table
+		 *
+		 * @param array $where
+		 * @return void
+		 */
 		public function findOne($where=null){
 			try{
      	   		if(!isset($where) || !is_array($where)) throw new Exception("Aucune data n'a été envoyé");
@@ -278,11 +329,17 @@
 				$c[$key] = $v;
 			}
 			$req->execute($c);
-			$data = $req->fetch(PDO::FETCH_OBJ);
+			$data = $req->fetch(\PDO::FETCH_OBJ);
 			$this->data = $data;
 			return $this;
 		}
 		
+		/**
+		 * Find in table with id
+		 *
+		 * @param int $id
+		 * @return void
+		 */
 		public function findById($id=null){
 			try{
      	   		if(!isset($id) || !is_numeric($id) || is_array($id)) throw new Exception("Aucun ID n'a été envoyé");
@@ -295,11 +352,17 @@
 			$req = $this->bdd->prepare($sql);
 			$req->execute(array(':id' => $id));
 
-			$this->data = $req->fetch(PDO::FETCH_OBJ);
+			$this->data = $req->fetch(\PDO::FETCH_OBJ);
 
 			return $this;
 		}
 
+		/**
+		 * Delete model
+		 *
+		 * @param int|array $data
+		 * @return void
+		 */
 		public function delete($data=null){
 			try{
      	   		if(!isset($data) || is_string((int) $data)) throw new Exception("Mauvaise donnée envoyé à la requète");
@@ -347,7 +410,7 @@
 				foreach ($this->data as $k => $v) {
 					$d = array();
 					$req = $this->bdd->query("SELECT $field FROM ".$from." WHERE ".$as."='".$this->data[$k]->$key."'");
-					while($data = $req->fetch(PDO::FETCH_OBJ)){
+					while($data = $req->fetch(\PDO::FETCH_OBJ)){
 						$d[] = $data;
 					}
 					if($ar){
@@ -364,7 +427,7 @@
 			}else{
 				$d = array();
 				$req = $this->bdd->query("SELECT $field FROM ".$from." WHERE ".$as."='".$this->data->$key."'");
-				while($data = $req->fetch(PDO::FETCH_OBJ)){
+				while($data = $req->fetch(\PDO::FETCH_OBJ)){
 					$d[] = $data;
 				}
 
@@ -383,6 +446,12 @@
 			return $this;
 		}
 
+		/**
+		 * Login user
+		 *
+		 * @param [type] $d
+		 * @return void
+		 */
 		public function connexion($d=null){
 			try{
 				if(!isset($d) || !is_array($d)) throw new Exception("Aucun tableau n'a été envoyé");
@@ -391,17 +460,17 @@
 				exit();
 			}
 
-			$login = $this->configYml['login']['login'];
-			$password = $this->configYml['login']['password'];
-			$connect = strip_tags($d[$login]);
-			$pwd = strip_tags($d[$password]);
+			$login 		= $this->configYml['login']['login'];
+			$password 	= $this->configYml['login']['password'];
+			$connect 	= strip_tags($d[$login]);
+			$pwd 		= strip_tags($d[$password]);
 			$activation = $this->configYml['login']['activation'];
 
 			$sql = "SELECT *, COUNT(*) AS nb FROM ".$this->table." WHERE ".$login." = :".$login." AND ".$password." = :".$password;
 			
 			$req = $this->bdd->prepare($sql);
 			$req->execute(array(':'.$login => $connect, ':'.$password => $pwd));
-			$data = $req->fetch(PDO::FETCH_OBJ);
+			$data = $req->fetch(\PDO::FETCH_OBJ);
 
 			if($data->nb > 0){
 				if($activation && $data->activation != "1"){
@@ -429,6 +498,11 @@
 			}
 		}
 
+		/**
+		 * Logout and remove all session
+		 *
+		 * @return void
+		 */
 		public function deconnexion(){
 			$sess = explode("|", $this->configYml['login']['session']);
 			foreach ($sess as $k => $v) {

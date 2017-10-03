@@ -2,14 +2,14 @@
 {% block title %}{{ parent()  }} | Error {{ Error.Number }}{% endblock %}
 {% block stylesheets %}
 <link href='https://fonts.googleapis.com/css?family=Roboto:400,500,700,300' rel='stylesheet' type='text/css'>
-  <link rel="stylesheet" href="{{ Info.Webroot }}app/errors/ressources/css/style.css" />
+  <link rel="stylesheet" href="{{ Info.WebrootApp }}errors/ressources/css/style.css" />
 {% endblock %}
 {% block body %}
 	<div id="bg"></div>
 <article>
 	<div id="contentInfoError">
 	 	<div id="errorName">Error {{ Error.Number }} !</div>
-	 	<div id="kintoun"><img src="{{ Info.Webroot }}app/errors/ressources/images/kintoun.png" alt="kinto un"/></div>
+	 	<div id="kintoun"><img src="{{ Info.WebrootApp }}errors/ressources/images/kintoun.png" alt="kinto un"/></div>
 
 	 	<div id="errorContent">{{ Error.Message }}</div>
 	</div>

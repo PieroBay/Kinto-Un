@@ -1,4 +1,7 @@
 <?php
+
+	namespace KintoUn\core;
+
 class Routing{
 	static $params;
 	static $pattern       = array();
@@ -9,10 +12,11 @@ class Routing{
 	static $setError;
 	static $lang;
 
-
 	/**
 	 * Check if lang in pattern and change self::$pattern
-	 * @param  Array: $linkEx: Explode of link
+	 *
+	 * @param array $linkEx [Explode of link]
+	 * @return void
 	 */
 	public static function ifLang($linkEx){
 		foreach(self::$patternList as $key => $value){
@@ -40,8 +44,17 @@ class Routing{
 		}
 	}
 
+	/**
+	 * Rooting start
+	 *
+	 * @param [type] $link
+	 * @param [type] $setError
+	 * @param boolean $verif
+	 * @param array $secondPatt
+	 * @return void
+	 */
 	public static function start($link,$setError,$verif=false,$secondPatt=array()){
-		$routeP          = spyc_load_file(ROOT.'app/config/Routing.yml');
+		$routeP          = spyc_load_file(ROOT.'config/Routing.yml');
 		$linkEx          = explode('/', trim($link,'/'));
 		self::$lang      = $_SESSION['lang'];
 		$ct              = 0;
@@ -83,8 +96,10 @@ class Routing{
 
 	/**
 	 * Verif and find the correct pattern
-	 * @param  String: $link "Current link"
-	 * @return   Json
+	 *
+	 * @param string $link
+	 * @param [type] $verif
+	 * @return void
 	 */
 	public static function finals($link,$verif){
 		$matchList = array();

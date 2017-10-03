@@ -1,4 +1,9 @@
 <?php
+
+namespace KintoUn\errors;
+
+use KintoUn\core\Controller;
+
 class errorController extends Controller{
 
 	protected $table = array();
