@@ -10,7 +10,7 @@
 	use KintoUn\core\Routing;
 	use KintoUn\core\Model;
 
-	ini_set('display_errors', 1);
+	use KintoUnSkeleton\src\ressources\layout\LayoutController;
 
 	class App{
 
@@ -160,8 +160,7 @@
 			$this->urlParams = Routing::$params;
 			$this->setInfo(2);
 			
-			require(ROOT."src/ressources/layout/LayoutController.php");
-			$this->layout      		    = new /LayoutController($this->bdd,$this->info,$this->configFile);
+			$this->layout      		    = new LayoutController($this->bdd,$this->info,$this->configFile);
 			$this->info["Layout"]		= $this->layout->layout();
 
 			$this->includeController();
