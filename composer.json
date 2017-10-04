@@ -7,7 +7,8 @@
     "require": {
         "php": ">=5.4",
         "twig/twig": "1.26.*@dev",
-        "mustangostang/spyc": "0.5.*@dev"
+        "mustangostang/spyc": "0.5.*@dev",
+        "nochso/html-compress-twig": "^2.0"
     },
     "autoload": {
         "psr-4": {

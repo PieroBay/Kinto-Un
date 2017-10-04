@@ -7,3 +7,4 @@
     $twig = new Twig_Environment($loader, array(
       'cache' => false
     ));
+    $twig->addExtension(new \nochso\HtmlCompressTwig\Extension());
