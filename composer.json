@@ -8,7 +8,12 @@
         "php": ">=5.4",
         "twig/twig": "1.26.*@dev",
         "mustangostang/spyc": "0.5.*@dev",
-        "nochso/html-compress-twig": "^2.0"
+        "nochso/html-compress-twig": "^2.0",
+        "pierobay/debug":"@dev",
+        "pierobay/sendmail":"@dev",
+        "pierobay/restful":"@dev",
+        "pierobay/backup":"@dev",
+        "pierobay/flashmessage":"@dev"
     },
     "autoload": {
         "psr-4": {

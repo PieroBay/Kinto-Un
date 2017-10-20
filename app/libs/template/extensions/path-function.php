@@ -1,6 +1,6 @@
 <?php
 	function path($routeName,$params=array()){
-		$route = spyc_load_file(APP.'config/Routing.yml');
+		$route = spyc_load_file(ROOT.'config/Routing.yml');
 
 		foreach ($route as $key => $value) {
 			$project = $route[$key]['project'];
