@@ -3,9 +3,9 @@
 	namespace KintoUn\core;
 
 	use KintoUn\libs\Security;
-	use KintoUn\libs\Session;
+	use KintoUn\libs\FlashMessage;
 	use KintoUn\libs\SendMail;
-	use KintoUn\libs\Request;
+	use KintoUn\libs\Restful;
 	use KintoUn\libs\Debug;
 
 	use KintoUn\core\Model;
@@ -34,7 +34,7 @@
 		 */
 		public function __construct($bdd, $info, $configYml){
 			$Security = new Security($configYml);
-			$session  = new Session();
+			$session  = new FlashMessage();
 			$mail     = new SendMail();
 
 			$this->xml       = $info['Info']['Output'];
@@ -55,7 +55,7 @@
 				}
 			}
 
-			$this->_PUT = Request::parsePutReq($this->info["Info"]['Parametres']);
+			$this->_PUT = Restful::parsePutReq($this->info["Info"]['Parametres']);
 		}
 
 		/**

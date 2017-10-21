@@ -9,11 +9,11 @@
         "twig/twig": "1.26.*@dev",
         "mustangostang/spyc": "0.5.*@dev",
         "nochso/html-compress-twig": "^2.0",
-        "pierobay/debug":"@dev",
-        "pierobay/sendmail":"@dev",
-        "pierobay/restful":"@dev",
-        "pierobay/backup":"@dev",
-        "pierobay/flashmessage":"@dev"
+        "pierobay/debug":">=1",
+        "pierobay/sendmail":">=1",
+        "pierobay/restful":">=1",
+        "pierobay/backup":">=1",
+        "pierobay/flashmessage":">=1"
     },
     "autoload": {
         "psr-4": {
@@ -28,5 +28,6 @@
     ],
     "config": { 
         "preferred-install": "dist" 
-    }
+    },
+    "minimum-stability": "dev"
 }

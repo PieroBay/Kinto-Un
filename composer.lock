@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "aa49c04f0d8c1744ef7d5582367712de",
+    "content-hash": "b0829420a5152615bd87f06ae3951202",
     "packages": [
         {
             "name": "linkorb/jsmin-php",
@@ -152,7 +152,7 @@
         },
         {
             "name": "natxet/CssMin",
-            "version": "v3.0.5",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/natxet/CssMin.git",
@@ -248,7 +248,7 @@
         },
         {
             "name": "patchwork/jsqueeze",
-            "version": "v2.0.5",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tchwork/jsqueeze.git",
@@ -646,15 +646,10 @@
     ],
     "packages-dev": [],
     "aliases": [],
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "stability-flags": {
         "twig/twig": 20,
-        "mustangostang/spyc": 20,
-        "pierobay/debug": 20,
-        "pierobay/sendmail": 20,
-        "pierobay/restful": 20,
-        "pierobay/backup": 20,
-        "pierobay/flashmessage": 20
+        "mustangostang/spyc": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

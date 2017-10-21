@@ -3,7 +3,6 @@
 
 	use KintoUn\libs\Security;
 	use KintoUn\libs\ErrorRender;
-	use KintoUn\libs\Request;
 	use KintoUn\libs\Debug;
 
 	use KintoUn\core\Controller;
