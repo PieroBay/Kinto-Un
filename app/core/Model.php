@@ -504,13 +504,15 @@
 		 * @return void
 		 */
 		public function deconnexion(){
-			$sess = explode("|", $this->configYml['login']['session']);
+			session_start();
+			/*$sess = explode("|", $this->configYml['login']['session']);
 			foreach ($sess as $k => $v) {
 				if($v != 'role'){
 					unset($_SESSION[$v]);
 				}
 			}
 			unset($_SESSION['KU_TOKEN']);
-			$_SESSION['ROLE'] = 'visiteur';
+			$_SESSION['ROLE'] = 'visiteur';*/
+			session_destroy();
 		}
 	}

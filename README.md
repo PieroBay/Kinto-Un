@@ -1,5 +1,5 @@
 # Kinto'un [Framework]
-v 1.9.0
+v 2.1.2
 
 Nécessite PHP 5.4 ou +
 
@@ -47,8 +47,8 @@ Nécessite PHP 5.4 ou +
 
 Lancer une des commandes: 
 
-* `php composer.phar create-project --prefer-dist kintoun/kintoun [app_name]`
-* `composer create-project --prefer-dist kintoun/kintoun [app_name]`
+* `php composer.phar create-project --prefer-dist kintoun/kintoun-skeleton [app_name]`
+* `composer create-project --prefer-dist kintoun/kintoun-skeleton [app_name]`
 
 #### Composer
 

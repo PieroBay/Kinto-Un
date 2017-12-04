@@ -25,11 +25,13 @@
 		function __construct(){
 			define('ROOT', str_replace('index.php', '', $_SERVER['SCRIPT_FILENAME']));
 			header('Access-Control-Allow-Origin: *');
+			header("Access-Control-Allow-Headers: Content-Type");
 			$this->configFile = spyc_load_file(ROOT.'config/Config.yml');
 			if($this->configFile["configuration"]['development']){ini_set('display_errors', 1);}
 			$this->ifFolder   = ($this->configFile["configuration"]["folder"])?trim($this->configFile["configuration"]["folder"],"/")."/": "";
 			$this->config 	  = $this->configFile['configuration'];
-			$this->link 	  = '/'.trim($_SERVER['PATH_INFO'], '/');
+			$path = (isset($_SERVER['PATH_INFO']))?$_SERVER['PATH_INFO']:$_SERVER['REQUEST_URI'];
+			$this->link 	  = '/'.trim($path, '/');
 		}
 
 		/**
@@ -41,11 +43,11 @@
 			define('APP', __DIR__."/");
 
 			if($_SERVER['REMOTE_ADDR'] != '::1'){
-				define('WEBROOT', 'http'.(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']=='on' ? 's':'').'://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URl'].'/'.$this->ifFolder);
+				define('WEBROOT', 'http'.(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']=='on' ? 's':'').'://'.$_SERVER['HTTP_HOST'].'/'.$this->ifFolder);
 			}else{
 				define('WEBROOT', str_replace('index.php', '', $_SERVER['SCRIPT_NAME']));
-				define('WEBROOTAPP', str_replace('index.php', 'vendor/pierobay/kintoun/app/', $_SERVER['SCRIPT_NAME']));
 			}			
+			define('WEBROOTAPP', str_replace('index.php', 'vendor/pierobay/kintoun/app/', $_SERVER['SCRIPT_NAME']));
 		}
 		
 		/**

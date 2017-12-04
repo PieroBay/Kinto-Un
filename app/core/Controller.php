@@ -46,7 +46,7 @@
 			
 			$this->sendMail  = $mail;
 			$this->Session   = $session;
-			if(get_class($this) != "layoutController"){
+			if(strpos(get_class($this), "LayoutController") === false){
 				$this->is_valid  = $Security->isValid();
 			}
 			if(isset($this->table)){
