@@ -30,7 +30,7 @@
 			if($this->configFile["configuration"]['development']){ini_set('display_errors', 1);}
 			$this->ifFolder   = ($this->configFile["configuration"]["folder"])?trim($this->configFile["configuration"]["folder"],"/")."/": "";
 			$this->config 	  = $this->configFile['configuration'];
-			$path = (isset($_SERVER['PATH_INFO']))?$_SERVER['PATH_INFO']:$_SERVER['REQUEST_URI'];
+			$path = (isset($_SERVER['PATH_INFO']))?$_SERVER['PATH_INFO']:current(explode('?', $_SERVER['REQUEST_URI']));
 			$this->link 	  = '/'.trim($path, '/');
 		}
 

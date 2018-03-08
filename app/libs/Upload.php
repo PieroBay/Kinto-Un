@@ -1,6 +1,6 @@
 <?php 
 
-	namespace KintoUn\app\libs;
+	namespace KintoUn\libs;
 
 	/**
 	 * Upload class
@@ -16,9 +16,11 @@
 		private $repository;
 		private $bdd;
 		private $edition;
+		private $keyFiles;
 
-		function __construct($upload,$bdd,$token,$edition){
+		function __construct($upload,$bdd,$token,$edition,$keyFiles=false){
 			$this->upload       = $upload;
+			$this->keyFiles     = $keyFiles;
 			$this->edition      = $edition;
 			$this->bdd          = $bdd;
 			$this->ins['token'] = ($upload["table_name"])?$token:"";
@@ -34,7 +36,7 @@
 				if($edition){
 					$req = $this->bdd->prepare("SELECT MAX(sort) as max FROM ".$this->upload['table_name']." WHERE token=:token");
 					$req->execute(array(':token' => $this->ins['token']));
-					$d 		 = $req->fetch(PDO::FETCH_OBJ);
+					$d 		 = $req->fetch(\PDO::FETCH_OBJ);
 					$this->j = $d->max+1;
 				}else{
 					$this->j = 1;
@@ -48,7 +50,7 @@
 			if($this->edition && $this->upload['edit'] == "replace"){
 				$req = $this->bdd->prepare("SELECT * FROM ".$this->upload['table_name']." WHERE token=:token");
 				$req->execute(array(':token' => $this->ins['token']));
-				while($d = $req->fetch(PDO::FETCH_OBJ)){
+				while($d = $req->fetch(\PDO::FETCH_OBJ)){
 					unlink(ROOT.'src/ressources/files/'.$this->upload['target'].'/'.$this->ins['token'].'/'.$d->file_name);
 				}
 
@@ -56,7 +58,8 @@
 				$req->execute(array(":token"=>$this->ins['token']));
 			}
 
-			foreach ($this->FILES['name'] as $key => $value) {
+			$filesCur = ($this->keyFiles !== false)?$this->FILES['name'][$this->keyFiles]:$this->FILES['name'];
+			foreach ($filesCur as $key => $value) {
 				$tmp = $this->upload($key);
 				if($tmp['status'] == "ok"){
 					$this->ins['file_name'] = $tmp['name'];
@@ -106,7 +109,7 @@
 			if($this->edition && $this->upload['edit'] == "replace"){
 				$req = $this->bdd->prepare("SELECT * FROM ".$this->upload['table_name']." WHERE token=:token");
 				$req->execute(array(':token' => $this->ins['token']));
-				while($d = $req->fetch(PDO::FETCH_OBJ)){
+				while($d = $req->fetch(\PDO::FETCH_OBJ)){
 					unlink(ROOT.'src/ressources/files/'.$this->upload['target'].'/'.$this->ins['token'].'/'.$d->file_name);
 				}
 				$req = $this->bdd->prepare("DELETE FROM ".$this->upload['table_name']." WHERE token = :token");
@@ -194,14 +197,29 @@
 			$infosImg = array();
 
 			$return = array("status"=>"","message"=>"","name"=>"");
+
 			if(!is_string($i)){ # multi
-				$fName = $this->FILES['name'][$i];
-				$fTmp_name = $this->FILES['tmp_name'][$i];
-				$fError = $this->FILES['error'][$i];
+				if($this->keyFiles !== false){
+					$fName = $this->FILES['name'][$this->keyFiles][$i];
+					$fTmp_name = $this->FILES['tmp_name'][$this->keyFiles][$i];
+					$fError = $this->FILES['error'][$this->keyFiles][$i];
+				}else{
+					$fName = $this->FILES['name'][$i];
+					$fTmp_name = $this->FILES['tmp_name'][$i];
+					$fError = $this->FILES['error'][$i];					
+				}
+
 			}else{ #single
-				$fName = $this->FILES['name'];
-				$fTmp_name = $this->FILES['tmp_name'];
-				$fError = $this->FILES['error'];
+				if($this->keyFiles !== false){
+					$fName = $this->FILES['name'][$this->keyFiles];
+					$fTmp_name = $this->FILES['tmp_name'][$this->keyFiles];
+					$fError = $this->FILES['error'][$this->keyFiles];
+				}else{
+					$fName = $this->FILES['name'];
+					$fTmp_name = $this->FILES['tmp_name'];
+					$fError = $this->FILES['error'];
+				}
+
 			}
 
 			$extension = pathinfo(basename($fName));

@@ -3,6 +3,7 @@
 	namespace KintoUn\core;
 
 	use KintoUn\libs\Upload;
+	use KintoUn\libs\Debug;
 
 	/**
 	 * Model db class
@@ -95,9 +96,10 @@
 		 *
 		 * @param array $data
 		 * @param array $upload
+		 * @param $keyFiles Si différent de false, multiple input file donc files name key est un array
 		 * @return void
 		 */
-		public function save($data=null, $upload=array()){
+		public function save($data=null, $upload=array(),$keyFiles=false){
 			
      	   	try{
      	   		if(!isset($data) || !is_array($data)) throw new Exception("Aucun tableau n'a été envoyé");
@@ -120,25 +122,36 @@
 
 			$upload = array_merge($uploadDefault, $upload);
 
-     	   	$fl = ""; if(isset($_FILES) && !empty($_FILES[$upload["champ_name"]]['name'][0])){foreach ($_FILES as $key => $value) { $fl = (count($_FILES[$key]['name']) > 1)? $_FILES[$key]['name'][0]:$_FILES[$key]['name'];}}
+			$fl = ""; 
+		
+			if(isset($_FILES) && !empty($_FILES[$upload["champ_name"]]['name'][0])){
+				foreach ($_FILES as $key => $value) { 
+					$fl = (count($_FILES[$key]['name']) > 1)? $_FILES[$key]['name'][0]:$_FILES[$key]['name'];
+				}
+			}
+			
 			if(!empty($fl)){
 				$token = time().uniqid();
-				$issetT = false;
-				if(isset($data['id'])){
+				$issetToken = false;
+
+				# Si un update
+				if(isset($data['id'])){ 
 					$req2 = $this->bdd->prepare("SELECT * FROM ".$this->table." WHERE id = :id");  # si update, récupere le token de la table
 					$req2->execute(array(':id' => $data['id']));
 					$data2 = $req2->fetch(\PDO::FETCH_OBJ);
-
-					$token = ($data2->$upload['champ_name'] != NULL)?$data2->$upload['champ_name']:$token;
+		
+					$token = ($data2->{$upload['champ_name']} != NULL)?$data2->{$upload['champ_name']}:$token;
 
 					$req2 = $this->bdd->prepare("SELECT * FROM ".$upload['table_name']." WHERE token = :token");  # si update, récupere le token de la table
 					$req2->execute(array(':token' => $token));
 					$data2 = $req2->fetch(\PDO::FETCH_OBJ);
 
-					$issetT = (is_object($data2))? true: false;
+					$issetToken = (is_object($data2))? true: false;
 				}
-				$uploading = new Upload($upload,$this->bdd,$token,$issetT); 		# init la class
-				if(COUNT($_FILES) > 1){
+
+				
+				$uploading = new Upload($upload,$this->bdd,$token,$issetToken,$keyFiles); 		# init la class
+				/*if(COUNT($_FILES) > 1){
 					$newArray = [];
 					foreach ($_FILES as $key => $value) {
 						if(!empty($_FILES[$key]['name'])){
@@ -148,10 +161,18 @@
 						}
 					}
 					$_FILES = $newArray;
-				}
+				}*/
 
 				foreach ($_FILES as $k => $v) { 
-					if($_FILES[$k]['name'] != "" && is_string($_FILES[$k]['name'] != "") || $_FILES[$k]['name'][0] != ""){ # si champs non vide
+		
+					if(
+						$_FILES[$k]['name'] != "" && is_string($_FILES[$k]['name'] != "") || 
+						( (!is_array($_FILES[$k]['name'][0]) && $_FILES[$k]['name'][0] != "") || 
+						(is_array($_FILES[$k]['name'][$keyFiles]) && $_FILES[$k]['name'][$keyFiles][0] != "")) 
+					) { # si champs non vide
+					
+					
+					
 						if(!$upload['table_name']){								# Si enregistré dans la même table
 							$file = $uploading->current($_FILES[$k]);			
 						}else{
@@ -231,7 +252,7 @@
 				}
 
 				$req->execute($c);
-				unset($_FILES);
+				//if($test){unset($_FILES);}
 				if(!isset($data['id'])){
 					$this->setId($this->bdd->lastInsertId());
 				}else{
@@ -394,12 +415,13 @@
 			$req->execute($c);
 		}
 
-		public function link($array=array(), $field=null){
+		public function link($array=array(), $field=null,$order=false){
 			$key  = $array[0];
 			$as   = $array[1];
 			$from = $array[2];
 
 			$field = (is_array($field))?implode(",", $field):"*";
+			$order = ($order)?" ORDER BY ".$order:"";
 
 			if(strpos($key, "[]") !== false){
 				$key = explode("[]", $key)[0];
@@ -409,7 +431,8 @@
 			if(is_array($this->data)){
 				foreach ($this->data as $k => $v) {
 					$d = array();
-					$req = $this->bdd->query("SELECT $field FROM ".$from." WHERE ".$as."='".$this->data[$k]->$key."'");
+			
+					$req = $this->bdd->query("SELECT $field FROM ".$from." WHERE ".$as."='".$this->data[$k]->$key."' ".$order);
 					while($data = $req->fetch(\PDO::FETCH_OBJ)){
 						$d[] = $data;
 					}
@@ -426,7 +449,7 @@
 				}
 			}else{
 				$d = array();
-				$req = $this->bdd->query("SELECT $field FROM ".$from." WHERE ".$as."='".$this->data->$key."'");
+				$req = $this->bdd->query("SELECT $field FROM ".$from." WHERE ".$as."='".$this->data->$key."' ".$order);
 				while($data = $req->fetch(\PDO::FETCH_OBJ)){
 					$d[] = $data;
 				}
@@ -442,6 +465,7 @@
 					unset($this->data->$key);
 				}
 			}
+			
 
 			return $this;
 		}
@@ -504,15 +528,13 @@
 		 * @return void
 		 */
 		public function deconnexion(){
-			session_start();
-			/*$sess = explode("|", $this->configYml['login']['session']);
+			$sess = explode("|", $this->configYml['login']['session']);
 			foreach ($sess as $k => $v) {
 				if($v != 'role'){
 					unset($_SESSION[$v]);
 				}
 			}
 			unset($_SESSION['KU_TOKEN']);
-			$_SESSION['ROLE'] = 'visiteur';*/
-			session_destroy();
+			$_SESSION['ROLE'] = 'visiteur';
 		}
 	}

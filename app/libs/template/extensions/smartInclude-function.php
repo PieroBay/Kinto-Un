@@ -20,11 +20,11 @@
 		if(file_exists($Info['Root'].'src/project/'.$Info['Project'].'/inc/css/'.$Info['Controller'].'.'.$Info['Action'].'.css')){
 			$file .= '<link rel="stylesheet" href="'.$Info['Webroot'].'src/project/'.$Info['Project'].'/inc/css/'.$Info['Controller'].'.'.$Info['Action'].'.css" />';
 		}
-		if(file_exists($Info['Root'].'src/project/'.$Info['Project'].'/inc/js/'.$Info['Controller'].'.js')){
-			$file .= '<script type="text/javascript" src="'.$Info['Webroot'].'src/project/'.$Info['Project'].'/inc/js/'.$Info['Controller'].'.js"></script>';
+		if(file_exists($Info['Root'].'src/project/'.$Info['Project'].'/inc/js/dist/'.$Info['Controller'].'.js')){
+			$file .= '<script type="text/javascript" src="'.$Info['Webroot'].'src/project/'.$Info['Project'].'/inc/js/dist/'.$Info['Controller'].'.js"></script>';
 		}
-		if(file_exists($Info['Root'].'src/project/'.$Info['Project'].'/inc/js/'.$Info['Controller'].'.'.$Info['Action'].'.js')){
-			$file .= '<script type="text/javascript" src="'.$Info['Webroot'].'src/project/'.$Info['Project'].'/inc/js/'.$Info['Controller'].'.'.$Info['Action'].'.js"></script>';
+		if(file_exists($Info['Root'].'src/project/'.$Info['Project'].'/inc/js/dist/'.$Info['Controller'].'.'.$Info['Action'].'.js')){
+			$file .= '<script type="text/javascript" src="'.$Info['Webroot'].'src/project/'.$Info['Project'].'/inc/js/dist/'.$Info['Controller'].'.'.$Info['Action'].'.js"></script>';
 		}
 		
 		echo $file;
