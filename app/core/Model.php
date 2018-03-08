@@ -129,8 +129,7 @@
 					$fl = (count($_FILES[$key]['name']) > 1)? $_FILES[$key]['name'][0]:$_FILES[$key]['name'];
 				}
 			}
-			
-			if(!empty($fl)){
+			if(count($fl)>0 && !empty($fl) ){
 				$token = time().uniqid();
 				$issetToken = false;
 
@@ -139,8 +138,12 @@
 					$req2 = $this->bdd->prepare("SELECT * FROM ".$this->table." WHERE id = :id");  # si update, récupere le token de la table
 					$req2->execute(array(':id' => $data['id']));
 					$data2 = $req2->fetch(\PDO::FETCH_OBJ);
-		
-					$token = ($data2->{$upload['champ_name']} != NULL)?$data2->{$upload['champ_name']}:$token;
+					
+					if($data2 != ""){
+						$token = $data2->{$upload['champ_name']};
+					}else{
+						$token = $token;
+					}
 
 					$req2 = $this->bdd->prepare("SELECT * FROM ".$upload['table_name']." WHERE token = :token");  # si update, récupere le token de la table
 					$req2->execute(array(':token' => $token));
@@ -252,7 +255,7 @@
 				}
 
 				$req->execute($c);
-				//if($test){unset($_FILES);}
+			//	if($keyFiles){unset($_FILES);}
 				if(!isset($data['id'])){
 					$this->setId($this->bdd->lastInsertId());
 				}else{

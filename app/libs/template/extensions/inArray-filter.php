@@ -9,10 +9,12 @@
 	 * @return bool
 	 */
 	function inArray($array,$key,$value){
-		foreach ($array as $k => $v){
-			$v = (array) $v;
-			if($v[$key] === $value){
-				return true;
+		if(isset($array)){
+			foreach ($array as $k => $v){
+				$v = (array) $v;
+				if($v[$key] === $value){
+					return true;
+				}
 			}
 		}
 	}
