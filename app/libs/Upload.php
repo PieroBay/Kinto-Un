@@ -224,7 +224,8 @@
 
 			$extension = pathinfo(basename($fName));
 			$extension = $extension['extension'];
-			$name = uniqid().'_'.time().'.'.$extension;
+			$nameNoExt = uniqid().'_'.time();
+			$name 	   = $nameNoExt.'.'.$extension;
 
 
 			if(in_array(strtolower($extension),$tabExt)){
@@ -236,7 +237,6 @@
 			    if(in_array($infosImg[2] , array(IMAGETYPE_GIF , IMAGETYPE_JPEG ,IMAGETYPE_PNG , IMAGETYPE_BMP))){
 			        $is_image = true;
 			    }
-
 
 				if (!file_exists($this->repository)){
 			    	mkdir($this->repository, 0755, true);
@@ -316,37 +316,47 @@
 
           					if($is_image && $this->upload['resize'] != false){
 
-					            switch ($extension) {
-					                case 'jpg':
-					                    $image = imagecreatefromjpeg($fTmp_name);
-					                    break;
-					                case 'jpeg':
-					                    $image = imagecreatefromjpeg($fTmp_name);
-					                    break;
-					                case 'png':
-					                    $image = imagecreatefrompng($fTmp_name);
-					                    break;
-					                case 'gif':
-					                    $image = imagecreatefromgif($fTmp_name);
-					                    break;
-					                default:
-					                    $image = imagecreatefromjpeg($fTmp_name);
-					            }
+								foreach ($this->upload['resize'] as $key => $value) {
+									switch ($extension) {
+										case 'jpg':
+											$image = imagecreatefromjpeg($fTmp_name);
+											break;
+										case 'jpeg':
+											$image = imagecreatefromjpeg($fTmp_name);
+											break;
+										case 'png':
+											$image = imagecreatefrompng($fTmp_name);
+											break;
+										case 'gif':
+											$image = imagecreatefromgif($fTmp_name);
+											break;
+										default:
+											$image = imagecreatefromjpeg($fTmp_name);
+									}
 
-								if(is_int($this->upload['resize'])){
-									$big_size = max(imagesx($image), imagesy($image));
-									$max_size = $this->upload['resize'];
-									$new_W    = imagesx($image) * $max_size / $big_size;
-									$new_H    = imagesy($image) * $max_size / $big_size;
-								}else{
-									$size  = explode("x", $this->upload['resize']);
-									$new_W = $size[0];
-									$new_H = $size[1];
+									$tmpName = $nameNoExt."-".$key.".".$extension;
+
+									if($value == "o" && $key == 0){
+										$new_W    = imagesx($image);
+										$new_H    = imagesy($image);
+										$tmpName  = $name;
+									}else{
+										if(is_int($value)){
+											$big_size = max(imagesx($image), imagesy($image));
+											$max_size = $value;
+											$new_W    = imagesx($image) * $max_size / $big_size;
+											$new_H    = imagesy($image) * $max_size / $big_size;
+										}else{
+											$size  = explode("x", $value);
+											$new_W = $size[0];
+											$new_H = $size[1];
+										}
+									}
+
+									$virtu_img = imagecreatetruecolor($new_W, $new_H);
+									imagecopyresampled($virtu_img, $image, 0, 0, 0, 0, $new_W, $new_H, imagesx($image), imagesy($image));
+									imagejpeg($virtu_img,$this->repository.$tmpName,90);
 								}
-
-								$virtu_img = imagecreatetruecolor($new_W, $new_H);
-								imagecopyresampled($virtu_img, $image, 0, 0, 0, 0, $new_W, $new_H, imagesx($image), imagesy($image));
-								imagejpeg($virtu_img,$this->repository.$name,90);
 							}else{
 								move_uploaded_file($fTmp_name,$this->repository.$name);
 							}

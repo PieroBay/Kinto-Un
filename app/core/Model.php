@@ -139,11 +139,7 @@
 					$req2->execute(array(':id' => $data['id']));
 					$data2 = $req2->fetch(\PDO::FETCH_OBJ);
 					
-					if($data2 != ""){
-						$token = $data2->{$upload['champ_name']};
-					}else{
-						$token = $token;
-					}
+					$token = ($data2->{$upload['champ_name']} != NULL)?$data2->{$upload['champ_name']}:$token;
 
 					$req2 = $this->bdd->prepare("SELECT * FROM ".$upload['table_name']." WHERE token = :token");  # si update, récupere le token de la table
 					$req2->execute(array(':token' => $token));
@@ -154,35 +150,30 @@
 
 				
 				$uploading = new Upload($upload,$this->bdd,$token,$issetToken,$keyFiles); 		# init la class
-				/*if(COUNT($_FILES) > 1){
-					$newArray = [];
-					foreach ($_FILES as $key => $value) {
-						if(!empty($_FILES[$key]['name'])){
-							foreach($_FILES[$key] as $k => $v) {
-								$newArray[$upload['champ_name']][$k][] = $v;
-							}
-						}
-					}
-					$_FILES = $newArray;
-				}*/
+				
+				if(COUNT($_FILES) > 1){
+					$newFILES[$upload['champ_name']] = $_FILES[$upload['champ_name']];
+				}else{
+					$newFILES = $_FILES;
+				}
 
-				foreach ($_FILES as $k => $v) { 
+				foreach ($newFILES as $k => $v) { 
 		
 					if(
-						$_FILES[$k]['name'] != "" && is_string($_FILES[$k]['name'] != "") || 
-						( (!is_array($_FILES[$k]['name'][0]) && $_FILES[$k]['name'][0] != "") || 
-						(is_array($_FILES[$k]['name'][$keyFiles]) && $_FILES[$k]['name'][$keyFiles][0] != "")) 
+						$newFILES[$k]['name'] != "" && is_string($newFILES[$k]['name'] != "") || 
+						( (!is_array($newFILES[$k]['name'][0]) && $newFILES[$k]['name'][0] != "") || 
+						(is_array($newFILES[$k]['name'][$keyFiles]) && $newFILES[$k]['name'][$keyFiles][0] != "")) 
 					) { # si champs non vide
 					
 					
 					
 						if(!$upload['table_name']){								# Si enregistré dans la même table
-							$file = $uploading->current($_FILES[$k]);			
+							$file = $uploading->current($newFILES[$k]);			
 						}else{
 							if(is_array($v['name'])){ 							# Si un multiUpload
-								$file = $uploading->multiple($_FILES[$k]);		# return array
+								$file = $uploading->multiple($newFILES[$k]);		# return array
 							}else{												# Si un simple upload ou plusieur champs file
-								$file = $uploading->single($_FILES[$k]);		# return array
+								$file = $uploading->single($newFILES[$k]);		# return array
 							}
 						}
 						if($file['verif']){  									# Si tout est ok pour l'upload
