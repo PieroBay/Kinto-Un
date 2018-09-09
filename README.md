@@ -108,8 +108,11 @@ login:
     password: password			# Nom du champ password lors d'une connexion
     activation: false			# Si une activation est nécessaire
     remember: false				# Si enregistrement cookies
-    session: id|name 			# Liste des champs à récupérer dans la $_SESSION
-
+	session: id|name 			# Liste des champs à récupérer dans la $_SESSION
+	
+translate:
+	type: json					# Type de traduction `json` ou `db` (fichier json ou trads en db)
+	dbTable: 					# Nom de la talbe ou sont stoqué les traductions
 ```
 
 Complétez correctement les valeurs.
@@ -426,6 +429,14 @@ view_article:
     controller: home:public:view
 ```
 
+```yml
+home_article:
+	pattern:  
+		fr: /{_lang}/accueil
+		en: /{_lang}/home
+    controller: home:public:view
+```
+
 * `view_article` => Est le nom de la route, qui sera utile pour la fonction path().
 * `pattern` => Est le lien subjectif désiré avec ses paramètres.
 * `controller` => Est le chemin vers le project/controller/action. 
@@ -452,15 +463,28 @@ retournera:
 
 Kinto'Un permet de traduire son site très facilement.
 
-Pour se faire, créez un fichier `.yml` dans `src/ressources/translate/` et nommez le à la langue que vous souhaitez traduire (2 lettres).
-Si mon site est en Français et je veux le traduire en anglais, je nomerai le fichier `en.yml`.
+Pour se faire, créez un fichier `.json` dans `src/ressources/translate/` et nommez le à la langue que vous souhaitez traduire (2 lettres).
+Si mon site est en Français et je veux le traduire en anglais, je nomerai le fichier `en.json`.
+Le fichier `fr.json` doit également exister et avoir sa traduction.
 
 Dans ce fichier, écrivez d'un coté la sentence cible (la langue de votre site) ensuite vous mettez deux points `:` et la sentence à la langue que vous voulez traduire.
 
-```yml
-Bonjour: Hello
-Comment allez vous: How are you
-"Numéro de téléphone:": Phone number: 
+Pour le fr :
+```json
+{
+	'langs': {
+		'message intro': 'Bonjour'
+	}
+}
+```
+
+Pour le en :
+```json
+{
+	'langs': {
+		'message intro': 'Hello'
+	}
+}
 ```
 
 Dans la vue, pour traduire vos sentences, les manières varient selon le template utilisé:
@@ -468,6 +492,19 @@ Dans la vue, pour traduire vos sentences, les manières varient selon le templat
 * Twig => `{{"Bonjour"|trans}}`
 * Smarty => `{"Bonjour"|trans}`
 * Php => `<?= trans("Bonjour"); ?>`
+
+
+Si dans la config vous avez préféré le type `db`.
+Créez une table du nom que vous avez indiqué dans le fichier de configuration.
+La structure est :
+
+```
+id - int
+model - varchar
+fr - text
+en - text
+... - text
+```
 
 **[Back to top](#sommaire)**
 
