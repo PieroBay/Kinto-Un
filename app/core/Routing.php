@@ -240,6 +240,7 @@ class Routing{
 
     static public function redirectToCorrectLang(){
         if(self::$params['lang'] != self::$params['routeLang'] && self::$langInUrl==true){
+
             $RootCorrectLang  		   = self::$params['lang'];
             $RootIncorrectLang  	   = self::$params['routeLang'];
             $AlternativeCorrectParam   = self::$params['routeAlternative'][$RootCorrectLang];
@@ -251,9 +252,12 @@ class Routing{
             header("Location: ".$newLink);
         }
 
-        if(self::$langInUrl == false){
+        if(self::$langInUrl == false && self::$params['routeLang'] != ""){
             self::$params['lang'] = self::$params['routeLang'];
-            $_SESSION['lang'] = self::$params['routeLang'];
+            $_SESSION['lang']     = self::$params['routeLang'];
+        }else{
+            self::$params['lang'] = $_SESSION['local'];
+            $_SESSION['lang']     = $_SESSION['local'];
         }
     }
 }
