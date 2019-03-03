@@ -1,7 +1,14 @@
 <?php
-function path($routeName,$params=array()){
+function path($routeName,$params=array(),$alternative=false){
     $route = spyc_load_file(ROOT.'config/Routing.yml');
-    $lang  = $_SESSION['lang'];
+    if (array_key_exists('_lang', $params)) {
+        $lang = $params['_lang'];
+    }else{
+        $lang  = $_SESSION['lang'];
+    }
+    if (strpos($routeName, '{') !== false) {
+        $routeName = explode("{",$routeName)[0];
+    }
 
     foreach ($route as $key => $value) {
         $project = $route[$key]['project'];
@@ -10,7 +17,11 @@ function path($routeName,$params=array()){
 
         if(isset($routeP[$routeName])){
             $link = $routeP[$routeName];
-            $linkPattern = (is_array($link['pattern']))?$link['pattern'][$lang]:$link['pattern'];
+            if(!$alternative){
+                $linkPattern = (is_array($link['pattern']))?$link['pattern'][$lang]:$link['pattern'];
+            }else{
+                $linkPattern = $alternative[$lang];
+            }
 
             $patternEx = explode('/', trim($linkPattern,'/'));
             foreach ($patternEx as $k => $v) {

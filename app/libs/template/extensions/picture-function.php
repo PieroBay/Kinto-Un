@@ -8,8 +8,8 @@
 	 */
 	function picture($link,$size=false){
 		if($size && $size != "o"){
-            list($path, $ext) = explode(".", $link);
-			echo $path."-".$size.".".$ext;
+            list($dom,$path, $ext) = explode(".", $link);
+			echo $dom.".".$path."-".$size.".".$ext;
 		}else{
 			echo $link;
 		}

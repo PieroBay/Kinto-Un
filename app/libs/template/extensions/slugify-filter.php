@@ -1,7 +1,14 @@
 <?php
 
+	/**
+	 * Retourne la string slugifié
+	 *
+	 * @param String $str
+	 * @return void
+	 */
     function slugify($str){
-        $str = strtolower(trim($str));
+        // Convert to lowercase and remove whitespace
+        $str = strtolower(trim($str));  
 
         // Replace high ascii characters
         $chars = array("ä", "ö", "ü", "ß");
